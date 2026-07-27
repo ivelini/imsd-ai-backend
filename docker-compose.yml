@@ -1,0 +1,106 @@
+services:
+  # --- PHP-FPM ---
+  app:
+    image: app:php8.5-fpm
+    container_name: imsd-ai-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - imsd-ai
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # --- Nginx ---
+  nginx:
+    image: nginx:stable-alpine
+    container_name: imsd-ai-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-8081}:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - imsd-ai
+    depends_on:
+      - app
+
+  # --- PostgreSQL ---
+  db:
+    image: postgres:17-alpine
+    container_name: imsd-ai-db
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5435}:5432"
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-imsd_ai}"
+      POSTGRES_USER: "${DB_USERNAME:-imsd_ai}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-imsd_ai_secret}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - imsd-ai
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-imsd_ai} -d ${DB_DATABASE:-imsd_ai}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Redis (required by queue / cache) ---
+  redis:
+    image: redis:7-alpine
+    container_name: imsd-ai-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6381}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - imsd-ai
+
+  # --- Queue Worker ---
+  queue-worker:
+    image: app:php8.5-fpm
+    container_name: imsd-ai-queue-worker
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - imsd-ai
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: php artisan queue:work redis --sleep=3 --tries=1 --max-time=3600
+
+  # --- Laravel Scheduler ---
+  scheduler:
+    image: app:php8.5-fpm
+    container_name: imsd-ai-scheduler
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    networks:
+      - imsd-ai
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: php artisan schedule:work
+
+networks:
+  imsd-ai:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
