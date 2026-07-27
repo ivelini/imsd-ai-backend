@@ -70,6 +70,6 @@ test:
 
 # --- Документация ---
 
-## Сгенерировать документацию API (Scribe) + Postman коллекцию
+## Сгенерировать документацию API (Scribe) + Postman + OpenAPI
 docs:
 	$(ARTISAN) scribe:generate

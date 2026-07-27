@@ -32,6 +32,7 @@ class Admin extends Authenticatable
         'remember_token',
     ];
 
+    /** @return BelongsTo<AdminRole, $this> */
     public function role(): BelongsTo
     {
         return $this->belongsTo(AdminRole::class, 'admin_role_id');

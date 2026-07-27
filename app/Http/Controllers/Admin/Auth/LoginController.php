@@ -12,6 +12,20 @@ use Illuminate\Validation\ValidationException;
 /** Аутентификация администратора. */
 final class LoginController
 {
+    /**
+     * Вход в админ-панель.
+     *
+     * Возвращает Sanctum-токен для авторизации в остальных эндпоинтах.
+     *
+     * @group Аутентификация
+     *
+     * @unauthenticated
+     *
+     * @responseField token string Sanctum-токен для последующих запросов.
+     * @responseField admin.id int ID администратора.
+     * @responseField admin.email string Email администратора.
+     * @responseField admin.role string Код роли (super-admin, content-manager, …).
+     */
     public function __invoke(LoginRequest $request): LoginResource|JsonResponse
     {
         $admin = Admin::where('email', $request->email)->first();

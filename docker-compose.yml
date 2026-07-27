@@ -21,7 +21,7 @@ services:
     container_name: imsd-ai-nginx
     restart: unless-stopped
     ports:
-      - "${NGINX_PORT:-8081}:80"
+      - "${DOCKER_DB_PORT:-8081}:80"
     volumes:
       - .:/var/www
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -36,7 +36,7 @@ services:
     container_name: imsd-ai-db
     restart: unless-stopped
     ports:
-      - "${DB_PORT:-5435}:5432"
+      - "${DOCKER_DB_PORT:-5435}:5432"
     environment:
       POSTGRES_DB: "${DB_DATABASE:-imsd_ai}"
       POSTGRES_USER: "${DB_USERNAME:-imsd_ai}"
@@ -57,7 +57,7 @@ services:
     container_name: imsd-ai-redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6381}:6379"
+      - "${DOCKER_DB_PORT:-6383}:6379"
     volumes:
       - redis_data:/data
     networks:

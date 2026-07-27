@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Enums\WheelType;
+use App\Enums\Catalog\WheelType;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

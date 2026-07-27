@@ -3,14 +3,23 @@
 namespace App\Models\Catalog;
 
 use App\Casts\SeasonCast;
+use App\Enums\Catalog\Season;
 use App\Models\Image;
+use Database\Factories\Catalog\TireProductFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-/** Шина: характеристика, бренд, страна, сезонность. */
+/** Шина: характеристика, бренд, страна, сезонность.
+ *
+ * @property-read Season|null $season
+ */
 class TireProduct extends Model
 {
+    /** @use HasFactory<TireProductFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'brand_id',
         'name',

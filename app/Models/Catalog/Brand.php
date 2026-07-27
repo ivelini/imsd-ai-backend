@@ -2,13 +2,18 @@
 
 namespace App\Models\Catalog;
 
-use App\Enums\ProductType;
+use App\Enums\Catalog\ProductType;
+use Database\Factories\Catalog\BrandFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** Бренд товара (Winter Drive…). Привязан к одному поставщику. */
 class Brand extends Model
 {
+    /** @use HasFactory<BrandFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'slug',

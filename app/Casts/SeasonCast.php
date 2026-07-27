@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Enums\Season;
+use App\Enums\Catalog\Season;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 

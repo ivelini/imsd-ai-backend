@@ -1,0 +1,628 @@
+openapi: 3.0.3
+info:
+  title: 'Laravel — Admin API'
+  description: 'Административная панель интернет-магазина шин и дисков.'
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8081'
+tags:
+  - name: Аутентификация
+    description: ''
+  - name: Бренды
+    description: ''
+  - name: Поставщики
+    description: ''
+  - name: Склады
+    description: ''
+  - name: 'Импорт шин'
+    description: ''
+  - name: 'Импорт дисков'
+    description: ''
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'Авторизация через Sanctum-токен. Получить: `POST /api/admin/login` с email и password.'
+security:
+  -
+    default: []
+paths:
+  /api/admin/login:
+    post:
+      summary: 'Вход в админ-панель.'
+      operationId: ''
+      description: 'Возвращает Sanctum-токен для авторизации в остальных эндпоинтах.'
+      parameters: []
+      responses: {}
+      tags:
+        - Аутентификация
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: gbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+              required:
+                - email
+                - password
+      security: []
+  /api/admin/logout:
+    post:
+      summary: 'Выход из админ-панели.'
+      operationId: ''
+      description: 'Удаляет текущий Sanctum-токен.'
+      parameters: []
+      responses: {}
+      tags:
+        - Аутентификация
+  /api/admin/me:
+    get:
+      summary: 'Профиль администратора.'
+      operationId: ''
+      description: 'Возвращает данные текущего авторизованного администратора.'
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Аутентификация
+  /api/admin/catalog/brands:
+    get:
+      summary: 'Список брендов.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Бренды
+    post:
+      summary: 'Создать бренд.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Бренды
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                slug:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                logo:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                type:
+                  type: string
+                  description: ''
+                  example: both
+                  enum:
+                    - tire
+                    - wheel
+                    - both
+              required:
+                - name
+                - slug
+                - type
+  '/api/admin/catalog/brands/{id}':
+    get:
+      summary: 'Получить бренд.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Бренды
+    put:
+      summary: 'Обновить бренд.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Бренды
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                slug:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                logo:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: g
+                  nullable: true
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                type:
+                  type: string
+                  description: ''
+                  example: wheel
+                  enum:
+                    - tire
+                    - wheel
+                    - both
+              required:
+                - name
+                - slug
+                - type
+    delete:
+      summary: 'Удалить бренд.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        204:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+        409:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Невозможно удалить бренд: 5 товаров использует его.'
+                properties:
+                  message:
+                    type: string
+                    example: 'Невозможно удалить бренд: 5 товаров использует его.'
+      tags:
+        - Бренды
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the brand.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/admin/catalog/suppliers:
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogSuppliers
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Поставщики
+    post:
+      summary: ''
+      operationId: postApiAdminCatalogSuppliers
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Поставщики
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                code:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: 'n'
+                  nullable: true
+              required:
+                - name
+  '/api/admin/catalog/suppliers/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogSuppliersId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Поставщики
+    put:
+      summary: ''
+      operationId: putApiAdminCatalogSuppliersId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Поставщики
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                code:
+                  type: string
+                  description: 'Must not be greater than 50 characters.'
+                  example: 'n'
+                  nullable: true
+              required:
+                - name
+    delete:
+      summary: ''
+      operationId: deleteApiAdminCatalogSuppliersId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Поставщики
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the supplier.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/admin/catalog/warehouses:
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogWarehouses
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Склады
+    post:
+      summary: ''
+      operationId: postApiAdminCatalogWarehouses
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Склады
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+              required:
+                - name
+  '/api/admin/catalog/warehouses/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogWarehousesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Склады
+    put:
+      summary: ''
+      operationId: putApiAdminCatalogWarehousesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Склады
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+              required:
+                - name
+    delete:
+      summary: ''
+      operationId: deleteApiAdminCatalogWarehousesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Склады
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the warehouse.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/admin/catalog/tires/import:
+    post:
+      summary: 'Загрузить XLSX-файл с шинами.'
+      operationId: XLSX
+      description: ''
+      parameters: []
+      responses:
+        202:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    import_id: 1
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      import_id:
+                        type: integer
+                        example: 1
+        422:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'The given data was invalid.'
+                  errors:
+                    file:
+                      - 'Допустим только формат XLSX.'
+                properties:
+                  message:
+                    type: string
+                    example: 'The given data was invalid.'
+                  errors:
+                    type: object
+                    properties:
+                      file:
+                        type: array
+                        example:
+                          - 'Допустим только формат XLSX.'
+                        items:
+                          type: string
+      tags:
+        - 'Импорт шин'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 'XLSX-файл (макс. 50 МБ).'
+              required:
+                - file
+  '/api/admin/catalog/tires/import/{id}':
+    get:
+      summary: 'Статус импорта шин.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Импорт шин'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'ID импорта.'
+        example: 16
+        required: true
+        schema:
+          type: integer
+  /api/admin/catalog/wheels/import:
+    post:
+      summary: 'Загрузить XLSX-файл с дисками.'
+      operationId: XLSX
+      description: ''
+      parameters: []
+      responses:
+        202:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    import_id: 1
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      import_id:
+                        type: integer
+                        example: 1
+      tags:
+        - 'Импорт дисков'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 'XLSX-файл (макс. 50 МБ).'
+              required:
+                - file
+  '/api/admin/catalog/wheels/import/{id}':
+    get:
+      summary: 'Статус импорта дисков.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Импорт дисков'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'ID импорта.'
+        example: 16
+        required: true
+        schema:
+          type: integer

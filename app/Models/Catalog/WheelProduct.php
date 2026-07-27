@@ -3,14 +3,23 @@
 namespace App\Models\Catalog;
 
 use App\Casts\WheelTypeCast;
+use App\Enums\Catalog\WheelType;
 use App\Models\Image;
+use Database\Factories\Catalog\WheelProductFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-/** Диск: тип, цвет, PCD, ET, DIA. */
+/** Диск: тип, цвет, PCD, ET, DIA.
+ *
+ * @property-read WheelType|null $type
+ */
 class WheelProduct extends Model
 {
+    /** @use HasFactory<WheelProductFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'brand_id',
         'name',

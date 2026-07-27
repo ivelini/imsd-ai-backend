@@ -2,12 +2,17 @@
 
 namespace App\Models\Catalog;
 
+use Database\Factories\Catalog\SupplierFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /** Завод-производитель (Cordiant, Nokian…). Внутренний справочник. */
 class Supplier extends Model
 {
+    /** @use HasFactory<SupplierFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'code',

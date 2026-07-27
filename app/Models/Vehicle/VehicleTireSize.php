@@ -2,7 +2,6 @@
 
 namespace App\Models\Vehicle;
 
-use App\Enums\SpecType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
