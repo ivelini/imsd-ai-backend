@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Catalog;
+namespace App\Enums\Promotion;
 
 /** Тип акции: процент, фиксированная сумма, подарок, спеццена. */
 enum PromotionType: string

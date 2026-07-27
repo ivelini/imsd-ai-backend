@@ -21,8 +21,8 @@ class ImageServiceTest extends TestCase
     public static function provideValidTypes(): array
     {
         return [
-            'tire' => ['tire', 'tire_product'],
-            'wheel' => ['wheel', 'wheel_product'],
+            'tire' => ['tire', 'tire'],
+            'wheel' => ['wheel', 'wheel'],
         ];
     }
 

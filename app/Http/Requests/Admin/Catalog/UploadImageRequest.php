@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog;
 
+use App\Enums\Catalog\ProductType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +13,7 @@ class UploadImageRequest extends FormRequest
     {
         return [
             'image' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:10240'],
-            'imageable_type' => ['required', Rule::in(['tire', 'wheel'])],
+            'imageable_type' => ['required', Rule::in(array_column(ProductType::cases(), 'value'))],
             'imageable_id' => ['required', 'integer'],
         ];
     }

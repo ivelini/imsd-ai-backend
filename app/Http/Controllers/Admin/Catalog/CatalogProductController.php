@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Enums\Catalog\ProductType;
 use App\Http\Resources\Admin\Catalog\CatalogProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -39,7 +40,7 @@ final readonly class CatalogProductController
         $tires = DB::table('tire_products')
             ->select([
                 'tire_products.id',
-                DB::raw("'tire' as type"),
+                DB::raw("'".ProductType::Tire->value."' as type"),
                 'brands.name as brand_name',
                 'tire_products.name',
                 'tire_products.ean',
@@ -58,7 +59,7 @@ final readonly class CatalogProductController
         $wheels = DB::table('wheel_products')
             ->select([
                 'wheel_products.id',
-                DB::raw("'wheel' as type"),
+                DB::raw("'".ProductType::Wheel->value."' as type"),
                 'brands.name as brand_name',
                 'wheel_products.name',
                 'wheel_products.ean',
@@ -75,9 +76,9 @@ final readonly class CatalogProductController
             ->join('brands', 'wheel_products.brand_id', '=', 'brands.id');
 
         // Apply filters
-        if ($type === 'tire') {
+        if ($type === ProductType::Tire->value) {
             $wheels->whereRaw('0 = 1');
-        } elseif ($type === 'wheel') {
+        } elseif ($type === ProductType::Wheel->value) {
             $tires->whereRaw('0 = 1');
         }
 

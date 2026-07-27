@@ -2,12 +2,17 @@
 
 namespace App\Models\Catalog;
 
+use Database\Factories\Catalog\WarehouseMarkupRuleFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /** Правило наценки склада: диапазон закупочной цены → коэффициент. */
 class WarehouseMarkupRule extends Model
 {
+    /** @use HasFactory<WarehouseMarkupRuleFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'warehouse_id',
         'price_from',

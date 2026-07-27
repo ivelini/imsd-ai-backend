@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog;
 
+use App\Enums\Catalog\Season;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -21,7 +22,7 @@ class TireProductRequest extends FormRequest
                 'nullable', 'string', 'max:50',
                 Rule::unique('tire_products', 'ean')->ignore($tireId),
             ],
-            'season' => ['required', Rule::in(['winter', 'summer', 'all-season'])],
+            'season' => ['required', Rule::in(array_column(Season::cases(), 'value'))],
             'width' => ['nullable', 'integer', 'min:100', 'max:400'],
             'profile' => ['nullable', 'integer', 'min:20', 'max:100'],
             'diameter' => ['nullable', 'string', 'max:10'],

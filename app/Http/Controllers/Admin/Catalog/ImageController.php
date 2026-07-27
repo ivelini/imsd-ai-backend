@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Admin\Catalog;
 
 use App\Http\Requests\Admin\Catalog\UploadImageRequest;
-use App\Models\Catalog\TireProduct;
-use App\Models\Catalog\WheelProduct;
 use App\Models\Image;
+use App\Services\Admin\ImageService;
 use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +12,10 @@ use Illuminate\Http\Request;
 /** Изображения товаров: загрузка, удаление, порядок, главное. */
 final readonly class ImageController
 {
+    public function __construct(
+        private ImageService $imageService,
+    ) {}
+
     private const MAX_IMAGES = 10;
 
     /**
@@ -132,10 +135,6 @@ final readonly class ImageController
     {
         $value = $request->input('imageable_type', $request->query('imageable_type'));
 
-        return match ($value) {
-            'tire' => (new TireProduct)->getMorphClass(),
-            'wheel' => (new WheelProduct)->getMorphClass(),
-            default => throw new DomainException("Некорректный тип товара: {$value}"),
-        };
+        return $this->imageService->resolveMorphType($value);
     }
 }

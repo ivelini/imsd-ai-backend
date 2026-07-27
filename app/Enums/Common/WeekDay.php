@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Catalog;
+namespace App\Enums\Common;
 
 /** День недели для графика отгрузки: 0=пн … 6=вс. */
 enum WeekDay: int

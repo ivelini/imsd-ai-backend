@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\Catalog\ProductType;
 use DomainException;
 
 /** Бизнес-логика работы с изображениями товаров. */
@@ -9,28 +10,24 @@ final class ImageService
 {
     public const MAX_IMAGES = 10;
 
-    /** Разрешённые типы товаров для полиморфной связи. */
-    private const MORPH_MAP = [
-        'tire' => 'tire_product',
-        'wheel' => 'wheel_product',
-    ];
+    /** @var string[] */
+    private array $validTypes;
 
-    /**
-     * Преобразовать строковый тип товара в morph-класс.
-     *
-     * @throws DomainException при неизвестном типе.
-     */
-    public function resolveMorphType(string $type): string
+    public function __construct()
     {
-        return self::MORPH_MAP[$type]
-            ?? throw new DomainException("Некорректный тип товара: {$type}");
+        $this->validTypes = array_column(ProductType::cases(), 'value');
     }
 
-    /**
-     * Проверить, не превышен ли лимит изображений.
-     *
-     * @throws DomainException если достигнут лимит.
-     */
+    /** Преобразовать строковый тип в morph-тип (ключ morphMap из AppServiceProvider). */
+    public function resolveMorphType(string $type): string
+    {
+        if (! in_array($type, $this->validTypes, true)) {
+            throw new DomainException("Некорректный тип товара: {$type}");
+        }
+
+        return $type;
+    }
+
     public function ensureImageLimit(int $currentCount): void
     {
         if ($currentCount >= self::MAX_IMAGES) {
@@ -40,10 +37,6 @@ final class ImageService
         }
     }
 
-    /**
-     * Вернуть ID следующего изображения для назначения главным.
-     * Если удаляемое было главным — возвращается следующее по sort.
-     */
     public function getNextMainImageId(bool $wasMain, array $siblingIds): ?int
     {
         if (! $wasMain || empty($siblingIds)) {

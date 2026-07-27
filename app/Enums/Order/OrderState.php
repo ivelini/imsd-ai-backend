@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Catalog;
+namespace App\Enums\Order;
 
 /** Статус заказа: от нового до возврата. */
 enum OrderState: string

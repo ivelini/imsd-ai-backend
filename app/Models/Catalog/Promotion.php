@@ -4,8 +4,13 @@ namespace App\Models\Catalog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 
-/** Акция: скидка на товар, бренд или весь каталог. */
+/** Акция: скидка на товар, бренд или весь каталог.
+ *
+ * @property-read Carbon $starts_at
+ * @property-read Carbon $ends_at
+ */
 class Promotion extends Model
 {
     protected $fillable = [

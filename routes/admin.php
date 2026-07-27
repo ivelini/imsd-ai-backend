@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\Auth\MeController;
 use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
 use App\Http\Controllers\Admin\Catalog\ImageController;
+use App\Http\Controllers\Admin\Catalog\MarkupRuleController;
+use App\Http\Controllers\Admin\Catalog\PromotionController;
 use App\Http\Controllers\Admin\Catalog\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
@@ -50,6 +52,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/catalog/images/{id}', [ImageController::class, 'destroy']);
     Route::put('/catalog/images/{id}/main', [ImageController::class, 'setMain']);
     Route::put('/catalog/images/reorder', [ImageController::class, 'reorder']);
+
+    Route::get('/catalog/markup-rules', [MarkupRuleController::class, 'index']);
+    Route::post('/catalog/markup-rules', [MarkupRuleController::class, 'store']);
+    Route::get('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'show']);
+    Route::put('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'update']);
+    Route::delete('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'destroy']);
+
+    Route::get('/catalog/promotions', [PromotionController::class, 'index']);
+    Route::post('/catalog/promotions', [PromotionController::class, 'store']);
+    Route::get('/catalog/promotions/{id}', [PromotionController::class, 'show']);
+    Route::put('/catalog/promotions/{id}', [PromotionController::class, 'update']);
+    Route::delete('/catalog/promotions/{id}', [PromotionController::class, 'destroy']);
 
     Route::post('/catalog/wheels/import', [ImportWheelController::class, 'store']);
     Route::get('/catalog/wheels/import/{id}', [ImportWheelController::class, 'show']);

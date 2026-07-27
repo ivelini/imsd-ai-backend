@@ -2,6 +2,7 @@
 
 namespace App\Actions\TireImport;
 
+use App\Enums\Catalog\WheelType;
 use App\Models\Catalog\WheelProduct;
 use App\Services\TireImport\ReferenceResolver;
 use DomainException;
@@ -9,15 +10,16 @@ use DomainException;
 /** Создание или обновление товара (диска) по EAN. */
 final readonly class UpsertWheelProduct
 {
+    /** @var array<string, string> */
     private const WHEEL_TYPE_MAP = [
-        'литые' => 'alloy',
-        'литой' => 'alloy',
-        'штампованные' => 'steel',
-        'штампованный' => 'steel',
-        'штамповка' => 'steel',
-        'кованые' => 'forged',
-        'кованый' => 'forged',
-        'ковка' => 'forged',
+        'литые' => WheelType::Alloy->value,
+        'литой' => WheelType::Alloy->value,
+        'штампованные' => WheelType::Steel->value,
+        'штампованный' => WheelType::Steel->value,
+        'штамповка' => WheelType::Steel->value,
+        'кованые' => WheelType::Forged->value,
+        'кованый' => WheelType::Forged->value,
+        'ковка' => WheelType::Forged->value,
     ];
 
     public function __construct(
