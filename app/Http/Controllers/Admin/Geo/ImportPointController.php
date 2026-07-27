@@ -34,7 +34,13 @@ final readonly class ImportPointController
             'type' => 'point',
         ]);
 
-        PointImportJob::dispatch($import->id, $this->filesystem->path($path));
+        PointImportJob::dispatch(
+            $import->id,
+            $this->filesystem->path($path),
+            config('point_import.column_map'),
+            config('point_import.required_columns'),
+            config('point_import.boolean_true'),
+        );
 
         return response()->json([
             'data' => ['import_id' => $import->id],

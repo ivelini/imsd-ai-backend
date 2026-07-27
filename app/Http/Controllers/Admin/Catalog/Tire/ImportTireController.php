@@ -39,7 +39,12 @@ final readonly class ImportTireController
             'status' => 'pending',
         ]);
 
-        MasterJob::dispatch($import->id, $this->filesystem->path($path));
+        MasterJob::dispatch(
+            $import->id,
+            $this->filesystem->path($path),
+            config('tire_import.chunk_size'),
+            config('tire_import.chunk_path'),
+        );
 
         return response()->json([
             'data' => [

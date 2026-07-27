@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Bus;
 
-/** Оркестратор импорта дисков. */
+/** Оркестратор импорта дисков: парсинг XLSX → чанки → dispatch WheelChunkJob. */
 final class WheelMasterJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
@@ -20,61 +20,94 @@ final class WheelMasterJob implements ShouldQueue
 
     public int $tries = 1;
 
+    /**
+     * @param  string[]  $requiredColumns  Обязательные колонки XLSX
+     * @param  array<string, string>  $columnMap  Маппинг заголовков XLSX → поля DTO
+     */
     public function __construct(
         public readonly int $importId,
         public readonly string $filePath,
+        private readonly int $chunkSize,
+        private readonly string $chunkPath,
+        private readonly array $requiredColumns,
+        private readonly array $columnMap,
     ) {}
 
     public function handle(ParseImportFile $parseAction): void
     {
         $import = ProductImport::findOrFail($this->importId);
-        $import->update(['status' => 'processing', 'started_at' => now()]);
+        $this->markImportProcessing($import);
 
         try {
-            $chunkDir = storage_path('app/'.trim(config('wheel_import.chunk_path'), '/'));
-            $input = new ParseImportFileInput(
-                filePath: $this->filePath,
-                batchId: (string) $this->importId,
-                chunkSize: config('wheel_import.chunk_size', 500),
-                chunkDir: $chunkDir,
-                requiredColumns: config('wheel_import.required_columns', []),
-                columnMap: config('wheel_import.column_map', []),
-            );
+            $result = $this->parseFile($parseAction);
 
-            $result = $parseAction->execute($input);
             $import->update(['total_rows' => $result->totalRows]);
 
             if (empty($result->chunkFilePaths)) {
-                $import->update(['status' => 'completed', 'finished_at' => now()]);
+                $this->markImportCompleted($import);
 
                 return;
             }
 
-            $batch = [];
-            foreach ($result->chunkFilePaths as $chunkPath) {
-                $batch[] = new WheelChunkJob(
-                    importId: $this->importId,
-                    chunkFilePath: $chunkPath,
-                );
-            }
-
-            Bus::batch($batch)
-                ->name("wheel-import-{$this->importId}")
-                ->finally(function () use ($import) {
-                    $import->refresh();
-                    if ($import->status === 'processing') {
-                        $import->update(['status' => 'completed', 'finished_at' => now()]);
-                    }
-                })
-                ->dispatch();
-
+            $this->dispatchBatch($import, $result->chunkFilePaths);
         } catch (\Throwable $e) {
-            $import->update([
-                'status' => 'failed',
-                'error_message' => $e->getMessage(),
-                'finished_at' => now(),
-            ]);
+            $this->markImportFailed($import, $e);
             throw $e;
         }
+    }
+
+    private function markImportProcessing(ProductImport $import): void
+    {
+        $import->update(['status' => 'processing', 'started_at' => now()]);
+    }
+
+    private function markImportCompleted(ProductImport $import): void
+    {
+        $import->update(['status' => 'completed', 'finished_at' => now()]);
+    }
+
+    private function markImportFailed(ProductImport $import, \Throwable $e): void
+    {
+        $import->update([
+            'status' => 'failed',
+            'error_message' => $e->getMessage(),
+            'finished_at' => now(),
+        ]);
+    }
+
+    private function parseFile(ParseImportFile $parseAction): object
+    {
+        return $parseAction->execute(new ParseImportFileInput(
+            filePath: $this->filePath,
+            batchId: (string) $this->importId,
+            chunkSize: $this->chunkSize,
+            chunkDir: storage_path('app/'.trim($this->chunkPath, '/')),
+            requiredColumns: $this->requiredColumns,
+            columnMap: $this->columnMap,
+        ));
+    }
+
+    /**
+     * @param  string[]  $chunkFilePaths
+     */
+    private function dispatchBatch(ProductImport $import, array $chunkFilePaths): void
+    {
+        $batch = array_map(
+            fn (string $chunkPath) => new WheelChunkJob(
+                importId: $this->importId,
+                chunkFilePath: $chunkPath,
+            ),
+            $chunkFilePaths,
+        );
+
+        Bus::batch($batch)
+            ->name("wheel-import-{$this->importId}")
+            ->finally(function () use ($import) {
+                $import->refresh();
+                if ($import->status === 'processing') {
+                    $this->markImportCompleted($import);
+                }
+            })
+            ->dispatch();
     }
 }

@@ -26,94 +26,169 @@ final class PointImportJob implements ShouldQueue
 
     public array $backoff = [10];
 
-    /** @var array<string, array{int, int}> Маппинг колонок цены: имя_колонки → [price_from, price_to] */
-    private const PRICE_RANGES = [
-        'price_0_5000' => [0, 5000],
-        'price_5001_8500' => [5001, 8500],
-        'price_8501_10000' => [8501, 10000],
-        'price_10001_15000' => [10001, 15000],
-        'price_15001_100000' => [15001, 100000],
-    ];
-
-    /** @var array<string, null> */
-    private const COEFF_MAP = [
-        'coeff_31_60' => null,
-        'coeff_61_100' => null,
-    ];
+    /** @var string[] */
+    private array $priceColumns = [];
 
     /** @var string[] */
-    private array $booleanTrue;
+    private array $coeffColumns = [];
 
+    /**
+     * @param  string[]  $columnMap  Маппинг заголовков XLSX → ключи данных
+     * @param  string[]  $requiredColumns  Обязательные колонки (отсутствие → исключение)
+     * @param  string[]  $booleanTrue  Значения, считающиеся true для булевых полей
+     */
     public function __construct(
         public readonly int $importId,
         public readonly string $filePath,
-    ) {
-        $this->booleanTrue = config('point_import.boolean_true', ['да', 'yes', 'true']);
+        private readonly array $columnMap,
+        private readonly array $requiredColumns,
+        private readonly array $booleanTrue,
+    ) {}
+
+    /**
+     * @param  string[]  $headers
+     * @return array{string[], string[]}
+     */
+    public static function detectColumnsFromHeaders(array $headers): array
+    {
+        $price = [];
+        $coeff = [];
+
+        foreach ($headers as $header) {
+            if (preg_match('/^(\d+)-(\d+)$/u', $header)) {
+                $price[] = $header;
+            } elseif (preg_match('/^(\d+)-(\d+) кг$/u', $header)) {
+                $coeff[] = $header;
+            }
+        }
+
+        return [$price, $coeff];
     }
 
     public function handle(): void
     {
         $import = ProductImport::findOrFail($this->importId);
+        $this->markImportProcessing($import);
+
+        try {
+            [$total, $errors] = $this->processFile();
+
+            $this->markImportCompleted($import, $total, $errors);
+        } catch (\Throwable $e) {
+            $this->markImportFailed($import, $e);
+            throw $e;
+        }
+    }
+
+    private function markImportProcessing(ProductImport $import): void
+    {
         $import->update(['status' => 'processing', 'started_at' => now()]);
+    }
+
+    /**
+     * @param  array<int, array{row: int, city: string, error: string}>  $errors
+     */
+    private function markImportCompleted(ProductImport $import, int $total, array $errors): void
+    {
+        $import->update([
+            'status' => 'completed',
+            'total_rows' => $total,
+            'processed_rows' => $total,
+            'failed_rows' => count($errors),
+            'errors' => $errors ?: null,
+            'finished_at' => now(),
+        ]);
+    }
+
+    private function markImportFailed(ProductImport $import, \Throwable $e): void
+    {
+        $import->update([
+            'status' => 'failed',
+            'error_message' => $e->getMessage(),
+            'finished_at' => now(),
+        ]);
+    }
+
+    /**
+     * @return array{int, array<int, array{row: int, city: string, error: string}>}
+     */
+    private function processFile(): array
+    {
+        $reader = new Reader;
+        $reader->open($this->filePath);
 
         $total = 0;
         $errors = [];
 
-        try {
-            $reader = new Reader;
-            $reader->open($this->filePath);
+        foreach ($reader->getSheetIterator() as $sheet) {
+            [$sheetTotal, $sheetErrors] = $this->processSheet($sheet);
+            $total += $sheetTotal;
+            $errors = [...$errors, ...$sheetErrors];
 
-            foreach ($reader->getSheetIterator() as $sheet) {
-                $headerColumns = [];
-                $columnMap = config('point_import.column_map', []);
+            // Прерываем при критическом числе ошибок — файл вероятно не того формата
+            if (count($errors) > 50) {
+                break;
+            }
+        }
 
-                foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                    if ($rowIndex === 1) {
-                        foreach ($row->getCells() as $cell) {
-                            $headerColumns[] = trim((string) $cell->getValue());
-                        }
-                        $this->ensureRequiredColumns($headerColumns);
+        $reader->close();
 
-                        continue;
-                    }
+        return [$total, $errors];
+    }
 
-                    $data = [];
-                    try {
-                        $data = $this->rowToAssoc($headerColumns, $row, $columnMap);
-                        $this->importRow($data);
-                        $total++;
-                    } catch (\Throwable $e) {
-                        $errors[] = [
-                            'row' => $rowIndex,
-                            'city' => $data['city_name'] ?? 'N/A',
-                            'error' => $e->getMessage(),
-                        ];
-                        if (count($errors) > 50) {
-                            break;
-                        }
-                    }
-                }
+    /**
+     * @return array{int, array<int, array{row: int, city: string, error: string}>}
+     */
+    private function processSheet($sheet): array
+    {
+        $total = 0;
+        $errors = [];
+        $headerColumns = [];
+
+        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+            if ($rowIndex === 1) {
+                $headerColumns = $this->extractHeaders($row);
+                $this->ensureRequiredColumns($headerColumns);
+                $this->detectDynamicColumns($headerColumns);
+
+                continue;
             }
 
-            $reader->close();
-
-            $import->update([
-                'status' => 'completed',
-                'total_rows' => $total,
-                'processed_rows' => $total,
-                'failed_rows' => count($errors),
-                'errors' => $errors ?: null,
-                'finished_at' => now(),
-            ]);
-
-        } catch (\Throwable $e) {
-            $import->update([
-                'status' => 'failed',
-                'error_message' => $e->getMessage(),
-                'finished_at' => now(),
-            ]);
-            throw $e;
+            try {
+                $data = $this->rowToAssoc($headerColumns, $row);
+                $this->importRow($data);
+                $total++;
+            } catch (\Throwable $e) {
+                $errors[] = [
+                    'row' => $rowIndex,
+                    'city' => $data['city_name'] ?? 'N/A',
+                    'error' => $e->getMessage(),
+                ];
+            }
         }
+
+        return [$total, $errors];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function extractHeaders($row): array
+    {
+        $headers = [];
+        foreach ($row->getCells() as $cell) {
+            $headers[] = trim((string) $cell->getValue());
+        }
+
+        return $headers;
+    }
+
+    /**
+     * @param  string[]  $headers
+     */
+    private function detectDynamicColumns(array $headers): void
+    {
+        [$this->priceColumns, $this->coeffColumns] = self::detectColumnsFromHeaders($headers);
     }
 
     private function importRow(array $data): void
@@ -131,76 +206,89 @@ final class PointImportJob implements ShouldQueue
             ['name' => $data['city_name']],
         );
 
-        // Наценки по диапазонам цен
-        foreach (self::PRICE_RANGES as $col => [$from, $to]) {
-            $value = $data[$col] ?? null;
-            if ($value !== null && $value !== '') {
-                CityPriceRule::updateOrCreate(
-                    [
-                        'city_id' => $city->id,
-                        'price_from' => $from,
-                        'price_to' => $to,
-                    ],
-                    ['markup' => (float) $value],
-                );
+        $this->importPriceRules($city, $data);
+        $this->importDeliveryTime($city, $data);
+        $this->importDeliveryCoefficients($data);
+        $this->importDeliveryPoint($city, $data);
+    }
+
+    private function importPriceRules(City $city, array $data): void
+    {
+        foreach ($this->priceColumns as $header) {
+            $value = $data[$header] ?? null;
+            if ($value === null || $value === '') {
+                continue;
             }
-        }
 
-        // Срок доставки
-        if (! empty($data['delivery_days'])) {
-            CityDeliveryTime::updateOrCreate(
-                ['city_id' => $city->id],
-                ['delivery_days' => (int) $data['delivery_days']],
-            );
-        }
-
-        // Коэффициенты доставки
-        foreach (self::COEFF_MAP as $col => $productType) {
-            $value = $data[$col] ?? null;
-            if ($value !== null && $value !== '') {
-                DeliveryPointCoefficient::updateOrCreate(
-                    [
-                        'price_from' => $this->parseCoeffRange($col)[0],
-                        'price_to' => $this->parseCoeffRange($col)[1],
-                        'product_type' => $productType,
-                    ],
-                    ['coefficient' => (float) $value],
-                );
-            }
-        }
-
-        // Точка выдачи
-        if (! empty($data['address'])) {
-            $workHours = trim(($data['work_hours'] ?? '').' '.($data['weekend_hours'] ?? ''));
-
-            DeliveryPoint::updateOrCreate(
+            preg_match('/^(\d+)-(\d+)$/u', $header, $m);
+            CityPriceRule::updateOrCreate(
                 [
                     'city_id' => $city->id,
-                    'address' => $data['address'],
+                    'price_from' => (int) $m[1],
+                    'price_to' => (int) $m[2],
                 ],
-                [
-                    'phone' => $data['phone'] ?? null,
-                    'email' => $data['email'] ?? null,
-                    'work_hours' => $workHours ?: null,
-                    'info' => $data['info'] ?? null,
-                    'pickup_from_truck' => $this->toBool($data['pickup_from_truck_raw'] ?? null),
-                ],
+                ['markup' => (float) $value],
             );
         }
     }
 
-    /**
-     * @return array{int, int}
-     */
-    private function parseCoeffRange(string $col): array
+    private function importDeliveryTime(City $city, array $data): void
     {
-        return match ($col) {
-            'coeff_31_60' => [31, 60],
-            'coeff_61_100' => [61, 100],
-            default => [0, 0],
-        };
+        if (empty($data['delivery_days'])) {
+            return;
+        }
+
+        CityDeliveryTime::updateOrCreate(
+            ['city_id' => $city->id],
+            ['delivery_days' => (int) $data['delivery_days']],
+        );
     }
 
+    private function importDeliveryCoefficients(array $data): void
+    {
+        foreach ($this->coeffColumns as $header) {
+            $value = $data[$header] ?? null;
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            preg_match('/^(\d+)-(\d+) кг$/u', $header, $m);
+            DeliveryPointCoefficient::updateOrCreate(
+                [
+                    'price_from' => (int) $m[1],
+                    'price_to' => (int) $m[2],
+                    'product_type' => null,
+                ],
+                ['coefficient' => (float) $value],
+            );
+        }
+    }
+
+    private function importDeliveryPoint(City $city, array $data): void
+    {
+        if (empty($data['address'])) {
+            return;
+        }
+
+        // Часы работы и выходного дня хранятся в разных колонках, склеиваем в одно поле
+        $workHours = trim(($data['work_hours'] ?? '').' '.($data['weekend_hours'] ?? ''));
+
+        DeliveryPoint::updateOrCreate(
+            [
+                'city_id' => $city->id,
+                'address' => $data['address'],
+            ],
+            [
+                'phone' => $data['phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'work_hours' => $workHours ?: null,
+                'info' => $data['info'] ?? null,
+                'pickup_from_truck' => $this->toBool($data['pickup_from_truck_raw'] ?? null),
+            ],
+        );
+    }
+
+    /** Приводит сырое значение из XLSX к bool по белому списку из конфига. */
     private function toBool(?string $value): bool
     {
         if ($value === null) {
@@ -215,8 +303,7 @@ final class PointImportJob implements ShouldQueue
      */
     private function ensureRequiredColumns(array $columns): void
     {
-        $required = config('point_import.required_columns', []);
-        $missing = array_diff($required, $columns);
+        $missing = array_diff($this->requiredColumns, $columns);
 
         if (! empty($missing)) {
             throw new \RuntimeException(
@@ -227,16 +314,15 @@ final class PointImportJob implements ShouldQueue
 
     /**
      * @param  string[]  $columns
-     * @param  array<string, string>  $columnMap
      * @return array<string, mixed>
      */
-    private function rowToAssoc(array $columns, object $row, array $columnMap): array
+    private function rowToAssoc(array $columns, object $row): array
     {
         $result = [];
         foreach ($columns as $i => $colName) {
             $cells = $row->getCells();
             $v = $cells[$i]?->getValue();
-            $mapped = $columnMap[$colName] ?? $colName;
+            $mapped = $this->columnMap[$colName] ?? $colName;
             $result[$mapped] = $v !== null ? (string) $v : null;
         }
 

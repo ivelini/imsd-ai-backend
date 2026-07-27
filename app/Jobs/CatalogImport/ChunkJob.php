@@ -36,13 +36,45 @@ final class ChunkJob implements ShouldQueue
         UpsertTireProduct $upsertTireProduct,
         UpsertStock $upsertStock,
     ): void {
+        $data = $this->readChunkFile();
+
+        [$created, $updated, $failed, $errors] = $this->processRows(
+            $data['rows'],
+            $upsertTireProduct,
+            $upsertStock,
+        );
+
+        $this->updateCounters($created, $updated, $failed);
+        $this->appendErrors($errors);
+        $this->deleteChunkFile();
+    }
+
+    /**
+     * @return array{rows: array<int, array<string, mixed>>}
+     */
+    private function readChunkFile(): array
+    {
         if (! file_exists($this->chunkFilePath)) {
             throw new RuntimeException("Файл чанка не найден: {$this->chunkFilePath}");
         }
 
-        $data = json_decode(file_get_contents($this->chunkFilePath), true, 512, JSON_THROW_ON_ERROR);
-        $rows = $data['rows'] ?? [];
+        return json_decode(
+            file_get_contents($this->chunkFilePath),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+    }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array{int, int, int, array<int, array{row: int, ean: string, error: string}>}
+     */
+    private function processRows(
+        array $rows,
+        UpsertTireProduct $upsertTireProduct,
+        UpsertStock $upsertStock,
+    ): array {
         $created = 0;
         $updated = 0;
         $failed = 0;
@@ -60,18 +92,7 @@ final class ChunkJob implements ShouldQueue
                     $updated++;
                 }
 
-                if ($row->warehouse_name !== null) {
-                    $tire = TireProduct::where('ean', $row->ean)->firstOrFail();
-                    $input = new UpsertStockInput(
-                        stockableType: $tire->getMorphClass(),
-                        stockableId: $tire->id,
-                        warehouseName: $row->warehouse_name,
-                        quantity: $row->quantity,
-                        purchasePrice: $row->purchase_price,
-                    );
-                    $upsertStock->execute($input);
-                }
-
+                $this->importStock($row, $upsertStock);
             } catch (\Throwable $e) {
                 $failed++;
                 $errors[] = [
@@ -80,12 +101,34 @@ final class ChunkJob implements ShouldQueue
                     'error' => $e->getMessage(),
                 ];
 
+                // Прерываем при критическом числе ошибок — данные вероятно повреждены
                 if (count($errors) > 100) {
                     break;
                 }
             }
         }
 
+        return [$created, $updated, $failed, $errors];
+    }
+
+    private function importStock(ImportTireRow $row, UpsertStock $upsertStock): void
+    {
+        if ($row->warehouse_name === null) {
+            return;
+        }
+
+        $tire = TireProduct::where('ean', $row->ean)->firstOrFail();
+        $upsertStock->execute(new UpsertStockInput(
+            stockableType: $tire->getMorphClass(),
+            stockableId: $tire->id,
+            warehouseName: $row->warehouse_name,
+            quantity: $row->quantity,
+            purchasePrice: $row->purchase_price,
+        ));
+    }
+
+    private function updateCounters(int $created, int $updated, int $failed): void
+    {
         ProductImport::where('id', $this->importId)
             ->lockForUpdate()
             ->incrementEach([
@@ -94,17 +137,33 @@ final class ChunkJob implements ShouldQueue
                 'failed_rows' => $failed,
                 'processed_rows' => $created + $updated + $failed,
             ]);
+    }
 
-        if (! empty($errors)) {
-            $import = ProductImport::find($this->importId);
-            if ($import) {
-                $existing = $import->errors ?? [];
-                $merged = array_slice(array_merge($existing, $errors), 0, 100);
-                $import->update(['errors' => $merged]);
-            }
+    /**
+     * @param  array<int, array{row: int, ean: string, error: string}>  $errors
+     */
+    private function appendErrors(array $errors): void
+    {
+        if (empty($errors)) {
+            return;
         }
 
-        @unlink($this->chunkFilePath);
+        $import = ProductImport::find($this->importId);
+        if (! $import) {
+            return;
+        }
+
+        $existing = $import->errors ?? [];
+        // Храним не более 100 ошибок — остальное неинформативный шум
+        $merged = array_slice(array_merge($existing, $errors), 0, 100);
+        $import->update(['errors' => $merged]);
+    }
+
+    private function deleteChunkFile(): void
+    {
+        if (file_exists($this->chunkFilePath)) {
+            unlink($this->chunkFilePath);
+        }
     }
 
     public function failed(\Throwable $e): void

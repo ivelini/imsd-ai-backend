@@ -80,7 +80,21 @@ class PointImportTest extends TestCase
             $this->markTestSkipped('Файл points.xlsx не найден.');
         }
 
-        $job = new PointImportJob(0, $path);
+        $job = new PointImportJob(
+            0,
+            $path,
+            config('point_import.column_map'),
+            config('point_import.required_columns'),
+            config('point_import.boolean_true'),
+        );
+
+        [$priceCols] = PointImportJob::detectColumnsFromHeaders([
+            'code', 'region_name', 'city_name', '0-5000', '5001-8500',
+        ]);
+
+        $refPrice = new \ReflectionProperty($job, 'priceColumns');
+        $refPrice->setValue($job, $priceCols);
+
         $ref = new \ReflectionMethod($job, 'importRow');
 
         $ref->invoke($job, [
@@ -91,8 +105,8 @@ class PointImportTest extends TestCase
             'address' => 'ул. Тестовая, 1',
             'phone' => '+7 (999) 999-99-99',
             'pickup_from_truck_raw' => 'Да',
-            'price_0_5000' => '100',
-            'price_5001_8500' => '200',
+            '0-5000' => '100',
+            '5001-8500' => '200',
         ]);
 
         $this->assertDatabaseHas('regions', ['code' => '99']);

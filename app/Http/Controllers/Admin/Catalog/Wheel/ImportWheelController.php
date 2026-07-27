@@ -39,7 +39,14 @@ final readonly class ImportWheelController
             'type' => 'wheel',
         ]);
 
-        WheelMasterJob::dispatch($import->id, $this->filesystem->path($path));
+        WheelMasterJob::dispatch(
+            $import->id,
+            $this->filesystem->path($path),
+            config('wheel_import.chunk_size'),
+            config('wheel_import.chunk_path'),
+            config('wheel_import.required_columns'),
+            config('wheel_import.column_map'),
+        );
 
         return response()->json([
             'data' => ['import_id' => $import->id],
