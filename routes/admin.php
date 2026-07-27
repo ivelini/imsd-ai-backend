@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
 use App\Http\Controllers\Admin\Catalog\WarehouseController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
+use App\Http\Controllers\Admin\Geo\ImportPointController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -73,6 +74,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/wheels/{id}', [WheelProductController::class, 'show']);
     Route::put('/catalog/wheels/{id}', [WheelProductController::class, 'update']);
     Route::delete('/catalog/wheels/{id}', [WheelProductController::class, 'destroy']);
+
+    Route::post('/geo/points/import', [ImportPointController::class, 'store']);
+    Route::get('/geo/points/import/{id}', [ImportPointController::class, 'show']);
 
     Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
     Route::post('/catalog/suppliers', [SupplierController::class, 'store']);
