@@ -52,10 +52,26 @@
 - **Не привязывайся к name/title.** Используй `code`, enum или config-маппинг.
 - **Валидируй только в `FormRequest`.** Бизнес-ошибки — `DomainException` с HTTP-кодом.
 
+### Сериализация в очередь
+
+- **В Job и batch-коллбэках сериализуй только ID модели, не модель целиком.** Модель восстанавливай внутри `handle()` / `finally()` отдельным запросом. Eloquent-модель тянет весь граф атрибутов и отношений — `laravel/serializable-closure` рекурсивно обходит его, вызывая переполнение памяти и падение без catch.
+  ```php
+  // ❌ Плохо
+  public function __construct(readonly Order $order) {}
+  Bus::batch($jobs)->finally(function () use ($product) { ... })->dispatch();
+
+  // ✅ Хорошо
+  public function __construct(readonly int $orderId) {}
+  $productId = $product->id;
+  Bus::batch($jobs)->finally(function () use ($productId) { ... })->dispatch();
+  ```
+- Исключение: константные скаляры (статусы, флаги, мелкие строки) — можно, если они не растут с данными и гарантированно не превысят лимит.
+
 ## Работа с кодом
 
 - Перед коммитом: `make lint-fix` + `make phpstan` + `make test`
 - Статический анализ: `make phpstan` (level 6, config: `phpstan.neon`)
+- **В сообщении коммита указывай модель AI-агента**, который сгенерировал изменения. Формат: `model: <имя-модели>` в теле коммита. Это позволяет отследить, какой моделью создан код.
 
 ## Документация
 

@@ -7,15 +7,29 @@ use Illuminate\Foundation\Http\FormRequest;
 /** Валидация входа администратора. */
 class LoginRequest extends FormRequest
 {
-    /**
-     * @bodyParam email string required Email администратора.
-     * @bodyParam password string required Пароль.
-     */
     public function rules(): array
     {
         return [
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+        ];
+    }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'email' => [
+                'description' => 'Email администратора.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'admin@example.com',
+            ],
+            'password' => [
+                'description' => 'Пароль.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'secret123',
+            ],
         ];
     }
 

@@ -7,9 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 /** Валидация загружаемого XLSX-файла с шинами. */
 class UploadFileRequest extends FormRequest
 {
-    /**
-     * @bodyParam file file required XLSX-файл каталога шин. Максимум 50 МБ.
-     */
     public function rules(): array
     {
         return [
@@ -18,6 +15,17 @@ class UploadFileRequest extends FormRequest
                 'file',
                 'mimes:xlsx',
                 'max:51200',
+            ],
+        ];
+    }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'file' => [
+                'description' => 'XLSX-файл каталога шин. Максимум 50 МБ.',
+                'required' => true,
+                'type' => 'file',
             ],
         ];
     }

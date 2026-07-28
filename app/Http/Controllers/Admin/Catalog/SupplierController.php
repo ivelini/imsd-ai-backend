@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Http\Requests\Admin\Catalog\SupplierIndexRequest;
 use App\Http\Requests\Admin\Catalog\SupplierRequest;
 use App\Http\Resources\Admin\Catalog\SupplierResource;
 use App\Models\Catalog\Supplier;
@@ -15,10 +16,28 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 final readonly class SupplierController
 {
-    public function index(): AnonymousResourceCollection
+    /** Поля, доступные для сортировки в списке. */
+    private const array ALLOWED_SORT = ['id', 'name', 'code', 'created_at'];
+
+    public function index(SupplierIndexRequest $request): AnonymousResourceCollection
     {
+        $data = $request->validated();
+        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
+
+        $query = Supplier::query();
+
+        if (! empty($data['search'])) {
+            $q = '%'.$data['search'].'%';
+            $query->where(function ($qry) use ($q) {
+                $qry->where('name', 'like', $q)->orWhere('code', 'like', $q);
+            });
+        }
+
+        $sortBy = in_array($data['sort_by'] ?? 'name', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'name';
+        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
+
         return SupplierResource::collection(
-            Supplier::orderBy('name')->paginate(50)
+            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
         );
     }
 

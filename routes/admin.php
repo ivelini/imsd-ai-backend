@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\LogoutController;
 use App\Http\Controllers\Admin\Auth\MeController;
 use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
+use App\Http\Controllers\Admin\Catalog\CountryController;
 use App\Http\Controllers\Admin\Catalog\ImageController;
 use App\Http\Controllers\Admin\Catalog\MarkupRuleController;
 use App\Http\Controllers\Admin\Catalog\PromotionController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\Admin\Catalog\WarehouseController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
+use App\Http\Controllers\Admin\ImportController;
+use App\Http\Controllers\Admin\ReferenceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,10 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/catalog/brands/{id}', [BrandController::class, 'update']);
     Route::delete('/catalog/brands/{id}', [BrandController::class, 'destroy']);
 
-    Route::post('/catalog/tires/import', [ImportTireController::class, 'store']);
-    Route::get('/catalog/tires/import/{id}', [ImportTireController::class, 'show']);
-
     Route::get('/catalog/tires', [TireProductController::class, 'index']);
+    Route::post('/catalog/tires/import', [ImportTireController::class, 'store']);
     Route::post('/catalog/tires', [TireProductController::class, 'store']);
     Route::get('/catalog/tires/{id}', [TireProductController::class, 'show']);
     Route::put('/catalog/tires/{id}', [TireProductController::class, 'update']);
@@ -66,18 +67,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/catalog/promotions/{id}', [PromotionController::class, 'update']);
     Route::delete('/catalog/promotions/{id}', [PromotionController::class, 'destroy']);
 
-    Route::post('/catalog/wheels/import', [ImportWheelController::class, 'store']);
-    Route::get('/catalog/wheels/import/{id}', [ImportWheelController::class, 'show']);
-
     Route::get('/catalog/wheels', [WheelProductController::class, 'index']);
+    Route::post('/catalog/wheels/import', [ImportWheelController::class, 'store']);
     Route::post('/catalog/wheels', [WheelProductController::class, 'store']);
     Route::get('/catalog/wheels/{id}', [WheelProductController::class, 'show']);
     Route::put('/catalog/wheels/{id}', [WheelProductController::class, 'update']);
     Route::delete('/catalog/wheels/{id}', [WheelProductController::class, 'destroy']);
 
     Route::post('/geo/points/import', [ImportPointController::class, 'store']);
-    Route::get('/geo/points/import/{id}', [ImportPointController::class, 'show']);
-
     Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
     Route::post('/catalog/suppliers', [SupplierController::class, 'store']);
     Route::get('/catalog/suppliers/{id}', [SupplierController::class, 'show']);
@@ -89,4 +86,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/warehouses/{id}', [WarehouseController::class, 'show']);
     Route::put('/catalog/warehouses/{id}', [WarehouseController::class, 'update']);
     Route::delete('/catalog/warehouses/{id}', [WarehouseController::class, 'destroy']);
+
+    Route::get('/catalog/countries', [CountryController::class, 'index']);
+
+    Route::get('/imports/{id}', [ImportController::class, 'show']);
+
+    Route::get('/references', [ReferenceController::class, 'index']);
 });

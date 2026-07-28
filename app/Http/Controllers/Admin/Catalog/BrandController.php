@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Http\Requests\Admin\Catalog\BrandIndexRequest;
 use App\Http\Requests\Admin\Catalog\BrandRequest;
 use App\Http\Resources\Admin\Catalog\BrandResource;
 use App\Models\Catalog\Brand;
@@ -15,18 +16,35 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 final readonly class BrandController
 {
+    /** Поля, доступные для сортировки в списке. */
+    private const array ALLOWED_SORT = ['id', 'name', 'type', 'created_at'];
+
     /**
      * Список брендов.
      *
      * @authenticated
      */
-    public function index(): AnonymousResourceCollection
+    public function index(BrandIndexRequest $request): AnonymousResourceCollection
     {
-        $brands = Brand::withCount(['tireProducts', 'wheelProducts'])
-            ->orderBy('name')
-            ->paginate(50);
+        $data = $request->validated();
+        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
 
-        return BrandResource::collection($brands);
+        $query = Brand::withCount(['tireProducts', 'wheelProducts']);
+
+        if (! empty($data['search'])) {
+            $query->where('name', 'like', '%'.$data['search'].'%');
+        }
+
+        if (! empty($data['type'])) {
+            $query->where('type', $data['type']);
+        }
+
+        $sortBy = in_array($data['sort_by'] ?? 'name', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'name';
+        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
+
+        return BrandResource::collection(
+            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+        );
     }
 
     /**

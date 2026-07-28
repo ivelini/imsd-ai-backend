@@ -26,6 +26,40 @@ class BrandRequest extends FormRequest
         ];
     }
 
+    public function bodyParameters(): array
+    {
+        return [
+            'name' => [
+                'description' => 'Название бренда.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'Michelin',
+            ],
+            'slug' => [
+                'description' => 'URL-псевдоним бренда.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'michelin',
+            ],
+            'logo' => [
+                'description' => 'URL логотипа бренда.',
+                'required' => false,
+                'type' => 'string',
+            ],
+            'description' => [
+                'description' => 'Описание бренда.',
+                'required' => false,
+                'type' => 'string',
+            ],
+            'type' => [
+                'description' => 'Тип товаров бренда: tire, wheel или both.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'tire',
+            ],
+        ];
+    }
+
     public function messages(): array
     {
         return [

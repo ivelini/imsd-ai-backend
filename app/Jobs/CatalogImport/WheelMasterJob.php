@@ -49,7 +49,7 @@ final class WheelMasterJob implements ShouldQueue
                 return;
             }
 
-            $this->dispatchBatch($import, $result->chunkFilePaths);
+            $this->dispatchBatch($result->chunkFilePaths);
         } catch (\Throwable $e) {
             $this->markImportFailed($import, $e);
             throw $e;
@@ -90,7 +90,7 @@ final class WheelMasterJob implements ShouldQueue
     /**
      * @param  string[]  $chunkFilePaths
      */
-    private function dispatchBatch(ProductImport $import, array $chunkFilePaths): void
+    private function dispatchBatch(array $chunkFilePaths): void
     {
         $batch = array_map(
             fn (string $chunkPath) => new WheelChunkJob(
@@ -100,12 +100,14 @@ final class WheelMasterJob implements ShouldQueue
             $chunkFilePaths,
         );
 
+        $importId = $this->importId;
+
         Bus::batch($batch)
             ->name("wheel-import-{$this->importId}")
-            ->finally(function () use ($import) {
-                $import->refresh();
-                if ($import->status === 'processing') {
-                    $this->markImportCompleted($import);
+            ->finally(function () use ($importId) {
+                $import = ProductImport::find($importId);
+                if ($import && $import->status === 'processing') {
+                    $import->update(['status' => 'completed', 'finished_at' => now()]);
                 }
             })
             ->dispatch();

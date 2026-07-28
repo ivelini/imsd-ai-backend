@@ -18,6 +18,29 @@ class UploadImageRequest extends FormRequest
         ];
     }
 
+    public function bodyParameters(): array
+    {
+        return [
+            'image' => [
+                'description' => 'Файл изображения. Допустимые форматы: JPEG, PNG, WebP. Максимум 10 МБ.',
+                'required' => true,
+                'type' => 'file',
+            ],
+            'imageable_type' => [
+                'description' => 'Тип товара: tire или wheel.',
+                'required' => true,
+                'type' => 'string',
+                'example' => 'tire',
+            ],
+            'imageable_id' => [
+                'description' => 'ID товара.',
+                'required' => true,
+                'type' => 'integer',
+                'example' => 1,
+            ],
+        ];
+    }
+
     public function messages(): array
     {
         return [

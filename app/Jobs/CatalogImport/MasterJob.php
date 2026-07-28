@@ -43,7 +43,7 @@ final class MasterJob implements ShouldQueue
                 return;
             }
 
-            $this->dispatchBatch($import, $result->chunkFilePaths);
+            $this->dispatchBatch($result->chunkFilePaths);
         } catch (\Throwable $e) {
             $this->markImportFailed($import, $e);
             throw $e;
@@ -82,7 +82,7 @@ final class MasterJob implements ShouldQueue
     /**
      * @param  string[]  $chunkFilePaths
      */
-    private function dispatchBatch(ProductImport $import, array $chunkFilePaths): void
+    private function dispatchBatch(array $chunkFilePaths): void
     {
         $batch = array_map(
             fn (string $chunkPath) => new ChunkJob(
@@ -92,14 +92,16 @@ final class MasterJob implements ShouldQueue
             $chunkFilePaths,
         );
 
+        $importId = $this->importId;
+
         Bus::batch($batch)
             ->name("tire-import-{$this->importId}")
-            ->finally(function () use ($import) {
-                $import->refresh();
+            ->finally(function () use ($importId) {
+                $import = ProductImport::find($importId);
                 // Статус мог быть изменён на failed в ChunkJob::failed —
                 // завершаем только если ещё processing
-                if ($import->status === 'processing') {
-                    $this->markImportCompleted($import);
+                if ($import && $import->status === 'processing') {
+                    $import->update(['status' => 'completed', 'finished_at' => now()]);
                 }
             })
             ->dispatch();

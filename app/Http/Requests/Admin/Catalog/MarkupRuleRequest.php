@@ -16,4 +16,34 @@ class MarkupRuleRequest extends FormRequest
             'coefficient' => ['required', 'numeric', 'min:1'],
         ];
     }
+
+    public function bodyParameters(): array
+    {
+        return [
+            'warehouse_id' => [
+                'description' => 'ID склада.',
+                'required' => true,
+                'type' => 'integer',
+                'example' => 1,
+            ],
+            'price_from' => [
+                'description' => 'Начальная цена диапазона.',
+                'required' => true,
+                'type' => 'number',
+                'example' => 1000,
+            ],
+            'price_to' => [
+                'description' => 'Конечная цена диапазона.',
+                'required' => true,
+                'type' => 'number',
+                'example' => 5000,
+            ],
+            'coefficient' => [
+                'description' => 'Коэффициент наценки.',
+                'required' => true,
+                'type' => 'number',
+                'example' => 1.5,
+            ],
+        ];
+    }
 }

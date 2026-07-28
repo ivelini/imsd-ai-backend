@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel \u2014 Admin API",
-        "_postman_id": "18d917b0-bc64-492b-8c26-134140acf136",
+        "_postman_id": "06f75703-a24b-4ee1-96fc-ca3b1542069a",
         "description": "\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u0438\u0432\u043d\u0430\u044f \u043f\u0430\u043d\u0435\u043b\u044c \u0438\u043d\u0442\u0435\u0440\u043d\u0435\u0442-\u043c\u0430\u0433\u0430\u0437\u0438\u043d\u0430 \u0448\u0438\u043d \u0438 \u0434\u0438\u0441\u043a\u043e\u0432.",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -41,7 +41,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"gbailey@example.net\",\"password\":\"|]|{+-\"}"
+                            "raw": "{\"email\":\"admin@example.com\",\"password\":\"secret123\"}"
                         },
                         "description": "\u0412\u043e\u0437\u0432\u0440\u0430\u0449\u0430\u0435\u0442 Sanctum-\u0442\u043e\u043a\u0435\u043d \u0434\u043b\u044f \u0430\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u0438 \u0432 \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0445 \u044d\u043d\u0434\u043f\u043e\u0438\u043d\u0442\u0430\u0445.",
                         "auth": {
@@ -146,7 +146,10 @@
                                 "value": "application\/json"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"name\",\"sort_dir\":\"asc\",\"search\":\"Cordiant\",\"type\":\"tire\"}"
+                        },
                         "description": ""
                     },
                     "response": [
@@ -193,7 +196,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"slug\":\"n\",\"logo\":\"g\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"both\"}"
+                            "raw": "{\"name\":\"Michelin\",\"slug\":\"michelin\",\"logo\":\"b\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"tire\"}"
                         },
                         "description": ""
                     },
@@ -282,7 +285,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"slug\":\"n\",\"logo\":\"g\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"wheel\"}"
+                            "raw": "{\"name\":\"Michelin\",\"slug\":\"michelin\",\"logo\":\"b\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"tire\"}"
                         },
                         "description": ""
                     },
@@ -360,7 +363,10 @@
                                 "value": "application\/json"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"name\",\"sort_dir\":\"asc\",\"search\":\"\u0428\u0438\u043d\u044b\"}"
+                        },
                         "description": ""
                     },
                     "response": [
@@ -407,7 +413,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"code\":\"n\"}"
+                            "raw": "{\"name\":\"\u041e\u041e\u041e \u0428\u0438\u043d\u044b-\u041e\u043f\u0442\",\"code\":\"SUP-001\"}"
                         },
                         "description": ""
                     },
@@ -496,7 +502,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"code\":\"n\"}"
+                            "raw": "{\"name\":\"\u041e\u041e\u041e \u0428\u0438\u043d\u044b-\u041e\u043f\u0442\",\"code\":\"SUP-001\"}"
                         },
                         "description": ""
                     },
@@ -561,7 +567,10 @@
                                 "value": "application\/json"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"name\",\"sort_dir\":\"asc\",\"search\":\"\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0439\"}"
+                        },
                         "description": ""
                     },
                     "response": [
@@ -608,7 +617,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\"}"
+                            "raw": "{\"name\":\"\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0439 \u0441\u043a\u043b\u0430\u0434\"}"
                         },
                         "description": ""
                     },
@@ -697,7 +706,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\"}"
+                            "raw": "{\"name\":\"\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0439 \u0441\u043a\u043b\u0430\u0434\"}"
                         },
                         "description": ""
                     },
@@ -788,59 +797,6 @@
                             "name": ""
                         }
                     ]
-                },
-                {
-                    "name": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0438\u043c\u043f\u043e\u0440\u0442\u0430 \u0448\u0438\u043d.",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/admin\/catalog\/tires\/import\/:id",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires\/import\/:id",
-                            "variable": [
-                                {
-                                    "id": "id",
-                                    "key": "id",
-                                    "value": 16,
-                                    "description": "ID \u0438\u043c\u043f\u043e\u0440\u0442\u0430."
-                                }
-                            ]
-                        },
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            }
-                        ],
-                        "body": null,
-                        "description": ""
-                    },
-                    "response": [
-                        {
-                            "header": [
-                                {
-                                    "key": "cache-control",
-                                    "value": "no-cache, private"
-                                },
-                                {
-                                    "key": "content-type",
-                                    "value": "application\/json"
-                                },
-                                {
-                                    "key": "access-control-allow-origin",
-                                    "value": "*"
-                                }
-                            ],
-                            "code": 401,
-                            "body": "{\"message\":\"Unauthenticated.\"}",
-                            "name": ""
-                        }
-                    ]
                 }
             ]
         },
@@ -888,21 +844,103 @@
                             "name": ""
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "name": "\u0410\u043a\u0446\u0438\u0438",
+            "description": "",
+            "item": [
                 {
-                    "name": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0438\u043c\u043f\u043e\u0440\u0442\u0430 \u0434\u0438\u0441\u043a\u043e\u0432.",
+                    "name": "GET api\/admin\/catalog\/promotions",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/admin\/catalog\/wheels\/import\/:id",
+                            "path": "api\/admin\/catalog\/promotions",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels\/import\/:id",
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/promotions"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"starts_at\",\"sort_dir\":\"desc\",\"search\":\"\u0440\u0430\u0441\u043f\u0440\u043e\u0434\u0430\u0436\u0430\",\"type\":\"percent\",\"promotable_type\":\"tire\",\"is_active\":true}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "POST api\/admin\/catalog\/promotions",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/promotions",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/promotions"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"\u041b\u0435\u0442\u043d\u044f\u044f \u0440\u0430\u0441\u043f\u0440\u043e\u0434\u0430\u0436\u0430\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"percent\",\"value\":15,\"starts_at\":\"2026-08-01T00:00:00\",\"ends_at\":\"2026-08-31T23:59:59\",\"promotable_type\":\"tire\",\"promotable_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/admin\/catalog\/promotions\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/promotions\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/promotions\/:id",
                             "variable": [
                                 {
                                     "id": "id",
                                     "key": "id",
-                                    "value": 16,
-                                    "description": "ID \u0438\u043c\u043f\u043e\u0440\u0442\u0430."
+                                    "value": "architecto",
+                                    "description": "The ID of the promotion."
                                 }
                             ]
                         },
@@ -941,6 +979,1180 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "PUT api\/admin\/catalog\/promotions\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/promotions\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/promotions\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the promotion."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"name\":\"\u041b\u0435\u0442\u043d\u044f\u044f \u0440\u0430\u0441\u043f\u0440\u043e\u0434\u0430\u0436\u0430\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"percent\",\"value\":15,\"starts_at\":\"2026-08-01T00:00:00\",\"ends_at\":\"2026-08-31T23:59:59\",\"promotable_type\":\"tire\",\"promotable_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/admin\/catalog\/promotions\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/promotions\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/promotions\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the promotion."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0414\u0438\u0441\u043a\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/admin\/catalog\/wheels",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"ANNA\",\"brand_id\":1,\"type\":\"alloy\",\"color\":\"\u0427\u0451\u0440\u043d\u044b\u0439\",\"is_published\":true}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "POST api\/admin\/catalog\/wheels",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/admin\/catalog\/wheels\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the wheel."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT api\/admin\/catalog\/wheels\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the wheel."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/admin\/catalog\/wheels\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the wheel."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0439 \u0442\u043e\u0432\u0430\u0440\u0430.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/images",
+                            "query": [
+                                {
+                                    "key": "imageable_type",
+                                    "value": "architecto",
+                                    "description": "\u0422\u0438\u043f: tire, wheel.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "imageable_id",
+                                    "value": "16",
+                                    "description": "ID \u0442\u043e\u0432\u0430\u0440\u0430.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/images?imageable_type=architecto&imageable_id=16"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/images",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/images"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "imageable_type",
+                                    "value": "tire",
+                                    "type": "text",
+                                    "description": "\u0422\u0438\u043f \u0442\u043e\u0432\u0430\u0440\u0430: tire \u0438\u043b\u0438 wheel."
+                                },
+                                {
+                                    "key": "imageable_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "ID \u0442\u043e\u0432\u0430\u0440\u0430."
+                                },
+                                {
+                                    "key": "image",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/images\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/images\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the image."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0433\u043b\u0430\u0432\u043d\u043e\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/images\/:id\/main",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/images\/:id\/main",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the image."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043f\u043e\u0440\u044f\u0434\u043e\u043a \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0439.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/images\/reorder",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/images\/reorder"
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"ids\":[16]}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0418\u043c\u043f\u043e\u0440\u0442",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u0442\u0430\u0442\u0443\u0441 \u0438\u043c\u043f\u043e\u0440\u0442\u0430 \u043f\u043e ID.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/imports\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/imports\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the import."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "\u0415\u0434\u0438\u043d\u044b\u0439 \u044d\u043d\u0434\u043f\u043e\u0438\u043d\u0442 \u0434\u043b\u044f \u0432\u0441\u0435\u0445 \u0442\u0438\u043f\u043e\u0432 \u0438\u043c\u043f\u043e\u0440\u0442\u0430: tire, wheel, point."
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u0418\u043c\u043f\u043e\u0440\u0442 \u0442\u043e\u0447\u0435\u043a \u0432\u044b\u0434\u0430\u0447\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c XLSX-\u0444\u0430\u0439\u043b \u0441 \u0442\u043e\u0447\u043a\u0430\u043c\u0438 \u0432\u044b\u0434\u0430\u0447\u0438.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/points\/import",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/points\/import"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0442\u043e\u0432\u0430\u0440\u043e\u0432.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/products",
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "architecto",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u0442\u0438\u043f\u0443: tire, wheel.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "brand_id",
+                                    "value": "16",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e ID \u0431\u0440\u0435\u043d\u0434\u0430.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "is_published",
+                                    "value": "",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u0441\u0442\u0430\u0442\u0443\u0441\u0443 \u043f\u0443\u0431\u043b\u0438\u043a\u0430\u0446\u0438\u0438.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "architecto",
+                                    "description": "\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u044e, \u0430\u0440\u0442\u0438\u043a\u0443\u043b\u0443, EAN.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "architecto",
+                                    "description": "\u041f\u043e\u043b\u0435 \u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0438: name, brand_name, created_at, ean.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_dir",
+                                    "value": "architecto",
+                                    "description": "\u041d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435: asc, desc.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/products?type=architecto&brand_id=16&is_published=&search=architecto&sort_by=architecto&sort_dir=architecto"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u041f\u0440\u0430\u0432\u0438\u043b\u0430 \u043d\u0430\u0446\u0435\u043d\u043a\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/admin\/catalog\/markup-rules",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/markup-rules",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/markup-rules"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"warehouse_id\",\"sort_dir\":\"asc\",\"warehouse_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "POST api\/admin\/catalog\/markup-rules",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/markup-rules",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/markup-rules"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"warehouse_id\":1,\"price_from\":1000,\"price_to\":5000,\"coefficient\":1.5}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/admin\/catalog\/markup-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/markup-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/markup-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the markup rule."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT api\/admin\/catalog\/markup-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/markup-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/markup-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the markup rule."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"warehouse_id\":1,\"price_from\":1000,\"price_to\":5000,\"coefficient\":1.5}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/admin\/catalog\/markup-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/markup-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/markup-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the markup rule."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0412\u0441\u0435 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a\u0438 \u043e\u0434\u043d\u0438\u043c \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u043c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/references",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/references"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u0421\u0442\u0440\u0430\u043d\u044b",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0441\u0442\u0440\u0430\u043d \u0434\u043b\u044f \u0434\u0440\u043e\u043f\u0434\u0430\u0443\u043d\u0430.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/countries",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/countries"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u0428\u0438\u043d\u044b",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0448\u0438\u043d.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"Winter\",\"brand_id\":1,\"season\":\"winter\",\"is_published\":true,\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u0448\u0438\u043d\u0443.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0448\u0438\u043d\u0443.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the tire."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0448\u0438\u043d\u0443.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the tire."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0448\u0438\u043d\u0443.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the tire."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
                 }
             ]
         }
