@@ -36,7 +36,7 @@ final readonly class GetPromotionList
             }
         }
 
-        $sortBy = in_array($params['sort_by'] ?? 'starts_at', self::ALLOWED_SORT, true) ? $params['sort_by'] : 'starts_at';
+        $sortBy = in_array($params['sort_by'] ?? 'starts_at', self::ALLOWED_SORT, true) ? ($params['sort_by'] ?? 'starts_at') : 'starts_at';
         $sortDir = ($params['sort_dir'] ?? 'desc') === 'asc' ? 'asc' : 'desc';
 
         return $query->orderBy($sortBy, $sortDir)->paginate($perPage);

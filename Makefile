@@ -1,7 +1,7 @@
 # Backend Makefile — делегирует в корневой Makefile
 # Все Docker-команды теперь в ../Makefile
 
-.PHONY: up stop down bash artisan test lint lint-fix phpstan
+.PHONY: up stop down bash artisan test lint lint-fix phpstan fresh cache-clear optimize-clear help
 
 up:
 	$(MAKE) -C .. up
@@ -29,3 +29,15 @@ lint-fix:
 
 phpstan:
 	$(MAKE) -C .. phpstan
+
+fresh:
+	$(MAKE) -C .. fresh
+
+cache-clear:
+	$(MAKE) -C .. cache-clear
+
+optimize-clear:
+	$(MAKE) -C .. optimize-clear
+
+help:
+	$(MAKE) -C .. help

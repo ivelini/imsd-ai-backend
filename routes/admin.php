@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Catalog\WarehouseStockController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
 use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
+use App\Http\Controllers\Admin\Geo\CityController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
 use App\Http\Controllers\Admin\GetReferencesController;
 use App\Http\Controllers\Admin\ImportController;
@@ -85,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/catalog/wheels/{id}', [WheelProductController::class, 'destroy']);
     Route::get('/catalog/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
 
+    Route::get('/geo/cities', [CityController::class, 'index']);
     Route::post('/geo/points/import', [ImportPointController::class, 'store']);
     Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
     Route::post('/catalog/suppliers', [SupplierController::class, 'store']);

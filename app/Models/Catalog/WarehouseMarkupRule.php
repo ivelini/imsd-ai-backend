@@ -21,6 +21,15 @@ class WarehouseMarkupRule extends Model
         'coefficient',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'coefficient' => 'float',
+            'price_from' => 'float',
+            'price_to' => 'float',
+        ];
+    }
+
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);

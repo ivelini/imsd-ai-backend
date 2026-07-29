@@ -20,7 +20,7 @@ final readonly class GetMarkupRuleList
             $query->byWarehouse((int) $params['warehouse_id']);
         }
 
-        $sortBy = in_array($params['sort_by'] ?? 'warehouse_id', self::ALLOWED_SORT, true) ? $params['sort_by'] : 'warehouse_id';
+        $sortBy = in_array($params['sort_by'] ?? 'warehouse_id', self::ALLOWED_SORT, true) ? ($params['sort_by'] ?? 'warehouse_id') : 'warehouse_id';
         $sortDir = ($params['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
 
         return $query->orderBy($sortBy, $sortDir)->paginate($perPage);

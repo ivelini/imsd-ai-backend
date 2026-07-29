@@ -19,17 +19,20 @@ final readonly class GetReferences
             'brands' => Brand::orderBy('name')
                 ->get(['id', 'name'])
                 ->map(fn (Brand $brand) => ['value' => $brand->id, 'label' => $brand->name])
-                ->values(),
+                ->values()
+                ->all(),
 
             'suppliers' => Supplier::orderBy('name')
                 ->get(['id', 'name'])
                 ->map(fn (Supplier $supplier) => ['value' => $supplier->id, 'label' => $supplier->name])
-                ->values(),
+                ->values()
+                ->all(),
 
             'countries' => Country::orderBy('name')
                 ->get(['id', 'name'])
                 ->map(fn (Country $country) => ['value' => $country->id, 'label' => $country->name])
-                ->values(),
+                ->values()
+                ->all(),
 
             'tire_seasons' => array_map(fn (Season $case) => [
                 'value' => $case->value,

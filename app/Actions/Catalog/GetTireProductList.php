@@ -44,7 +44,7 @@ final readonly class GetTireProductList
             $query->xl(filter_var($params['is_xl'], FILTER_VALIDATE_BOOLEAN));
         }
 
-        $sortBy = in_array($params['sort_by'] ?? 'id', self::ALLOWED_SORT, true) ? $params['sort_by'] : 'id';
+        $sortBy = in_array($params['sort_by'] ?? 'id', self::ALLOWED_SORT, true) ? ($params['sort_by'] ?? 'id') : 'id';
         $sortDir = ($params['sort_dir'] ?? 'desc') === 'asc' ? 'asc' : 'desc';
 
         return $query->orderBy($sortBy, $sortDir)->paginate($perPage);

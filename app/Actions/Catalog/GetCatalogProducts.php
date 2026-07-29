@@ -69,7 +69,7 @@ final readonly class GetCatalogProducts
                 'wheel_products.is_published',
                 DB::raw('null as width'),
                 DB::raw('null as profile'),
-                'wheel_products.diameter',
+                DB::raw('CAST(wheel_products.diameter AS TEXT) as diameter'),
                 DB::raw('null as season'),
                 'wheel_products.width as wheel_width',
                 'wheel_products.pcd',
