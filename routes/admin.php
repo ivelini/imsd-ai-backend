@@ -23,6 +23,9 @@ use App\Http\Controllers\Admin\Geo\DeliveryPointController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
 use App\Http\Controllers\Admin\GetReferencesController;
 use App\Http\Controllers\Admin\ImportController;
+use App\Http\Controllers\Admin\NotificationController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -120,4 +123,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/imports/{id}', [ImportController::class, 'show']);
 
     Route::get('/references', GetReferencesController::class);
+
+    Route::post('/broadcasting/auth', function (Request $request) {
+        return Broadcast::auth($request);
+    });
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
 });

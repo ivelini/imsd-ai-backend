@@ -6,6 +6,7 @@ use App\Actions\Catalog\PopulateCatalogPrices;
 use App\Actions\TireImport\ParseImportFile;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\TireImport\ParseImportFileInput;
+use App\Events\Admin\ImportCompleted;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -66,6 +67,7 @@ final class WheelMasterJob implements ShouldQueue
     private function markImportCompleted(ProductImport $import): void
     {
         $import->update(['status' => 'completed', 'finished_at' => now()]);
+        event(new ImportCompleted($import));
     }
 
     private function markImportFailed(ProductImport $import, \Throwable $e): void
@@ -75,6 +77,7 @@ final class WheelMasterJob implements ShouldQueue
             'error_message' => $e->getMessage(),
             'finished_at' => now(),
         ]);
+        event(new ImportCompleted($import));
     }
 
     private function parseFile(ParseImportFile $parseAction): object
@@ -110,6 +113,7 @@ final class WheelMasterJob implements ShouldQueue
                 $import = ProductImport::find($importId);
                 if ($import && $import->status === 'processing') {
                     $import->update(['status' => 'completed', 'finished_at' => now()]);
+                    event(new ImportCompleted($import));
                 }
 
                 app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($importId));

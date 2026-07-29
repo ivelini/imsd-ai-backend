@@ -6,6 +6,7 @@ use App\Actions\TireImport\UpsertStock;
 use App\Actions\TireImport\UpsertWheelProduct;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\TireImport\UpsertWheelProductInput;
+use App\Events\Admin\ImportCompleted;
 use App\Models\Catalog\WheelProduct;
 use App\Models\System\ProductImport;
 use App\Preconditions\TireImport\EnsureEanNotEmpty;
@@ -205,5 +206,10 @@ final class WheelChunkJob implements ShouldQueue
             'error_message' => 'WheelChunkJob: '.$e->getMessage(),
             'finished_at' => now(),
         ]);
+
+        $import = ProductImport::find($this->importId);
+        if ($import) {
+            event(new ImportCompleted($import));
+        }
     }
 }

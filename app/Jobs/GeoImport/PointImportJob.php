@@ -4,6 +4,7 @@ namespace App\Jobs\GeoImport;
 
 use App\Actions\Catalog\PopulateCatalogPrices;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
+use App\Events\Admin\ImportCompleted;
 use App\Models\Delivery\City;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
@@ -95,6 +96,8 @@ final class PointImportJob implements ShouldQueue
         ]);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($import->id));
+
+        event(new ImportCompleted($import));
     }
 
     private function markImportFailed(ProductImport $import, \Throwable $e): void
@@ -104,6 +107,7 @@ final class PointImportJob implements ShouldQueue
             'error_message' => $e->getMessage(),
             'finished_at' => now(),
         ]);
+        event(new ImportCompleted($import));
     }
 
     /**

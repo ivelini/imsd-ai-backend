@@ -6,6 +6,7 @@ use App\Actions\Catalog\PopulateCatalogPrices;
 use App\Actions\TireImport\ParseImportFile;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\TireImport\ParseImportFileInput;
+use App\Events\Admin\ImportCompleted;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -60,6 +61,7 @@ final class MasterJob implements ShouldQueue
     private function markImportCompleted(ProductImport $import): void
     {
         $import->update(['status' => 'completed', 'finished_at' => now()]);
+        event(new ImportCompleted($import));
     }
 
     private function markImportFailed(ProductImport $import, \Throwable $e): void
@@ -69,6 +71,7 @@ final class MasterJob implements ShouldQueue
             'error_message' => $e->getMessage(),
             'finished_at' => now(),
         ]);
+        event(new ImportCompleted($import));
     }
 
     private function parseFile(ParseImportFile $parseAction): object
@@ -100,10 +103,9 @@ final class MasterJob implements ShouldQueue
             ->name("tire-import-{$this->importId}")
             ->finally(function () use ($importId) {
                 $import = ProductImport::find($importId);
-                // Статус мог быть изменён на failed в ChunkJob::failed —
-                // завершаем только если ещё processing
                 if ($import && $import->status === 'processing') {
                     $import->update(['status' => 'completed', 'finished_at' => now()]);
+                    event(new ImportCompleted($import));
                 }
 
                 app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($importId));
