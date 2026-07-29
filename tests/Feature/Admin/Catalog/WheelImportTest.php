@@ -7,6 +7,7 @@ use App\Actions\TireImport\UpsertStock;
 use App\Actions\TireImport\UpsertWheelProduct;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\DTOs\TireImport\UpsertStockInput;
+use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
@@ -88,7 +89,7 @@ class WheelImportTest extends TestCase
         $resolver = app(ReferenceResolver::class);
         $upsert = new UpsertWheelProduct($resolver);
 
-        $upsert->execute(
+        $upsert->execute(new UpsertWheelProductInput(
             ean: 'TEST-WHEEL-001',
             brandName: 'Test Wheel Brand',
             name: 'Test Wheel Model',
@@ -103,7 +104,7 @@ class WheelImportTest extends TestCase
             wheelTypeRaw: 'Литые',
             supplierName: 'Test Sup',
             description: 'Test description',
-        );
+        ));
 
         $this->assertDatabaseHas('wheel_products', ['ean' => 'TEST-WHEEL-001']);
         $this->assertDatabaseHas('brands', ['name' => 'Test Wheel Brand']);
@@ -117,9 +118,9 @@ class WheelImportTest extends TestCase
     {
         $resolver = app(ReferenceResolver::class);
         $upsertWheel = new UpsertWheelProduct($resolver);
-        $upsertStock = new UpsertStock($resolver);
+        $upsertStock = app(UpsertStock::class);
 
-        $upsertWheel->execute(
+        $upsertWheel->execute(new UpsertWheelProductInput(
             ean: 'TEST-WHEEL-002',
             brandName: 'Brand X',
             name: 'Model X',
@@ -134,7 +135,7 @@ class WheelImportTest extends TestCase
             wheelTypeRaw: null,
             supplierName: null,
             description: null,
-        );
+        ));
 
         $wheel = WheelProduct::where('ean', 'TEST-WHEEL-002')->firstOrFail();
         $upsertStock->execute(new UpsertStockInput(

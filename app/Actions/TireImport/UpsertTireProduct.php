@@ -8,7 +8,6 @@ use App\Models\Catalog\TireProduct;
 use App\Services\TireImport\DescriptionBuilder;
 use App\Services\TireImport\ReferenceResolver;
 use App\Services\TireImport\RowMapper;
-use DomainException;
 
 /** Создание или обновление товара (шины) по EAN. */
 final readonly class UpsertTireProduct
@@ -21,10 +20,6 @@ final readonly class UpsertTireProduct
 
     public function execute(ImportTireRow $row): UpsertResult
     {
-        if ($row->ean === '') {
-            throw new DomainException('EAN не может быть пустым.');
-        }
-
         $brand = $this->referenceResolver->resolveBrand($row->brand_name);
 
         $supplier = $row->supplier_name !== null

@@ -8,6 +8,7 @@ use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\Models\Catalog\TireProduct;
 use App\Models\System\ProductImport;
+use App\Preconditions\TireImport\EnsureEanNotEmpty;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,6 +36,7 @@ final class ChunkJob implements ShouldQueue
     public function handle(
         UpsertTireProduct $upsertTireProduct,
         UpsertStock $upsertStock,
+        EnsureEanNotEmpty $ensureEanNotEmpty,
     ): void {
         $data = $this->readChunkFile();
 
@@ -42,6 +44,7 @@ final class ChunkJob implements ShouldQueue
             $data['rows'],
             $upsertTireProduct,
             $upsertStock,
+            $ensureEanNotEmpty,
         );
 
         $this->updateCounters($created, $updated, $failed);
@@ -74,6 +77,7 @@ final class ChunkJob implements ShouldQueue
         array $rows,
         UpsertTireProduct $upsertTireProduct,
         UpsertStock $upsertStock,
+        EnsureEanNotEmpty $ensureEanNotEmpty,
     ): array {
         $created = 0;
         $updated = 0;
@@ -83,6 +87,8 @@ final class ChunkJob implements ShouldQueue
         foreach ($rows as $rowIndex => $rowData) {
             try {
                 $row = ImportTireRow::fromArray($rowData);
+
+                $ensureEanNotEmpty->ensure($row->ean);
 
                 $result = $upsertTireProduct->execute($row);
 

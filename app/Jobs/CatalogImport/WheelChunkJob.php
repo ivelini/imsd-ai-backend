@@ -5,8 +5,10 @@ namespace App\Jobs\CatalogImport;
 use App\Actions\TireImport\UpsertStock;
 use App\Actions\TireImport\UpsertWheelProduct;
 use App\DTOs\TireImport\UpsertStockInput;
+use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Models\Catalog\WheelProduct;
 use App\Models\System\ProductImport;
+use App\Preconditions\TireImport\EnsureEanNotEmpty;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,6 +36,7 @@ final class WheelChunkJob implements ShouldQueue
     public function handle(
         UpsertWheelProduct $upsertWheel,
         UpsertStock $upsertStock,
+        EnsureEanNotEmpty $ensureEanNotEmpty,
     ): void {
         $data = $this->readChunkFile();
 
@@ -41,6 +44,7 @@ final class WheelChunkJob implements ShouldQueue
             $data['rows'],
             $upsertWheel,
             $upsertStock,
+            $ensureEanNotEmpty,
         );
 
         $this->updateCounters($created, $updated, $failed);
@@ -73,6 +77,7 @@ final class WheelChunkJob implements ShouldQueue
         array $rows,
         UpsertWheelProduct $upsertWheel,
         UpsertStock $upsertStock,
+        EnsureEanNotEmpty $ensureEanNotEmpty,
     ): array {
         $created = 0;
         $updated = 0;
@@ -81,7 +86,7 @@ final class WheelChunkJob implements ShouldQueue
 
         foreach ($rows as $rowData) {
             try {
-                $isNew = $this->upsertWheelRow($rowData, $upsertWheel);
+                $isNew = $this->upsertWheelRow($rowData, $upsertWheel, $ensureEanNotEmpty);
 
                 if ($isNew) {
                     $created++;
@@ -109,12 +114,15 @@ final class WheelChunkJob implements ShouldQueue
     /**
      * @param  array<string, mixed>  $rowData
      */
-    private function upsertWheelRow(array $rowData, UpsertWheelProduct $upsertWheel): bool
+    private function upsertWheelRow(array $rowData, UpsertWheelProduct $upsertWheel, EnsureEanNotEmpty $ensureEanNotEmpty): bool
     {
-        $exists = WheelProduct::where('ean', $rowData['ean'] ?? '')->exists();
+        $ean = $rowData['ean'] ?? '';
+        $ensureEanNotEmpty->ensure($ean);
 
-        $upsertWheel->execute(
-            ean: $rowData['ean'] ?? '',
+        $exists = WheelProduct::where('ean', $ean)->exists();
+
+        $upsertWheel->execute(new UpsertWheelProductInput(
+            ean: $ean,
             brandName: $rowData['brand_name'] ?? '',
             name: $rowData['name'] ?? '',
             countryName: $rowData['country_name'] ?? null,
@@ -128,7 +136,7 @@ final class WheelChunkJob implements ShouldQueue
             wheelTypeRaw: $rowData['wheel_type_raw'] ?? null,
             supplierName: $rowData['supplier_name'] ?? null,
             description: $rowData['description_vendor'] ?? null,
-        );
+        ));
 
         return ! $exists;
     }

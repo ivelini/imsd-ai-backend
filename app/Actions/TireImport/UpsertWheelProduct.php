@@ -2,10 +2,10 @@
 
 namespace App\Actions\TireImport;
 
+use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Models\Catalog\WheelProduct;
 use App\Services\TireImport\ReferenceResolver;
-use DomainException;
 
 /** Создание или обновление товара (диска) по EAN. */
 final readonly class UpsertWheelProduct
@@ -26,52 +26,34 @@ final readonly class UpsertWheelProduct
         private ReferenceResolver $referenceResolver,
     ) {}
 
-    public function execute(
-        string $ean,
-        string $brandName,
-        string $name,
-        ?string $countryName,
-        ?string $color,
-        ?int $diameter,
-        ?string $width,
-        ?string $pcd1,
-        ?string $pcd2,
-        ?string $hubDiameter,
-        ?string $et,
-        ?string $wheelTypeRaw,
-        ?string $supplierName,
-        ?string $description,
-    ): void {
-        if ($ean === '') {
-            throw new DomainException('EAN не может быть пустым.');
-        }
-
-        $brand = $this->referenceResolver->resolveBrand($brandName);
-        $supplier = $supplierName !== null
-            ? $this->referenceResolver->resolveSupplier($supplierName)
+    public function execute(UpsertWheelProductInput $input): void
+    {
+        $brand = $this->referenceResolver->resolveBrand($input->brandName);
+        $supplier = $input->supplierName !== null
+            ? $this->referenceResolver->resolveSupplier($input->supplierName)
             : null;
-        $country = $countryName !== null
-            ? $this->referenceResolver->resolveCountry($countryName)
+        $country = $input->countryName !== null
+            ? $this->referenceResolver->resolveCountry($input->countryName)
             : null;
 
-        $pcd = $this->buildPcd($pcd1, $pcd2);
-        $wheelType = $this->resolveWheelType($wheelTypeRaw);
+        $pcd = $this->buildPcd($input->pcd1, $input->pcd2);
+        $wheelType = $this->resolveWheelType($input->wheelTypeRaw);
 
         WheelProduct::updateOrCreate(
-            ['ean' => $ean],
+            ['ean' => $input->ean],
             [
                 'brand_id' => $brand->id,
-                'name' => $name,
+                'name' => $input->name,
                 'supplier_id' => $supplier?->id,
                 'country_id' => $country?->id,
                 'type' => $wheelType,
-                'color' => $color,
+                'color' => $input->color,
                 'pcd' => $pcd,
-                'hub_diameter' => $hubDiameter !== null ? (float) $hubDiameter : null,
-                'et' => $et !== null ? (float) $et : null,
-                'width' => $width !== null ? (float) $width : null,
-                'diameter' => $diameter,
-                'description' => $description,
+                'hub_diameter' => $input->hubDiameter !== null ? (float) $input->hubDiameter : null,
+                'et' => $input->et !== null ? (float) $input->et : null,
+                'width' => $input->width !== null ? (float) $input->width : null,
+                'diameter' => $input->diameter,
+                'description' => $input->description,
             ],
         );
     }

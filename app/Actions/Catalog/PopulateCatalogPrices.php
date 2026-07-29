@@ -4,14 +4,18 @@ namespace App\Actions\Catalog;
 
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\Models\Catalog\Stock;
-use App\Models\Catalog\WarehouseMarkupRule;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
+use App\Services\Catalog\PriceCalculator;
 use Illuminate\Support\Facades\DB;
 
 /** Пересчитывает catalog_prices для всех stocks × все cities с учётом наценок. */
 final readonly class PopulateCatalogPrices
 {
+    public function __construct(
+        private PriceCalculator $priceCalculator,
+    ) {}
+
     public function execute(PopulateCatalogPricesInput $input): void
     {
         $stocks = Stock::with('warehouse')->get();
@@ -25,7 +29,10 @@ final readonly class PopulateCatalogPrices
                     continue;
                 }
 
-                $finalPrice = $this->calculateFinalPrice($stock);
+                $finalPrice = $this->priceCalculator->calculateFinalPrice(
+                    (float) $stock->purchase_price,
+                    $stock->warehouse_id,
+                );
 
                 foreach ($cityIds as $cityId) {
                     $records[] = [
@@ -42,21 +49,5 @@ final readonly class PopulateCatalogPrices
                 CatalogPrice::upsert($chunk, ['stock_id', 'city_id'], ['price', 'updated_at']);
             }
         }
-    }
-
-    private function calculateFinalPrice(Stock $stock): float
-    {
-        $rule = WarehouseMarkupRule::where('warehouse_id', $stock->warehouse_id)
-            ->where('price_from', '<=', $stock->purchase_price)
-            ->where('price_to', '>=', $stock->purchase_price)
-            ->orderBy('price_from')
-            ->orderBy('price_to')
-            ->first();
-
-        if ($rule === null) {
-            return (float) $stock->purchase_price;
-        }
-
-        return round((float) $stock->purchase_price * $rule->coefficient, 2);
     }
 }
