@@ -4,6 +4,7 @@ namespace App\Models\Catalog;
 
 use App\Casts\SeasonCast;
 use App\Enums\Catalog\Season;
+use App\Models\Catalog\Builders\TireProductBuilder;
 use App\Models\Image;
 use Database\Factories\Catalog\TireProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -86,5 +87,10 @@ class TireProduct extends Model
     public function promotions(): MorphMany
     {
         return $this->morphMany(Image::class, 'promotable');
+    }
+
+    public function newEloquentBuilder($query): TireProductBuilder
+    {
+        return new TireProductBuilder($query);
     }
 }

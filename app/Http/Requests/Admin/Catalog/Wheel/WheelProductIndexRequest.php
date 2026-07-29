@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Catalog;
+namespace App\Http\Requests\Admin\Catalog\Wheel;
 
 use App\Enums\Catalog\WheelType;
 use Illuminate\Foundation\Http\FormRequest;

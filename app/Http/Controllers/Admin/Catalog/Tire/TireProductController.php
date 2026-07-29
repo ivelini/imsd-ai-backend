@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Tire;
 
-use App\Http\Requests\Admin\Catalog\TireProductIndexRequest;
-use App\Http\Requests\Admin\Catalog\TireProductRequest;
-use App\Http\Resources\Admin\Catalog\TireProductResource;
+use App\Http\Requests\Admin\Catalog\Tire\TireProductIndexRequest;
+use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
+use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\TireProduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

@@ -190,6 +190,28 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-grafiki-otgruzki" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="grafiki-otgruzki">
+                    <a href="#grafiki-otgruzki">Графики отгрузки</a>
+                </li>
+                                    <ul id="tocify-subheader-grafiki-otgruzki" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules">
+                                <a href="#grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules">GET api/admin/catalog/delivery-schedules</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="grafiki-otgruzki-POSTapi-admin-catalog-delivery-schedules">
+                                <a href="#grafiki-otgruzki-POSTapi-admin-catalog-delivery-schedules">POST api/admin/catalog/delivery-schedules</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules--id-">
+                                <a href="#grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules--id-">GET api/admin/catalog/delivery-schedules/{id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="grafiki-otgruzki-PUTapi-admin-catalog-delivery-schedules--id-">
+                                <a href="#grafiki-otgruzki-PUTapi-admin-catalog-delivery-schedules--id-">PUT api/admin/catalog/delivery-schedules/{id}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="grafiki-otgruzki-DELETEapi-admin-catalog-delivery-schedules--id-">
+                                <a href="#grafiki-otgruzki-DELETEapi-admin-catalog-delivery-schedules--id-">DELETE api/admin/catalog/delivery-schedules/{id}</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
                     <ul id="tocify-header-diski" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="diski">
                     <a href="#diski">Диски</a>
@@ -260,7 +282,7 @@
                 </li>
                                     <ul id="tocify-subheader-katalog" class="tocify-subheader">
                                                     <li class="tocify-item level-2" data-unique="katalog-GETapi-admin-catalog-products">
-                                <a href="#katalog-GETapi-admin-catalog-products">Список товаров.</a>
+                                <a href="#katalog-GETapi-admin-catalog-products">GET api/admin/catalog/products</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -337,7 +359,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: July 28, 2026</li>
+        <li>Last updated: July 29, 2026</li>
     </ul>
 </div>
 
@@ -3504,7 +3526,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/phpkcuovk88efmibmfneeh" </code></pre></div>
+    --form "file=@/tmp/phpljr8ab3t9d472p0NHIt" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -3650,7 +3672,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/phpkcuovk88efmibmfneeh</code></p>
+<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/phpljr8ab3t9d472p0NHIt</code></p>
         </div>
         </form>
 
@@ -3676,7 +3698,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/php8pdlj9bein2k3XLdzIZ" </code></pre></div>
+    --form "file=@/tmp/phpn63idn0tlpae4WjLvcO" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -3808,7 +3830,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/php8pdlj9bein2k3XLdzIZ</code></p>
+<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/phpn63idn0tlpae4WjLvcO</code></p>
         </div>
         </form>
 
@@ -4897,6 +4919,950 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="url">
     <br>
 <p>The ID of the promotion. Example: <code>architecto</code></p>
+            </div>
+                    </form>
+
+                <h1 id="grafiki-otgruzki">Графики отгрузки</h1>
+
+    
+
+                                <h2 id="grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules">GET api/admin/catalog/delivery-schedules</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-admin-catalog-delivery-schedules">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8081/api/admin/catalog/delivery-schedules" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"page\": 1,
+    \"per_page\": 50,
+    \"sort_by\": \"warehouse_id\",
+    \"sort_dir\": \"asc\",
+    \"warehouse_id\": 1
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/delivery-schedules"
+);
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "page": 1,
+    "per_page": 50,
+    "sort_by": "warehouse_id",
+    "sort_dir": "asc",
+    "warehouse_id": 1
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-admin-catalog-delivery-schedules">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-admin-catalog-delivery-schedules" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-admin-catalog-delivery-schedules"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-admin-catalog-delivery-schedules"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-admin-catalog-delivery-schedules" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-admin-catalog-delivery-schedules">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-admin-catalog-delivery-schedules" data-method="GET"
+      data-path="api/admin/catalog/delivery-schedules"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-admin-catalog-delivery-schedules', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-admin-catalog-delivery-schedules"
+                    onclick="tryItOut('GETapi-admin-catalog-delivery-schedules');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-admin-catalog-delivery-schedules"
+                    onclick="cancelTryOut('GETapi-admin-catalog-delivery-schedules');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-admin-catalog-delivery-schedules"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/admin/catalog/delivery-schedules</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="1"
+               data-component="body">
+    <br>
+<p>Номер страницы. Must be at least 1. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="50"
+               data-component="body">
+    <br>
+<p>Элементов на странице (10–100). Must be at least 10. Must not be greater than 100. Example: <code>50</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>sort_by</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="sort_by"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="warehouse_id"
+               data-component="body">
+    <br>
+<p>Поле сортировки: id, warehouse_id, day_of_week, created_at. Example: <code>warehouse_id</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>id</code></li> <li><code>warehouse_id</code></li> <li><code>day_of_week</code></li> <li><code>created_at</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>sort_dir</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="sort_dir"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="asc"
+               data-component="body">
+    <br>
+<p>Направление сортировки: asc или desc. Example: <code>asc</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>asc</code></li> <li><code>desc</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>warehouse_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="warehouse_id"                data-endpoint="GETapi-admin-catalog-delivery-schedules"
+               value="1"
+               data-component="body">
+    <br>
+<p>ID склада для фильтрации. Must match an existing stored value. Example: <code>1</code></p>
+        </div>
+        </form>
+
+                    <h2 id="grafiki-otgruzki-POSTapi-admin-catalog-delivery-schedules">POST api/admin/catalog/delivery-schedules</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-POSTapi-admin-catalog-delivery-schedules">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8081/api/admin/catalog/delivery-schedules" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"warehouse_id\": 1,
+    \"day_of_week\": 1,
+    \"cutoff_time\": \"14:00\",
+    \"days_before\": 1,
+    \"days_after\": 2
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/delivery-schedules"
+);
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "warehouse_id": 1,
+    "day_of_week": 1,
+    "cutoff_time": "14:00",
+    "days_before": 1,
+    "days_after": 2
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-admin-catalog-delivery-schedules">
+</span>
+<span id="execution-results-POSTapi-admin-catalog-delivery-schedules" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-admin-catalog-delivery-schedules"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-admin-catalog-delivery-schedules"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-admin-catalog-delivery-schedules" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-admin-catalog-delivery-schedules">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-admin-catalog-delivery-schedules" data-method="POST"
+      data-path="api/admin/catalog/delivery-schedules"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-admin-catalog-delivery-schedules', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-admin-catalog-delivery-schedules"
+                    onclick="tryItOut('POSTapi-admin-catalog-delivery-schedules');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-admin-catalog-delivery-schedules"
+                    onclick="cancelTryOut('POSTapi-admin-catalog-delivery-schedules');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-admin-catalog-delivery-schedules"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/admin/catalog/delivery-schedules</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>warehouse_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="warehouse_id"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="1"
+               data-component="body">
+    <br>
+<p>ID склада. Must match an existing stored value. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>day_of_week</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="day_of_week"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="1"
+               data-component="body">
+    <br>
+<p>День недели (0=пн … 6=вс). Example: <code>1</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>0</code></li> <li><code>1</code></li> <li><code>2</code></li> <li><code>3</code></li> <li><code>4</code></li> <li><code>5</code></li> <li><code>6</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cutoff_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cutoff_time"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="14:00"
+               data-component="body">
+    <br>
+<p>Время отсечки (HH:MI). Must match the regex /^\d{2}:\d{2}$/. Example: <code>14:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>days_before</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="days_before"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="1"
+               data-component="body">
+    <br>
+<p>Срок обработки при заказе до отсечки. Must be at least 0. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>days_after</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="days_after"                data-endpoint="POSTapi-admin-catalog-delivery-schedules"
+               value="2"
+               data-component="body">
+    <br>
+<p>Срок обработки при заказе после отсечки. Must be at least 0. Example: <code>2</code></p>
+        </div>
+        </form>
+
+                    <h2 id="grafiki-otgruzki-GETapi-admin-catalog-delivery-schedules--id-">GET api/admin/catalog/delivery-schedules/{id}</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-admin-catalog-delivery-schedules--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto"
+);
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-admin-catalog-delivery-schedules--id-">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-admin-catalog-delivery-schedules--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-admin-catalog-delivery-schedules--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-admin-catalog-delivery-schedules--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-admin-catalog-delivery-schedules--id-" data-method="GET"
+      data-path="api/admin/catalog/delivery-schedules/{id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-admin-catalog-delivery-schedules--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-admin-catalog-delivery-schedules--id-"
+                    onclick="tryItOut('GETapi-admin-catalog-delivery-schedules--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-admin-catalog-delivery-schedules--id-"
+                    onclick="cancelTryOut('GETapi-admin-catalog-delivery-schedules--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-admin-catalog-delivery-schedules--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/admin/catalog/delivery-schedules/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-admin-catalog-delivery-schedules--id-"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="GETapi-admin-catalog-delivery-schedules--id-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the delivery schedule. Example: <code>architecto</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="grafiki-otgruzki-PUTapi-admin-catalog-delivery-schedules--id-">PUT api/admin/catalog/delivery-schedules/{id}</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-PUTapi-admin-catalog-delivery-schedules--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"warehouse_id\": 1,
+    \"day_of_week\": 1,
+    \"cutoff_time\": \"14:00\",
+    \"days_before\": 1,
+    \"days_after\": 2
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto"
+);
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "warehouse_id": 1,
+    "day_of_week": 1,
+    "cutoff_time": "14:00",
+    "days_before": 1,
+    "days_after": 2
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-admin-catalog-delivery-schedules--id-">
+</span>
+<span id="execution-results-PUTapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-admin-catalog-delivery-schedules--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-admin-catalog-delivery-schedules--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-admin-catalog-delivery-schedules--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-admin-catalog-delivery-schedules--id-" data-method="PUT"
+      data-path="api/admin/catalog/delivery-schedules/{id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-admin-catalog-delivery-schedules--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-admin-catalog-delivery-schedules--id-"
+                    onclick="tryItOut('PUTapi-admin-catalog-delivery-schedules--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-admin-catalog-delivery-schedules--id-"
+                    onclick="cancelTryOut('PUTapi-admin-catalog-delivery-schedules--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-admin-catalog-delivery-schedules--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/admin/catalog/delivery-schedules/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the delivery schedule. Example: <code>architecto</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>warehouse_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="warehouse_id"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="1"
+               data-component="body">
+    <br>
+<p>ID склада. Must match an existing stored value. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>day_of_week</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="day_of_week"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="1"
+               data-component="body">
+    <br>
+<p>День недели (0=пн … 6=вс). Example: <code>1</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>0</code></li> <li><code>1</code></li> <li><code>2</code></li> <li><code>3</code></li> <li><code>4</code></li> <li><code>5</code></li> <li><code>6</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>cutoff_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="cutoff_time"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="14:00"
+               data-component="body">
+    <br>
+<p>Время отсечки (HH:MI). Must match the regex /^\d{2}:\d{2}$/. Example: <code>14:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>days_before</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="days_before"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="1"
+               data-component="body">
+    <br>
+<p>Срок обработки при заказе до отсечки. Must be at least 0. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>days_after</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="days_after"                data-endpoint="PUTapi-admin-catalog-delivery-schedules--id-"
+               value="2"
+               data-component="body">
+    <br>
+<p>Срок обработки при заказе после отсечки. Must be at least 0. Example: <code>2</code></p>
+        </div>
+        </form>
+
+                    <h2 id="grafiki-otgruzki-DELETEapi-admin-catalog-delivery-schedules--id-">DELETE api/admin/catalog/delivery-schedules/{id}</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-admin-catalog-delivery-schedules--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/delivery-schedules/architecto"
+);
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-admin-catalog-delivery-schedules--id-">
+</span>
+<span id="execution-results-DELETEapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-admin-catalog-delivery-schedules--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-admin-catalog-delivery-schedules--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-admin-catalog-delivery-schedules--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-admin-catalog-delivery-schedules--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-admin-catalog-delivery-schedules--id-" data-method="DELETE"
+      data-path="api/admin/catalog/delivery-schedules/{id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-admin-catalog-delivery-schedules--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-admin-catalog-delivery-schedules--id-"
+                    onclick="tryItOut('DELETEapi-admin-catalog-delivery-schedules--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-admin-catalog-delivery-schedules--id-"
+                    onclick="cancelTryOut('DELETEapi-admin-catalog-delivery-schedules--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-admin-catalog-delivery-schedules--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/admin/catalog/delivery-schedules/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-admin-catalog-delivery-schedules--id-"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-admin-catalog-delivery-schedules--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="DELETEapi-admin-catalog-delivery-schedules--id-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The ID of the delivery schedule. Example: <code>architecto</code></p>
             </div>
                     </form>
 
@@ -6478,7 +7444,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "imageable_type=tire"\
     --form "imageable_id=1"\
-    --form "image=@/tmp/phpbcqp7rtqknb79glzGPj" </code></pre></div>
+    --form "image=@/tmp/phpebnffk589k2i0K8wCdk" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -6601,7 +7567,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Файл изображения. Допустимые форматы: JPEG, PNG, WebP. Максимум 10 МБ. Must be an image. Must not be greater than 10240 kilobytes. Example: <code>/tmp/phpbcqp7rtqknb79glzGPj</code></p>
+<p>Файл изображения. Допустимые форматы: JPEG, PNG, WebP. Максимум 10 МБ. Must be an image. Must not be greater than 10240 kilobytes. Example: <code>/tmp/phpebnffk589k2i0K8wCdk</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>imageable_type</code></b>&nbsp;&nbsp;
@@ -7243,7 +8209,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/php65se1mldmprt2PM4RxP" </code></pre></div>
+    --form "file=@/tmp/php3uhpgsqqe8ra9fgQ2J8" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7364,7 +8330,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл каталога шин. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php65se1mldmprt2PM4RxP</code></p>
+<p>XLSX-файл каталога шин. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php3uhpgsqqe8ra9fgQ2J8</code></p>
         </div>
         </form>
 
@@ -7372,7 +8338,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     
 
-                                <h2 id="katalog-GETapi-admin-catalog-products">Список товаров.</h2>
+                                <h2 id="katalog-GETapi-admin-catalog-products">GET api/admin/catalog/products</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
@@ -7386,10 +8352,21 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8081/api/admin/catalog/products?type=architecto&amp;brand_id=16&amp;is_published=&amp;search=architecto&amp;sort_by=architecto&amp;sort_dir=architecto" \
+    --get "http://localhost:8081/api/admin/catalog/products" \
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Accept: application/json" \
+    --data "{
+    \"type\": \"tire\",
+    \"brand_id\": 1,
+    \"is_published\": true,
+    \"search\": \"Michelin\",
+    \"sort_by\": \"created_at\",
+    \"sort_dir\": \"desc\",
+    \"page\": 1,
+    \"per_page\": 50
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7397,27 +8374,27 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://localhost:8081/api/admin/catalog/products"
 );
 
-const params = {
-    "type": "architecto",
-    "brand_id": "16",
-    "is_published": "0",
-    "search": "architecto",
-    "sort_by": "architecto",
-    "sort_dir": "architecto",
-};
-Object.keys(params)
-    .forEach(key =&gt; url.searchParams.append(key, params[key]));
-
 const headers = {
     "Authorization": "Bearer {your-sanctum-token}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
+let body = {
+    "type": "tire",
+    "brand_id": 1,
+    "is_published": true,
+    "search": "Michelin",
+    "sort_by": "created_at",
+    "sort_dir": "desc",
+    "page": 1,
+    "per_page": 50
+};
 
 fetch(url, {
     method: "GET",
     headers,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -7523,90 +8500,120 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
-                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="GETapi-admin-catalog-products"
-               value="architecto"
-               data-component="query">
+               value="tire"
+               data-component="body">
     <br>
-<p>Фильтр по типу: tire, wheel. Example: <code>architecto</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>brand_id</code></b>&nbsp;&nbsp;
+<p>Фильтр по типу товара: tire или wheel. Example: <code>tire</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>tire</code></li> <li><code>wheel</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>brand_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="brand_id"                data-endpoint="GETapi-admin-catalog-products"
-               value="16"
-               data-component="query">
+               value="1"
+               data-component="body">
     <br>
-<p>Фильтр по ID бренда. Example: <code>16</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>is_published</code></b>&nbsp;&nbsp;
+<p>Фильтр по ID бренда. Must match an existing stored value. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>is_published</code></b>&nbsp;&nbsp;
 <small>boolean</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <label data-endpoint="GETapi-admin-catalog-products" style="display: none">
             <input type="radio" name="is_published"
-                   value="1"
+                   value="true"
                    data-endpoint="GETapi-admin-catalog-products"
-                   data-component="query"             >
+                   data-component="body"             >
             <code>true</code>
         </label>
         <label data-endpoint="GETapi-admin-catalog-products" style="display: none">
             <input type="radio" name="is_published"
-                   value="0"
+                   value="false"
                    data-endpoint="GETapi-admin-catalog-products"
-                   data-component="query"             >
+                   data-component="body"             >
             <code>false</code>
         </label>
     <br>
-<p>Фильтр по статусу публикации. Example: <code>false</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<p>Фильтр по статусу публикации. Example: <code>true</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="search"                data-endpoint="GETapi-admin-catalog-products"
-               value="architecto"
-               data-component="query">
+               value="Michelin"
+               data-component="body">
     <br>
-<p>Поиск по названию, артикулу, EAN. Example: <code>architecto</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>sort_by</code></b>&nbsp;&nbsp;
+<p>Поиск по названию или EAN. Must not be greater than 100 characters. Example: <code>Michelin</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>sort_by</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="sort_by"                data-endpoint="GETapi-admin-catalog-products"
-               value="architecto"
-               data-component="query">
+               value="created_at"
+               data-component="body">
     <br>
-<p>Поле сортировки: name, brand_name, created_at, ean. Example: <code>architecto</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>sort_dir</code></b>&nbsp;&nbsp;
+<p>Поле сортировки: name, brand_name, created_at, ean. Example: <code>created_at</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>name</code></li> <li><code>brand_name</code></li> <li><code>created_at</code></li> <li><code>ean</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>sort_dir</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="sort_dir"                data-endpoint="GETapi-admin-catalog-products"
-               value="architecto"
-               data-component="query">
+               value="desc"
+               data-component="body">
     <br>
-<p>Направление: asc, desc. Example: <code>architecto</code></p>
-            </div>
-                </form>
+<p>Направление сортировки: asc или desc. Example: <code>desc</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>asc</code></li> <li><code>desc</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-admin-catalog-products"
+               value="1"
+               data-component="body">
+    <br>
+<p>Номер страницы. Must be at least 1. Example: <code>1</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-admin-catalog-products"
+               value="50"
+               data-component="body">
+    <br>
+<p>Элементов на странице (10–100). Must be at least 10. Must not be greater than 100. Example: <code>50</code></p>
+        </div>
+        </form>
 
                 <h1 id="pravila-nacenki">Правила наценки</h1>
 

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Resources;
 
-use App\Http\Resources\Admin\Catalog\TireProductResource;
+use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\Brand;
 use App\Models\Catalog\TireProduct;
 use Illuminate\Foundation\Testing\RefreshDatabase;

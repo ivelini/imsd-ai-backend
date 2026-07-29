@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Wheel;
 
-use App\Http\Requests\Admin\Catalog\WheelProductIndexRequest;
-use App\Http\Requests\Admin\Catalog\WheelProductRequest;
-use App\Http\Resources\Admin\Catalog\WheelProductResource;
+use App\Http\Requests\Admin\Catalog\Wheel\WheelProductIndexRequest;
+use App\Http\Requests\Admin\Catalog\Wheel\WheelProductRequest;
+use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
 use App\Models\Catalog\WheelProduct;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

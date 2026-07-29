@@ -4,6 +4,7 @@ namespace App\Models\Catalog;
 
 use App\Casts\WheelTypeCast;
 use App\Enums\Catalog\WheelType;
+use App\Models\Catalog\Builders\WheelProductBuilder;
 use App\Models\Image;
 use Database\Factories\Catalog\WheelProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -77,5 +78,10 @@ class WheelProduct extends Model
     public function promotions(): MorphMany
     {
         return $this->morphMany(Image::class, 'promotable');
+    }
+
+    public function newEloquentBuilder($query): WheelProductBuilder
+    {
+        return new WheelProductBuilder($query);
     }
 }

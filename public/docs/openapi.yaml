@@ -20,6 +20,8 @@ tags:
     description: ''
   - name: Акции
     description: ''
+  - name: 'Графики отгрузки'
+    description: ''
   - name: Диски
     description: ''
   - name: Изображения
@@ -970,6 +972,203 @@ paths:
         required: true
         schema:
           type: string
+  /api/admin/catalog/delivery-schedules:
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogDeliverySchedules
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Графики отгрузки'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: id, warehouse_id, day_of_week, created_at.'
+                  example: warehouse_id
+                  enum:
+                    - id
+                    - warehouse_id
+                    - day_of_week
+                    - created_at
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: asc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                warehouse_id:
+                  type: integer
+                  description: 'ID склада для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+    post:
+      summary: ''
+      operationId: postApiAdminCatalogDeliverySchedules
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Графики отгрузки'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                warehouse_id:
+                  type: integer
+                  description: 'ID склада. Must match an existing stored value.'
+                  example: 1
+                day_of_week:
+                  type: integer
+                  description: 'День недели (0=пн … 6=вс).'
+                  example: 1
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                    - 6
+                cutoff_time:
+                  type: string
+                  description: 'Время отсечки (HH:MI). Must match the regex /^\d{2}:\d{2}$/.'
+                  example: '14:00'
+                days_before:
+                  type: integer
+                  description: 'Срок обработки при заказе до отсечки. Must be at least 0.'
+                  example: 1
+                days_after:
+                  type: integer
+                  description: 'Срок обработки при заказе после отсечки. Must be at least 0.'
+                  example: 2
+              required:
+                - warehouse_id
+                - day_of_week
+                - cutoff_time
+                - days_before
+                - days_after
+  '/api/admin/catalog/delivery-schedules/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminCatalogDeliverySchedulesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Графики отгрузки'
+    put:
+      summary: ''
+      operationId: putApiAdminCatalogDeliverySchedulesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Графики отгрузки'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                warehouse_id:
+                  type: integer
+                  description: 'ID склада. Must match an existing stored value.'
+                  example: 1
+                day_of_week:
+                  type: integer
+                  description: 'День недели (0=пн … 6=вс).'
+                  example: 1
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                    - 3
+                    - 4
+                    - 5
+                    - 6
+                cutoff_time:
+                  type: string
+                  description: 'Время отсечки (HH:MI). Must match the regex /^\d{2}:\d{2}$/.'
+                  example: '14:00'
+                days_before:
+                  type: integer
+                  description: 'Срок обработки при заказе до отсечки. Must be at least 0.'
+                  example: 1
+                days_after:
+                  type: integer
+                  description: 'Срок обработки при заказе после отсечки. Must be at least 0.'
+                  example: 2
+              required:
+                - warehouse_id
+                - day_of_week
+                - cutoff_time
+                - days_before
+                - days_after
+    delete:
+      summary: ''
+      operationId: deleteApiAdminCatalogDeliverySchedulesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Графики отгрузки'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delivery schedule.'
+        example: architecto
+        required: true
+        schema:
+          type: string
   /api/admin/catalog/wheels:
     get:
       summary: ''
@@ -1485,70 +1684,10 @@ paths:
                 - file
   /api/admin/catalog/products:
     get:
-      summary: 'Список товаров.'
-      operationId: ''
+      summary: ''
+      operationId: getApiAdminCatalogProducts
       description: ''
-      parameters:
-        -
-          in: query
-          name: type
-          description: 'Фильтр по типу: tire, wheel.'
-          example: architecto
-          required: false
-          schema:
-            type: string
-            description: 'Фильтр по типу: tire, wheel.'
-            example: architecto
-        -
-          in: query
-          name: brand_id
-          description: 'Фильтр по ID бренда.'
-          example: 16
-          required: false
-          schema:
-            type: integer
-            description: 'Фильтр по ID бренда.'
-            example: 16
-        -
-          in: query
-          name: is_published
-          description: 'Фильтр по статусу публикации.'
-          example: false
-          required: false
-          schema:
-            type: boolean
-            description: 'Фильтр по статусу публикации.'
-            example: false
-        -
-          in: query
-          name: search
-          description: 'Поиск по названию, артикулу, EAN.'
-          example: architecto
-          required: false
-          schema:
-            type: string
-            description: 'Поиск по названию, артикулу, EAN.'
-            example: architecto
-        -
-          in: query
-          name: sort_by
-          description: 'Поле сортировки: name, brand_name, created_at, ean.'
-          example: architecto
-          required: false
-          schema:
-            type: string
-            description: 'Поле сортировки: name, brand_name, created_at, ean.'
-            example: architecto
-        -
-          in: query
-          name: sort_dir
-          description: 'Направление: asc, desc.'
-          example: architecto
-          required: false
-          schema:
-            type: string
-            description: 'Направление: asc, desc.'
-            example: architecto
+      parameters: []
       responses:
         401:
           description: ''
@@ -1564,6 +1703,64 @@ paths:
                     example: Unauthenticated.
       tags:
         - Каталог
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: 'Фильтр по типу товара: tire или wheel.'
+                  example: tire
+                  enum:
+                    - tire
+                    - wheel
+                  nullable: true
+                brand_id:
+                  type: integer
+                  description: 'Фильтр по ID бренда. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                is_published:
+                  type: boolean
+                  description: 'Фильтр по статусу публикации.'
+                  example: true
+                  nullable: true
+                search:
+                  type: string
+                  description: 'Поиск по названию или EAN. Must not be greater than 100 characters.'
+                  example: Michelin
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: name, brand_name, created_at, ean.'
+                  example: created_at
+                  enum:
+                    - name
+                    - brand_name
+                    - created_at
+                    - ean
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: desc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
   /api/admin/catalog/markup-rules:
     get:
       summary: ''

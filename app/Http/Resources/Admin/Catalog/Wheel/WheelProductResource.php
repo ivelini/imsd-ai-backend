@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Admin\Catalog;
+namespace App\Http\Resources\Admin\Catalog\Wheel;
 
 use App\Models\Catalog\Brand;
 use App\Models\Catalog\WheelProduct;

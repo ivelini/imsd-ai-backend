@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Catalog;
+namespace App\Http\Requests\Admin\Catalog\Tire;
 
 use App\Enums\Catalog\Season;
 use Illuminate\Foundation\Http\FormRequest;

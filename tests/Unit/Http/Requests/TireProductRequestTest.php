@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Http\Requests;
 
-use App\Http\Requests\Admin\Catalog\TireProductRequest;
+use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
 use PHPUnit\Framework\TestCase;
 
 /** Валидация шины: правила и сообщения. */

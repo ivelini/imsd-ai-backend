@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
 use App\Http\Controllers\Admin\Catalog\WarehouseController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
+use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ReferenceController;
@@ -60,6 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'show']);
     Route::put('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'update']);
     Route::delete('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'destroy']);
+
+    Route::get('/catalog/delivery-schedules', [DeliveryScheduleController::class, 'index']);
+    Route::post('/catalog/delivery-schedules', [DeliveryScheduleController::class, 'store']);
+    Route::get('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'show']);
+    Route::put('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'update']);
+    Route::delete('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'destroy']);
 
     Route::get('/catalog/promotions', [PromotionController::class, 'index']);
     Route::post('/catalog/promotions', [PromotionController::class, 'store']);
