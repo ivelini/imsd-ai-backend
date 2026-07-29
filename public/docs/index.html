@@ -308,6 +308,19 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-skladskie-ostatki" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="skladskie-ostatki">
+                    <a href="#skladskie-ostatki">Складские остатки</a>
+                </li>
+                                    <ul id="tocify-subheader-skladskie-ostatki" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="skladskie-ostatki-GETapi-admin-catalog-tires--tireId--warehouse-stock">
+                                <a href="#skladskie-ostatki-GETapi-admin-catalog-tires--tireId--warehouse-stock">Остатки товара на всех складах.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="skladskie-ostatki-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">
+                                <a href="#skladskie-ostatki-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">Остатки товара на всех складах.</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
                     <ul id="tocify-header-spravocniki" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="spravocniki">
                     <a href="#spravocniki">Справочники</a>
@@ -3526,7 +3539,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/phpljr8ab3t9d472p0NHIt" </code></pre></div>
+    --form "file=@/tmp/php12607f82b60a52Pagys" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -3672,7 +3685,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/phpljr8ab3t9d472p0NHIt</code></p>
+<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/php12607f82b60a52Pagys</code></p>
         </div>
         </form>
 
@@ -3698,7 +3711,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/phpn63idn0tlpae4WjLvcO" </code></pre></div>
+    --form "file=@/tmp/php4v4b67juajut4qWqQws" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -3830,7 +3843,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/phpn63idn0tlpae4WjLvcO</code></p>
+<p>XLSX-файл (макс. 50 МБ). Example: <code>/tmp/php4v4b67juajut4qWqQws</code></p>
         </div>
         </form>
 
@@ -7264,10 +7277,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8081/api/admin/catalog/images?imageable_type=architecto&amp;imageable_id=16" \
+    --get "http://localhost:8081/api/admin/catalog/images" \
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Accept: application/json" \
+    --data "{
+    \"imageable_type\": \"tire\",
+    \"imageable_id\": 1
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7275,23 +7293,21 @@ You can check the Dev Tools console for debugging information.</code></pre>
     "http://localhost:8081/api/admin/catalog/images"
 );
 
-const params = {
-    "imageable_type": "architecto",
-    "imageable_id": "16",
-};
-Object.keys(params)
-    .forEach(key =&gt; url.searchParams.append(key, params[key]));
-
 const headers = {
     "Authorization": "Bearer {your-sanctum-token}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
+let body = {
+    "imageable_type": "tire",
+    "imageable_id": 1
+};
 
 fetch(url, {
     method: "GET",
     headers,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -7397,32 +7413,34 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
-                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>imageable_type</code></b>&nbsp;&nbsp;
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>imageable_type</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="imageable_type"                data-endpoint="GETapi-admin-catalog-images"
-               value="architecto"
-               data-component="query">
+               value="tire"
+               data-component="body">
     <br>
-<p>Тип: tire, wheel. Example: <code>architecto</code></p>
-            </div>
-                                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>imageable_id</code></b>&nbsp;&nbsp;
+<p>Тип товара: tire или wheel. Example: <code>tire</code></p>
+Must be one of:
+<ul style="list-style-type: square;"><li><code>tire</code></li> <li><code>wheel</code></li></ul>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>imageable_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="imageable_id"                data-endpoint="GETapi-admin-catalog-images"
-               value="16"
-               data-component="query">
+               value="1"
+               data-component="body">
     <br>
-<p>ID товара. Example: <code>16</code></p>
-            </div>
-                </form>
+<p>ID товара. Example: <code>1</code></p>
+        </div>
+        </form>
 
                     <h2 id="izobrazeniia-POSTapi-admin-catalog-images">Загрузить изображение.</h2>
 
@@ -7444,7 +7462,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "imageable_type=tire"\
     --form "imageable_id=1"\
-    --form "image=@/tmp/phpebnffk589k2i0K8wCdk" </code></pre></div>
+    --form "image=@/tmp/phpb7ou75glbcmv91gMYLi" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7567,7 +7585,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Файл изображения. Допустимые форматы: JPEG, PNG, WebP. Максимум 10 МБ. Must be an image. Must not be greater than 10240 kilobytes. Example: <code>/tmp/phpebnffk589k2i0K8wCdk</code></p>
+<p>Файл изображения. Допустимые форматы: JPEG, PNG, WebP. Максимум 10 МБ. Must be an image. Must not be greater than 10240 kilobytes. Example: <code>/tmp/phpb7ou75glbcmv91gMYLi</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>imageable_type</code></b>&nbsp;&nbsp;
@@ -8015,7 +8033,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>ids</code></b>&nbsp;&nbsp;
 <small>integer[]</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="ids[0]"                data-endpoint="PUTapi-admin-catalog-images-reorder"
@@ -8024,7 +8042,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="ids[1]"                data-endpoint="PUTapi-admin-catalog-images-reorder"
                data-component="body">
     <br>
-<p>Массив ID изображений в новом порядке.</p>
+
         </div>
         </form>
 
@@ -8209,7 +8227,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {your-sanctum-token}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file=@/tmp/php3uhpgsqqe8ra9fgQ2J8" </code></pre></div>
+    --form "file=@/tmp/phpo0hupa2sfnqc1fCMo4Z" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -8330,7 +8348,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>XLSX-файл каталога шин. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php3uhpgsqqe8ra9fgQ2J8</code></p>
+<p>XLSX-файл каталога шин. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpo0hupa2sfnqc1fCMo4Z</code></p>
         </div>
         </form>
 
@@ -9526,6 +9544,358 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The ID of the markup rule. Example: <code>architecto</code></p>
             </div>
                     </form>
+
+                <h1 id="skladskie-ostatki">Складские остатки</h1>
+
+    
+
+                                <h2 id="skladskie-ostatki-GETapi-admin-catalog-tires--tireId--warehouse-stock">Остатки товара на всех складах.</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-admin-catalog-tires--tireId--warehouse-stock">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8081/api/admin/catalog/tires/architecto/warehouse-stock?city_id=16" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/tires/architecto/warehouse-stock"
+);
+
+const params = {
+    "city_id": "16",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-admin-catalog-tires--tireId--warehouse-stock">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-admin-catalog-tires--tireId--warehouse-stock" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-admin-catalog-tires--tireId--warehouse-stock"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-admin-catalog-tires--tireId--warehouse-stock"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-admin-catalog-tires--tireId--warehouse-stock" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-admin-catalog-tires--tireId--warehouse-stock">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-admin-catalog-tires--tireId--warehouse-stock" data-method="GET"
+      data-path="api/admin/catalog/tires/{tireId}/warehouse-stock"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-admin-catalog-tires--tireId--warehouse-stock', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-admin-catalog-tires--tireId--warehouse-stock"
+                    onclick="tryItOut('GETapi-admin-catalog-tires--tireId--warehouse-stock');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-admin-catalog-tires--tireId--warehouse-stock"
+                    onclick="cancelTryOut('GETapi-admin-catalog-tires--tireId--warehouse-stock');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-admin-catalog-tires--tireId--warehouse-stock"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/admin/catalog/tires/{tireId}/warehouse-stock</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-admin-catalog-tires--tireId--warehouse-stock"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-admin-catalog-tires--tireId--warehouse-stock"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-admin-catalog-tires--tireId--warehouse-stock"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>tireId</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="tireId"                data-endpoint="GETapi-admin-catalog-tires--tireId--warehouse-stock"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>Example: <code>architecto</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>city_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="city_id"                data-endpoint="GETapi-admin-catalog-tires--tireId--warehouse-stock"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID города. Example: <code>16</code></p>
+            </div>
+                </form>
+
+                    <h2 id="skladskie-ostatki-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">Остатки товара на всех складах.</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8081/api/admin/catalog/wheels/architecto/warehouse-stock?city_id=16" \
+    --header "Authorization: Bearer {your-sanctum-token}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8081/api/admin/catalog/wheels/architecto/warehouse-stock"
+);
+
+const params = {
+    "city_id": "16",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {your-sanctum-token}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-admin-catalog-wheels--wheelId--warehouse-stock" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-admin-catalog-wheels--wheelId--warehouse-stock"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-admin-catalog-wheels--wheelId--warehouse-stock" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-admin-catalog-wheels--wheelId--warehouse-stock">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-admin-catalog-wheels--wheelId--warehouse-stock" data-method="GET"
+      data-path="api/admin/catalog/wheels/{wheelId}/warehouse-stock"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-admin-catalog-wheels--wheelId--warehouse-stock', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+                    onclick="tryItOut('GETapi-admin-catalog-wheels--wheelId--warehouse-stock');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+                    onclick="cancelTryOut('GETapi-admin-catalog-wheels--wheelId--warehouse-stock');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/admin/catalog/wheels/{wheelId}/warehouse-stock</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+               value="Bearer {your-sanctum-token}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {your-sanctum-token}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>wheelId</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="wheelId"                data-endpoint="GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>Example: <code>architecto</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>city_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="city_id"                data-endpoint="GETapi-admin-catalog-wheels--wheelId--warehouse-stock"
+               value="16"
+               data-component="query">
+    <br>
+<p>ID города. Example: <code>16</code></p>
+            </div>
+                </form>
 
                 <h1 id="spravocniki">Справочники</h1>
 

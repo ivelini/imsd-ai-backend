@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Actions\Catalog\GetBrandList;
 use App\Http\Requests\Admin\Catalog\BrandIndexRequest;
 use App\Http\Requests\Admin\Catalog\BrandRequest;
 use App\Http\Resources\Admin\Catalog\BrandResource;
 use App\Models\Catalog\Brand;
-use DomainException;
+use App\Preconditions\Catalog\EnsureBrandHasNoProducts;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -16,8 +17,10 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 final readonly class BrandController
 {
-    /** Поля, доступные для сортировки в списке. */
-    private const array ALLOWED_SORT = ['id', 'name', 'type', 'created_at'];
+    public function __construct(
+        private GetBrandList $getBrandList,
+        private EnsureBrandHasNoProducts $ensureBrandHasNoProducts,
+    ) {}
 
     /**
      * Список брендов.
@@ -26,24 +29,8 @@ final readonly class BrandController
      */
     public function index(BrandIndexRequest $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
-        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
-
-        $query = Brand::withCount(['tireProducts', 'wheelProducts']);
-
-        if (! empty($data['search'])) {
-            $query->where('name', 'like', '%'.$data['search'].'%');
-        }
-
-        if (! empty($data['type'])) {
-            $query->where('type', $data['type']);
-        }
-
-        $sortBy = in_array($data['sort_by'] ?? 'name', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'name';
-        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
-
         return BrandResource::collection(
-            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+            $this->getBrandList->execute($request->validated())
         );
     }
 
@@ -96,14 +83,7 @@ final readonly class BrandController
     public function destroy(int $id): JsonResponse
     {
         $brand = Brand::withCount(['tireProducts', 'wheelProducts'])->findOrFail($id);
-
-        $productsCount = ($brand->tire_products_count ?? 0) + ($brand->wheel_products_count ?? 0);
-
-        if ($productsCount > 0) {
-            throw new DomainException(
-                "Невозможно удалить бренд «{$brand->name}»: {$productsCount} товаров использует его."
-            );
-        }
+        $this->ensureBrandHasNoProducts->ensure($brand);
 
         $brand->delete();
 

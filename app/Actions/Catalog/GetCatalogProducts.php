@@ -112,4 +112,3 @@ final readonly class GetCatalogProducts
         return $tireQuery->unionAll($wheelQuery->getQuery());
     }
 }
-}

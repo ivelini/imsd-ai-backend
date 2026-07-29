@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Actions\Catalog\GetWarehouseList;
 use App\Http\Requests\Admin\Catalog\WarehouseIndexRequest;
 use App\Http\Requests\Admin\Catalog\WarehouseRequest;
 use App\Http\Resources\Admin\Catalog\WarehouseResource;
@@ -15,25 +16,14 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 final readonly class WarehouseController
 {
-    /** Поля, доступные для сортировки в списке. */
-    private const array ALLOWED_SORT = ['id', 'name', 'created_at'];
+    public function __construct(
+        private GetWarehouseList $getWarehouseList,
+    ) {}
 
     public function index(WarehouseIndexRequest $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
-        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
-
-        $query = Warehouse::query();
-
-        if (! empty($data['search'])) {
-            $query->where('name', 'like', '%'.$data['search'].'%');
-        }
-
-        $sortBy = in_array($data['sort_by'] ?? 'name', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'name';
-        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
-
         return WarehouseResource::collection(
-            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+            $this->getWarehouseList->execute($request->validated())
         );
     }
 

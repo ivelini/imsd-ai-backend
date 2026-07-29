@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Actions\Auth\LoginAdmin;
 use App\Http\Requests\Admin\Auth\LoginRequest;
 use App\Http\Resources\Admin\Auth\LoginResource;
-use App\Models\Auth\Admin;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use App\Preconditions\Auth\EnsureAdminExists;
+use App\Preconditions\Auth\EnsureAdminIsActive;
+use App\Preconditions\Auth\EnsurePasswordIsValid;
 
 /** Аутентификация администратора. */
 final class LoginController
 {
+    public function __construct(
+        private EnsureAdminExists $ensureAdminExists,
+        private EnsurePasswordIsValid $ensurePasswordIsValid,
+        private EnsureAdminIsActive $ensureAdminIsActive,
+        private LoginAdmin $loginAdmin,
+    ) {}
+
     /**
      * Вход в админ-панель.
      *
@@ -26,24 +33,16 @@ final class LoginController
      * @responseField admin.email string Email администратора.
      * @responseField admin.role string Код роли (super-admin, content-manager, …).
      */
-    public function __invoke(LoginRequest $request): LoginResource|JsonResponse
+    public function __invoke(LoginRequest $request): LoginResource
     {
-        $admin = Admin::where('email', $request->email)->first();
+        $data = $request->validated();
 
-        if (! $admin || ! Hash::check($request->password, $admin->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Неверный email или пароль.'],
-            ]);
-        }
+        $admin = $this->ensureAdminExists->ensure($data['email']);
+        $this->ensurePasswordIsValid->ensure($data['password'], $admin->password);
+        $this->ensureAdminIsActive->ensure($admin);
 
-        if (! $admin->is_active) {
-            return response()->json([
-                'message' => 'Аккаунт заблокирован.',
-            ], 403);
-        }
+        $result = $this->loginAdmin->execute($admin);
 
-        $token = $admin->createToken('admin-token')->plainTextToken;
-
-        return new LoginResource($admin, $token);
+        return new LoginResource($result->admin, $result->token);
     }
 }

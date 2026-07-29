@@ -3,6 +3,7 @@
 namespace App\Models\Catalog;
 
 use Database\Factories\Catalog\SupplierFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,5 +27,14 @@ class Supplier extends Model
     public function wheelProducts(): HasMany
     {
         return $this->hasMany(WheelProduct::class);
+    }
+
+    /** Поиск по названию или коду поставщика. */
+    public function scopeSearch(Builder $query, string $search): void
+    {
+        $q = '%'.$search.'%';
+        $query->where(function (Builder $qry) use ($q) {
+            $qry->where('name', 'like', $q)->orWhere('code', 'like', $q);
+        });
     }
 }

@@ -35,4 +35,32 @@ class TireProductBuilder extends Builder
 
         return $this;
     }
+
+    public function bySeason(string $season): self
+    {
+        $this->where('tire_products.season', $season);
+
+        return $this;
+    }
+
+    public function studded(bool $studded): self
+    {
+        $this->where('tire_products.is_studded', $studded);
+
+        return $this;
+    }
+
+    public function runflat(bool $runflat): self
+    {
+        $this->where('tire_products.is_runflat', $runflat);
+
+        return $this;
+    }
+
+    public function xl(bool $xl): self
+    {
+        $this->where('tire_products.is_xl', $xl);
+
+        return $this;
+    }
 }

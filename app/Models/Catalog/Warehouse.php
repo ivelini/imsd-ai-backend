@@ -4,6 +4,7 @@ namespace App\Models\Catalog;
 
 use App\Models\Delivery\DeliverySchedule;
 use Database\Factories\Catalog\WarehouseFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,5 +32,11 @@ class Warehouse extends Model
     public function deliverySchedules(): HasMany
     {
         return $this->hasMany(DeliverySchedule::class);
+    }
+
+    /** Поиск по названию склада. */
+    public function scopeSearch(Builder $query, string $search): void
+    {
+        $query->where('name', 'like', '%'.$search.'%');
     }
 }

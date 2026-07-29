@@ -2,7 +2,9 @@
 
 namespace App\Jobs\CatalogImport;
 
+use App\Actions\Catalog\PopulateCatalogPrices;
 use App\Actions\TireImport\ParseImportFile;
+use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
@@ -109,6 +111,8 @@ final class WheelMasterJob implements ShouldQueue
                 if ($import && $import->status === 'processing') {
                     $import->update(['status' => 'completed', 'finished_at' => now()]);
                 }
+
+                app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($importId));
             })
             ->dispatch();
     }

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Admin\Geo;
 
+use App\Actions\Import\StartProductImport;
+use App\DTOs\Import\StartImportInput;
 use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
-use App\Jobs\GeoImport\PointImportJob;
 use App\Models\System\ProductImport;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта точек выдачи. */
 final readonly class ImportPointController
 {
     public function __construct(
-        private Filesystem $filesystem,
+        private StartProductImport $startProductImport,
     ) {}
 
     /**
@@ -25,26 +25,12 @@ final readonly class ImportPointController
      */
     public function store(UploadFileRequest $request): JsonResponse
     {
-        $file = $request->file('file');
-        $path = $file->store('import/uploads');
+        $importId = $this->startProductImport->execute(new StartImportInput(
+            file: $request->file('file'),
+            type: 'point',
+        ));
 
-        $import = ProductImport::create([
-            'original_filename' => $file->getClientOriginalName(),
-            'status' => 'pending',
-            'type' => 'point',
-        ]);
-
-        PointImportJob::dispatch(
-            $import->id,
-            $this->filesystem->path($path),
-            config('point_import.column_map'),
-            config('point_import.required_columns'),
-            config('point_import.boolean_true'),
-        );
-
-        return response()->json([
-            'data' => ['import_id' => $import->id],
-        ], 202);
+        return response()->json(['data' => ['import_id' => $importId]], 202);
     }
 
     /**

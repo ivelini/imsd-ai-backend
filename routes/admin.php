@@ -13,12 +13,13 @@ use App\Http\Controllers\Admin\Catalog\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
 use App\Http\Controllers\Admin\Catalog\WarehouseController;
+use App\Http\Controllers\Admin\Catalog\WarehouseStockController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
 use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
+use App\Http\Controllers\Admin\GetReferencesController;
 use App\Http\Controllers\Admin\ImportController;
-use App\Http\Controllers\Admin\ReferenceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/tires/{id}', [TireProductController::class, 'show']);
     Route::put('/catalog/tires/{id}', [TireProductController::class, 'update']);
     Route::delete('/catalog/tires/{id}', [TireProductController::class, 'destroy']);
+    Route::get('/catalog/tires/{tireId}/warehouse-stock', WarehouseStockController::class);
+
     Route::get('/catalog/images', [ImageController::class, 'index']);
     Route::post('/catalog/images', [ImageController::class, 'store']);
     Route::delete('/catalog/images/{id}', [ImageController::class, 'destroy']);
@@ -80,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/wheels/{id}', [WheelProductController::class, 'show']);
     Route::put('/catalog/wheels/{id}', [WheelProductController::class, 'update']);
     Route::delete('/catalog/wheels/{id}', [WheelProductController::class, 'destroy']);
+    Route::get('/catalog/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
 
     Route::post('/geo/points/import', [ImportPointController::class, 'store']);
     Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
@@ -98,5 +102,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/imports/{id}', [ImportController::class, 'show']);
 
-    Route::get('/references', [ReferenceController::class, 'index']);
+    Route::get('/references', GetReferencesController::class);
 });

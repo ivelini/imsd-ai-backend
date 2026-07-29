@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Actions\Catalog\GetMarkupRuleList;
 use App\Http\Requests\Admin\Catalog\MarkupRuleIndexRequest;
 use App\Http\Requests\Admin\Catalog\MarkupRuleRequest;
 use App\Http\Resources\Admin\Catalog\MarkupRuleResource;
@@ -12,28 +13,17 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 /** CRUD правил наценки складов. */
 final readonly class MarkupRuleController
 {
-    /** Поля, доступные для сортировки в списке. */
-    private const array ALLOWED_SORT = ['id', 'warehouse_id', 'price_from', 'price_to', 'coefficient', 'created_at'];
+    public function __construct(
+        private GetMarkupRuleList $getMarkupRuleList,
+    ) {}
 
     /**
      * @group Правила наценки
      */
     public function index(MarkupRuleIndexRequest $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
-        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
-
-        $query = WarehouseMarkupRule::with('warehouse');
-
-        if (! empty($data['warehouse_id'])) {
-            $query->where('warehouse_id', (int) $data['warehouse_id']);
-        }
-
-        $sortBy = in_array($data['sort_by'] ?? 'warehouse_id', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'warehouse_id';
-        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
-
         return MarkupRuleResource::collection(
-            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+            $this->getMarkupRuleList->execute($request->validated())
         );
     }
 

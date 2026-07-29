@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Catalog;
 
+use App\Actions\Catalog\GetSupplierList;
 use App\Http\Requests\Admin\Catalog\SupplierIndexRequest;
 use App\Http\Requests\Admin\Catalog\SupplierRequest;
 use App\Http\Resources\Admin\Catalog\SupplierResource;
 use App\Models\Catalog\Supplier;
-use DomainException;
+use App\Preconditions\Catalog\EnsureSupplierHasNoProducts;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -16,28 +17,15 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 final readonly class SupplierController
 {
-    /** Поля, доступные для сортировки в списке. */
-    private const array ALLOWED_SORT = ['id', 'name', 'code', 'created_at'];
+    public function __construct(
+        private GetSupplierList $getSupplierList,
+        private EnsureSupplierHasNoProducts $ensureSupplierHasNoProducts,
+    ) {}
 
     public function index(SupplierIndexRequest $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
-        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
-
-        $query = Supplier::query();
-
-        if (! empty($data['search'])) {
-            $q = '%'.$data['search'].'%';
-            $query->where(function ($qry) use ($q) {
-                $qry->where('name', 'like', $q)->orWhere('code', 'like', $q);
-            });
-        }
-
-        $sortBy = in_array($data['sort_by'] ?? 'name', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'name';
-        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
-
         return SupplierResource::collection(
-            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+            $this->getSupplierList->execute($request->validated())
         );
     }
 
@@ -63,13 +51,8 @@ final readonly class SupplierController
 
     public function destroy(int $id): JsonResponse
     {
-        $supplier = Supplier::withCount('tireProducts')->findOrFail($id);
-
-        if ($supplier->tire_products_count > 0) {
-            throw new DomainException(
-                "Невозможно удалить поставщика «{$supplier->name}»: {$supplier->tire_products_count} товаров ссылается на него."
-            );
-        }
+        $supplier = Supplier::withCount(['tireProducts', 'wheelProducts'])->findOrFail($id);
+        $this->ensureSupplierHasNoProducts->ensure($supplier);
 
         $supplier->delete();
 

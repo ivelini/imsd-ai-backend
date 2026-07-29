@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Tire;
 
+use App\Actions\Import\StartProductImport;
+use App\DTOs\Import\StartImportInput;
 use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
-use App\Jobs\CatalogImport\MasterJob;
 use App\Models\System\ProductImport;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта шин.
@@ -16,7 +16,7 @@ use Illuminate\Http\JsonResponse;
 final readonly class ImportTireController
 {
     public function __construct(
-        private Filesystem $filesystem,
+        private StartProductImport $startProductImport,
     ) {}
 
     /**
@@ -31,26 +31,12 @@ final readonly class ImportTireController
      */
     public function store(UploadFileRequest $request): JsonResponse
     {
-        $file = $request->file('file');
-        $path = $file->store('import/uploads');
+        $importId = $this->startProductImport->execute(new StartImportInput(
+            file: $request->file('file'),
+            type: null,
+        ));
 
-        $import = ProductImport::create([
-            'original_filename' => $file->getClientOriginalName(),
-            'status' => 'pending',
-        ]);
-
-        MasterJob::dispatch(
-            $import->id,
-            $this->filesystem->path($path),
-            config('tire_import.chunk_size'),
-            config('tire_import.chunk_path'),
-        );
-
-        return response()->json([
-            'data' => [
-                'import_id' => $import->id,
-            ],
-        ], 202);
+        return response()->json(['data' => ['import_id' => $importId]], 202);
     }
 
     /**
@@ -70,8 +56,6 @@ final readonly class ImportTireController
      */
     public function show(int $id): ProductImportResource
     {
-        $import = ProductImport::findOrFail($id);
-
-        return new ProductImportResource($import);
+        return new ProductImportResource(ProductImport::findOrFail($id));
     }
 }

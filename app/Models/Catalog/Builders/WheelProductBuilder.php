@@ -35,4 +35,18 @@ class WheelProductBuilder extends Builder
 
         return $this;
     }
+
+    public function byType(string $type): self
+    {
+        $this->where('wheel_products.type', $type);
+
+        return $this;
+    }
+
+    public function byColor(string $color): self
+    {
+        $this->where('wheel_products.color', $color);
+
+        return $this;
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Delivery;
 
+use App\Actions\Delivery\GetDeliveryScheduleList;
 use App\Http\Requests\Admin\Delivery\DeliveryScheduleIndexRequest;
 use App\Http\Requests\Admin\Delivery\DeliveryScheduleRequest;
 use App\Http\Resources\Admin\Delivery\DeliveryScheduleResource;
@@ -12,28 +13,17 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 /** CRUD графиков отгрузки складов. */
 final readonly class DeliveryScheduleController
 {
-    /** Поля, доступные для сортировки в списке. */
-    private const array ALLOWED_SORT = ['id', 'warehouse_id', 'day_of_week', 'created_at'];
+    public function __construct(
+        private GetDeliveryScheduleList $getDeliveryScheduleList,
+    ) {}
 
     /**
      * @group Графики отгрузки
      */
     public function index(DeliveryScheduleIndexRequest $request): AnonymousResourceCollection
     {
-        $data = $request->validated();
-        $perPage = min(max((int) ($data['per_page'] ?? 50), 10), 100);
-
-        $query = DeliverySchedule::with('warehouse');
-
-        if (! empty($data['warehouse_id'])) {
-            $query->where('warehouse_id', (int) $data['warehouse_id']);
-        }
-
-        $sortBy = in_array($data['sort_by'] ?? 'warehouse_id', self::ALLOWED_SORT, true) ? $data['sort_by'] : 'warehouse_id';
-        $sortDir = ($data['sort_dir'] ?? 'asc') === 'asc' ? 'asc' : 'desc';
-
         return DeliveryScheduleResource::collection(
-            $query->orderBy($sortBy, $sortDir)->paginate($perPage)
+            $this->getDeliveryScheduleList->execute($request->validated())
         );
     }
 

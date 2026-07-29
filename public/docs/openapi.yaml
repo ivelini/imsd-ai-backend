@@ -34,6 +34,8 @@ tags:
     description: ''
   - name: 'Правила наценки'
     description: ''
+  - name: 'Складские остатки'
+    description: ''
   - name: Справочники
     description: ''
   - name: Страны
@@ -1499,27 +1501,7 @@ paths:
       summary: 'Список изображений товара.'
       operationId: ''
       description: ''
-      parameters:
-        -
-          in: query
-          name: imageable_type
-          description: 'Тип: tire, wheel.'
-          example: architecto
-          required: true
-          schema:
-            type: string
-            description: 'Тип: tire, wheel.'
-            example: architecto
-        -
-          in: query
-          name: imageable_id
-          description: 'ID товара.'
-          example: 16
-          required: true
-          schema:
-            type: integer
-            description: 'ID товара.'
-            example: 16
+      parameters: []
       responses:
         401:
           description: ''
@@ -1535,6 +1517,27 @@ paths:
                     example: Unauthenticated.
       tags:
         - Изображения
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageable_type:
+                  type: string
+                  description: 'Тип товара: tire или wheel.'
+                  example: tire
+                  enum:
+                    - tire
+                    - wheel
+                imageable_id:
+                  type: integer
+                  description: 'ID товара.'
+                  example: 1
+              required:
+                - imageable_type
+                - imageable_id
     post:
       summary: 'Загрузить изображение.'
       operationId: ''
@@ -1615,7 +1618,7 @@ paths:
       tags:
         - Изображения
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -1623,13 +1626,11 @@ paths:
               properties:
                 ids:
                   type: array
-                  description: 'Массив ID изображений в новом порядке.'
+                  description: ''
                   example:
                     - 16
                   items:
                     type: integer
-              required:
-                - ids
   '/api/admin/imports/{id}':
     get:
       summary: 'Статус импорта по ID.'
@@ -1930,6 +1931,86 @@ paths:
         in: path
         name: id
         description: 'The ID of the markup rule.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/admin/catalog/tires/{tireId}/warehouse-stock':
+    get:
+      summary: 'Остатки товара на всех складах.'
+      operationId: ''
+      description: ''
+      parameters:
+        -
+          in: query
+          name: city_id
+          description: 'ID города.'
+          example: 16
+          required: true
+          schema:
+            type: integer
+            description: 'ID города.'
+            example: 16
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Складские остатки'
+    parameters:
+      -
+        in: path
+        name: tireId
+        description: ''
+        example: architecto
+        required: true
+        schema:
+          type: string
+  '/api/admin/catalog/wheels/{wheelId}/warehouse-stock':
+    get:
+      summary: 'Остатки товара на всех складах.'
+      operationId: ''
+      description: ''
+      parameters:
+        -
+          in: query
+          name: city_id
+          description: 'ID города.'
+          example: 16
+          required: true
+          schema:
+            type: integer
+            description: 'ID города.'
+            example: 16
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Складские остатки'
+    parameters:
+      -
+        in: path
+        name: wheelId
+        description: ''
         example: architecto
         required: true
         schema:

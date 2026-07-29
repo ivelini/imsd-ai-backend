@@ -3,6 +3,7 @@
 namespace App\Models\Catalog;
 
 use Database\Factories\Catalog\WarehouseMarkupRuleFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,5 +24,11 @@ class WarehouseMarkupRule extends Model
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    /** Фильтр по складу. */
+    public function scopeByWarehouse(Builder $query, int $warehouseId): void
+    {
+        $query->where('warehouse_id', $warehouseId);
     }
 }
