@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
 use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
 use App\Http\Controllers\Admin\Geo\CityController;
+use App\Http\Controllers\Admin\Geo\CityPriceRuleController;
+use App\Http\Controllers\Admin\Geo\DeliveryPointController;
 use App\Http\Controllers\Admin\Geo\ImportPointController;
 use App\Http\Controllers\Admin\GetReferencesController;
 use App\Http\Controllers\Admin\ImportController;
@@ -88,6 +90,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/geo/cities', [CityController::class, 'index']);
     Route::post('/geo/points/import', [ImportPointController::class, 'store']);
+
+    Route::get('/geo/city-price-rules', [CityPriceRuleController::class, 'index']);
+    Route::post('/geo/city-price-rules', [CityPriceRuleController::class, 'store']);
+    Route::get('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'show']);
+    Route::put('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'update']);
+    Route::delete('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'destroy']);
+
+    Route::get('/geo/delivery-points', [DeliveryPointController::class, 'index']);
+    Route::post('/geo/delivery-points', [DeliveryPointController::class, 'store']);
+    Route::get('/geo/delivery-points/{id}', [DeliveryPointController::class, 'show']);
+    Route::put('/geo/delivery-points/{id}', [DeliveryPointController::class, 'update']);
+    Route::delete('/geo/delivery-points/{id}', [DeliveryPointController::class, 'destroy']);
+
     Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
     Route::post('/catalog/suppliers', [SupplierController::class, 'store']);
     Route::get('/catalog/suppliers/{id}', [SupplierController::class, 'show']);

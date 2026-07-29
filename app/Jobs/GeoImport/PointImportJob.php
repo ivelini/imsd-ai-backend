@@ -8,7 +8,6 @@ use App\Models\Delivery\City;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliveryPoint;
-use App\Models\Delivery\DeliveryPointCoefficient;
 use App\Models\Delivery\Region;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
@@ -31,9 +30,6 @@ final class PointImportJob implements ShouldQueue
     /** @var string[] */
     private array $priceColumns = [];
 
-    /** @var string[] */
-    private array $coeffColumns = [];
-
     /**
      * @param  string[]  $columnMap  Маппинг заголовков XLSX → ключи данных
      * @param  string[]  $requiredColumns  Обязательные колонки (отсутствие → исключение)
@@ -49,22 +45,19 @@ final class PointImportJob implements ShouldQueue
 
     /**
      * @param  string[]  $headers
-     * @return array{string[], string[]}
+     * @return string[]
      */
     public static function detectColumnsFromHeaders(array $headers): array
     {
         $price = [];
-        $coeff = [];
 
         foreach ($headers as $header) {
             if (preg_match('/^(\d+)-(\d+)$/u', $header)) {
                 $price[] = $header;
-            } elseif (preg_match('/^(\d+)-(\d+) кг$/u', $header)) {
-                $coeff[] = $header;
             }
         }
 
-        return [$price, $coeff];
+        return $price;
     }
 
     public function handle(): void
@@ -192,7 +185,7 @@ final class PointImportJob implements ShouldQueue
      */
     private function detectDynamicColumns(array $headers): void
     {
-        [$this->priceColumns, $this->coeffColumns] = self::detectColumnsFromHeaders($headers);
+        $this->priceColumns = self::detectColumnsFromHeaders($headers);
     }
 
     private function importRow(array $data): void
@@ -212,7 +205,6 @@ final class PointImportJob implements ShouldQueue
 
         $this->importPriceRules($city, $data);
         $this->importDeliveryTime($city, $data);
-        $this->importDeliveryCoefficients($data);
         $this->importDeliveryPoint($city, $data);
     }
 
@@ -246,26 +238,6 @@ final class PointImportJob implements ShouldQueue
             ['city_id' => $city->id],
             ['delivery_days' => (int) $data['delivery_days']],
         );
-    }
-
-    private function importDeliveryCoefficients(array $data): void
-    {
-        foreach ($this->coeffColumns as $header) {
-            $value = $data[$header] ?? null;
-            if ($value === null || $value === '') {
-                continue;
-            }
-
-            preg_match('/^(\d+)-(\d+) кг$/u', $header, $m);
-            DeliveryPointCoefficient::updateOrCreate(
-                [
-                    'price_from' => (int) $m[1],
-                    'price_to' => (int) $m[2],
-                    'product_type' => null,
-                ],
-                ['coefficient' => (float) $value],
-            );
-        }
     }
 
     private function importDeliveryPoint(City $city, array $data): void

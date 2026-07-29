@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Catalog\Tire\TireProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\TireProduct;
+use App\Services\Cache\Catalog\ProductCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -15,6 +16,7 @@ final readonly class TireProductController
 {
     public function __construct(
         private GetTireProductList $getTireProductList,
+        private ProductCacheService $cache,
     ) {}
 
     /**
@@ -37,7 +39,8 @@ final readonly class TireProductController
     public function show(int $id): TireProductResource
     {
         return new TireProductResource(
-            TireProduct::with('brand')->findOrFail($id)
+            $this->cache->rememberTire($id, fn () => TireProduct::with('brand', 'stocks.warehouse')->findOrFail($id)
+            )
         );
     }
 

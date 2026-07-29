@@ -14,7 +14,7 @@ final readonly class GetWheelProductList
     {
         $perPage = min(max((int) ($params['per_page'] ?? 50), 10), 100);
 
-        $query = WheelProduct::with('brand');
+        $query = WheelProduct::with('brand', 'stocks.warehouse');
 
         if (! empty($params['search'])) {
             $query->search($params['search']);

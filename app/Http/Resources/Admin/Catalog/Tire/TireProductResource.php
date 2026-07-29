@@ -3,7 +3,9 @@
 namespace App\Http\Resources\Admin\Catalog\Tire;
 
 use App\Models\Catalog\Brand;
+use App\Models\Catalog\Stock;
 use App\Models\Catalog\TireProduct;
+use App\Models\Catalog\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -45,6 +47,23 @@ final class TireProductResource extends JsonResource
             'is_published' => $tire->is_published,
             'is_bestseller' => $tire->is_bestseller,
             'is_new' => $tire->is_new,
+            'stocks' => $this->whenLoaded('stocks', function () use ($tire) {
+                $result = [];
+                foreach ($tire->stocks as $s) {
+                    /** @var Stock $s */
+                    /** @var Warehouse|null $wh */
+                    $wh = $s->warehouse;
+                    $result[] = [
+                        'warehouse_id' => $s->warehouse_id,
+                        'warehouse' => $wh?->name,
+                        'quantity' => $s->quantity,
+                        'purchase_price' => $s->purchase_price,
+                        'price' => $s->price,
+                    ];
+                }
+
+                return $result;
+            }),
             'created_at' => $tire->created_at->toIso8601String(),
         ];
     }

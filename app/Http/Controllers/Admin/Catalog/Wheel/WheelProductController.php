@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Catalog\Wheel\WheelProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductRequest;
 use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
 use App\Models\Catalog\WheelProduct;
+use App\Services\Cache\Catalog\ProductCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -15,6 +16,7 @@ final readonly class WheelProductController
 {
     public function __construct(
         private GetWheelProductList $getWheelProductList,
+        private ProductCacheService $cache,
     ) {}
 
     /**
@@ -33,7 +35,8 @@ final readonly class WheelProductController
     public function show(int $id): WheelProductResource
     {
         return new WheelProductResource(
-            WheelProduct::with('brand')->findOrFail($id)
+            $this->cache->rememberWheel($id, fn () => WheelProduct::with('brand', 'stocks.warehouse')->findOrFail($id)
+            )
         );
     }
 

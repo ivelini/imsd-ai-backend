@@ -88,7 +88,7 @@ class PointImportTest extends TestCase
             config('point_import.boolean_true'),
         );
 
-        [$priceCols] = PointImportJob::detectColumnsFromHeaders([
+        $priceCols = PointImportJob::detectColumnsFromHeaders([
             'code', 'region_name', 'city_name', '0-5000', '5001-8500',
         ]);
 

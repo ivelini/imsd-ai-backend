@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         if (app()->environment('local')) {
             $this->call(AdminSeeder::class);
+            $this->call(WarehouseMarkupRuleSeeder::class);
         }
     }
 }

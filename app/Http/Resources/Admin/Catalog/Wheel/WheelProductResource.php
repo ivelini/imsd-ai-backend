@@ -3,6 +3,8 @@
 namespace App\Http\Resources\Admin\Catalog\Wheel;
 
 use App\Models\Catalog\Brand;
+use App\Models\Catalog\Stock;
+use App\Models\Catalog\Warehouse;
 use App\Models\Catalog\WheelProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -42,6 +44,23 @@ final class WheelProductResource extends JsonResource
             'is_published' => $wheel->is_published,
             'is_bestseller' => $wheel->is_bestseller,
             'is_new' => $wheel->is_new,
+            'stocks' => $this->whenLoaded('stocks', function () use ($wheel) {
+                $result = [];
+                foreach ($wheel->stocks as $s) {
+                    /** @var Stock $s */
+                    /** @var Warehouse|null $wh */
+                    $wh = $s->warehouse;
+                    $result[] = [
+                        'warehouse_id' => $s->warehouse_id,
+                        'warehouse' => $wh?->name,
+                        'quantity' => $s->quantity,
+                        'purchase_price' => $s->purchase_price,
+                        'price' => $s->price,
+                    ];
+                }
+
+                return $result;
+            }),
             'created_at' => $wheel->created_at->toIso8601String(),
         ];
     }

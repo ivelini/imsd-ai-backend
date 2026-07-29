@@ -49,7 +49,6 @@
 | `city_price_rules` | Правила наценки по городам (city_id, price_from, price_to, markup) | |
 | `catalog_prices` | Предрасcчитанные цены и сроки доставки (stock_id, city_id, price, delivery_min, delivery_max) | |
 | `delivery_points` | Точки выдачи (city_id) | `id`, `city_id`, `address`, `phone`, `email`, `work_hours`, `info`, `pickup_from_truck` |
-| `delivery_point_coefficients` | Коэффициенты доставки (price_from, price_to, product_type, coefficient) | |
 | `delivery_schedules` | График отгрузки со складов (warehouse_id, day_of_week, cutoff_time, days_before, days_after) | |
 | `city_delivery_times` | Время доставки из Челябинска в город клиента (city_id, delivery_days) | |
 
