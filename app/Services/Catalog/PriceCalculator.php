@@ -2,7 +2,7 @@
 
 namespace App\Services\Catalog;
 
-use App\Models\Catalog\WarehouseMarkupRule;
+use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 
 /** Расчёт финальной цены товара: purchase_price × коэффициент наценки склада. */
 final readonly class PriceCalculator

@@ -2,7 +2,7 @@
 
 namespace App\Preconditions\Catalog;
 
-use App\Models\Catalog\Supplier;
+use App\Models\Catalog\Supplier\Supplier;
 use DomainException;
 
 /** Проверка: у поставщика нет товаров перед удалением. */

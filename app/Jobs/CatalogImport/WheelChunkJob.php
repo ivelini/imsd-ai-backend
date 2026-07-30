@@ -7,7 +7,7 @@ use App\Actions\TireImport\UpsertWheelProduct;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Events\Admin\ImportCompleted;
-use App\Models\Catalog\WheelProduct;
+use App\Models\Catalog\Wheel\WheelProduct;
 use App\Models\System\ProductImport;
 use App\Preconditions\TireImport\EnsureEanNotEmpty;
 use Illuminate\Bus\Batchable;

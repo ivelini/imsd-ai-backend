@@ -2,7 +2,7 @@
 
 namespace App\Preconditions\Catalog;
 
-use App\Models\Catalog\ProductModel;
+use App\Models\Catalog\Model\ProductModel;
 use DomainException;
 
 /** Проверка: у модели нет товаров перед удалением. */

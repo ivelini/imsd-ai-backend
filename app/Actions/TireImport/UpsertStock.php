@@ -3,7 +3,7 @@
 namespace App\Actions\TireImport;
 
 use App\DTOs\TireImport\UpsertStockInput;
-use App\Models\Catalog\Stock;
+use App\Models\Catalog\Warehouse\Stock;
 use App\Services\Catalog\PriceCalculator;
 use App\Services\TireImport\ReferenceResolver;
 

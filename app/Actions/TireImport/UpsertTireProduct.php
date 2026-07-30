@@ -4,7 +4,7 @@ namespace App\Actions\TireImport;
 
 use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertResult;
-use App\Models\Catalog\TireProduct;
+use App\Models\Catalog\Tire\TireProduct;
 use App\Services\TireImport\DescriptionBuilder;
 use App\Services\TireImport\ReferenceResolver;
 use App\Services\TireImport\RowMapper;

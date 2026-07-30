@@ -2,8 +2,8 @@
 
 namespace App\Services\Catalog;
 
-use App\Models\Catalog\Stock;
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Warehouse\Stock;
+use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;

@@ -4,7 +4,7 @@ namespace Tests\Feature\Admin\Catalog;
 
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
-use App\Models\Catalog\Supplier;
+use App\Models\Catalog\Supplier\Supplier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

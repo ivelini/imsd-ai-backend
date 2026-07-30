@@ -2,35 +2,29 @@
 
 namespace App\Http\Requests\Admin\Catalog\Tire;
 
-use App\Enums\Catalog\Season;
+use App\Http\Requests\Concerns\ValidatesTireFilters;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /** Валидация query-параметров списка шин. */
 class TireProductIndexRequest extends FormRequest
 {
+    use ValidatesTireFilters;
+
     public function rules(): array
     {
-        return [
+        return array_merge($this->tireFilterRules(), [
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:10', 'max:100'],
             'sort_by' => ['nullable', Rule::in(['id', 'name', 'ean', 'season', 'width', 'profile', 'diameter', 'load_index', 'speed_index', 'year', 'is_published', 'created_at'])],
             'sort_dir' => ['nullable', Rule::in(['asc', 'desc'])],
             'search' => ['nullable', 'string', 'max:100'],
-            'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
-            'model_id' => ['nullable', 'integer', 'exists:product_models,id'],
-            'season' => ['nullable', Rule::in(array_column(Season::cases(), 'value'))],
-            'is_published' => ['nullable', 'boolean'],
-            'is_studded' => ['nullable', 'boolean'],
-            'is_runflat' => ['nullable', 'boolean'],
-            'is_xl' => ['nullable', 'boolean'],
-            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
-        ];
+        ]);
     }
 
     public function bodyParameters(): array
     {
-        return [
+        return array_merge($this->tireFilterBodyParameters(), [
             'page' => [
                 'description' => 'Номер страницы.',
                 'required' => false,
@@ -61,48 +55,6 @@ class TireProductIndexRequest extends FormRequest
                 'type' => 'string',
                 'example' => 'Winter',
             ],
-            'brand_id' => [
-                'description' => 'ID бренда для фильтрации.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'season' => [
-                'description' => 'Сезонность: summer, winter, all-season.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'winter',
-            ],
-            'is_published' => [
-                'description' => 'Опубликован на сайте.',
-                'required' => false,
-                'type' => 'boolean',
-                'example' => true,
-            ],
-            'is_studded' => [
-                'description' => 'Шипованная.',
-                'required' => false,
-                'type' => 'boolean',
-                'example' => false,
-            ],
-            'is_runflat' => [
-                'description' => 'Runflat-технология.',
-                'required' => false,
-                'type' => 'boolean',
-                'example' => false,
-            ],
-            'is_xl' => [
-                'description' => 'Усиленная (Extra Load).',
-                'required' => false,
-                'type' => 'boolean',
-                'example' => false,
-            ],
-            'city_id' => [
-                'description' => 'ID города для расчёта срока и стоимости доставки.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-        ];
+        ]);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Actions\TireImport;
 
 use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
-use App\Models\Catalog\WheelProduct;
+use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\TireImport\ReferenceResolver;
 
 /** Создание или обновление товара (диска) по EAN. */

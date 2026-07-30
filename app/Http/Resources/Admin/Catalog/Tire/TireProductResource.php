@@ -2,11 +2,11 @@
 
 namespace App\Http\Resources\Admin\Catalog\Tire;
 
-use App\Models\Catalog\Brand;
-use App\Models\Catalog\ProductModel;
-use App\Models\Catalog\Stock;
-use App\Models\Catalog\TireProduct;
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Tire\TireProduct;
+use App\Models\Catalog\Warehouse\Stock;
+use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -2,7 +2,7 @@
 
 namespace App\Actions\Catalog;
 
-use App\Models\Catalog\ProductModel;
+use App\Models\Catalog\Model\ProductModel;
 
 /** Если name не передан — заполняет из model.name. */
 final readonly class EnsureProductDisplayName

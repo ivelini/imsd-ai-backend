@@ -2,33 +2,29 @@
 
 namespace App\Http\Requests\Admin\Catalog\Wheel;
 
-use App\Enums\Catalog\WheelType;
+use App\Http\Requests\Concerns\ValidatesWheelFilters;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /** Валидация query-параметров списка дисков. */
 class WheelProductIndexRequest extends FormRequest
 {
+    use ValidatesWheelFilters;
+
     public function rules(): array
     {
-        return [
+        return array_merge($this->wheelFilterRules(), [
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:10', 'max:100'],
             'sort_by' => ['nullable', Rule::in(['id', 'name', 'ean', 'type', 'color', 'pcd', 'et', 'hub_diameter', 'width', 'diameter', 'is_published', 'created_at'])],
             'sort_dir' => ['nullable', Rule::in(['asc', 'desc'])],
             'search' => ['nullable', 'string', 'max:100'],
-            'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
-            'model_id' => ['nullable', 'integer', 'exists:product_models,id'],
-            'type' => ['nullable', Rule::in(array_column(WheelType::cases(), 'value'))],
-            'color' => ['nullable', 'string', 'max:50'],
-            'is_published' => ['nullable', 'boolean'],
-            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
-        ];
+        ]);
     }
 
     public function bodyParameters(): array
     {
-        return [
+        return array_merge($this->wheelFilterBodyParameters(), [
             'page' => [
                 'description' => 'Номер страницы.',
                 'required' => false,
@@ -59,36 +55,6 @@ class WheelProductIndexRequest extends FormRequest
                 'type' => 'string',
                 'example' => 'ANNA',
             ],
-            'brand_id' => [
-                'description' => 'ID бренда для фильтрации.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'type' => [
-                'description' => 'Тип диска: alloy, steel, forged.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'alloy',
-            ],
-            'color' => [
-                'description' => 'Цвет диска.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'Чёрный',
-            ],
-            'is_published' => [
-                'description' => 'Опубликован на сайте.',
-                'required' => false,
-                'type' => 'boolean',
-                'example' => true,
-            ],
-            'city_id' => [
-                'description' => 'ID города для расчёта срока и стоимости доставки.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-        ];
+        ]);
     }
 }

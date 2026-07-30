@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Catalog\Supplier;
+use App\Models\Catalog\Supplier\Supplier;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 
 /** Инвалидация кеша справочников при изменении поставщика. */

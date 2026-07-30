@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Catalog\Warehouse;
-use App\Models\Catalog\WarehouseMarkupRule;
+use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
+use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Database\Seeder;
 
 /** Коэффициенты наценки для каждого склада по диапазонам цен. */

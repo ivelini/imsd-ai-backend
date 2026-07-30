@@ -2,7 +2,7 @@
 
 namespace App\Models\Delivery;
 
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

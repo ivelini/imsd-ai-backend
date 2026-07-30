@@ -12,7 +12,7 @@ use App\Enums\Catalog\WheelType;
 use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
-use App\Models\Catalog\WheelProduct;
+use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\TireImport\ReferenceResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;

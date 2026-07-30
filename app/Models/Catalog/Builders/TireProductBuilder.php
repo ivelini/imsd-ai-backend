@@ -2,7 +2,7 @@
 
 namespace App\Models\Catalog\Builders;
 
-use App\Models\Catalog\TireProduct;
+use App\Models\Catalog\Tire\TireProduct;
 use Illuminate\Database\Eloquent\Builder;
 
 /** Кастомный Builder для TireProduct — фильтры каталога.
@@ -68,6 +68,62 @@ class TireProductBuilder extends Builder
     public function xl(bool $xl): self
     {
         $this->where('tire_products.is_xl', $xl);
+
+        return $this;
+    }
+
+    public function byWidths(array $widths): self
+    {
+        $this->whereIn('tire_products.width', $widths);
+
+        return $this;
+    }
+
+    public function byProfiles(array $profiles): self
+    {
+        $this->whereIn('tire_products.profile', $profiles);
+
+        return $this;
+    }
+
+    public function byDiameters(array $diameters): self
+    {
+        $this->whereIn('tire_products.diameter', $diameters);
+
+        return $this;
+    }
+
+    public function byLoadIndexes(array $indexes): self
+    {
+        $this->whereIn('tire_products.load_index', $indexes);
+
+        return $this;
+    }
+
+    public function bySpeedIndexes(array $indexes): self
+    {
+        $this->whereIn('tire_products.speed_index', $indexes);
+
+        return $this;
+    }
+
+    public function byYears(array $years): self
+    {
+        $this->whereIn('tire_products.year', $years);
+
+        return $this;
+    }
+
+    public function bestseller(bool $bestseller): self
+    {
+        $this->where('tire_products.is_bestseller', $bestseller);
+
+        return $this;
+    }
+
+    public function isNew(bool $isNew): self
+    {
+        $this->where('tire_products.is_new', $isNew);
 
         return $this;
     }

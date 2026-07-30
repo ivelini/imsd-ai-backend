@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Admin\Delivery;
 
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\DeliverySchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

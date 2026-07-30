@@ -7,8 +7,8 @@ use App\DTOs\Catalog\GetCatalogProductsResult;
 use App\Enums\Catalog\ProductType;
 use App\Models\Catalog\Builders\TireProductBuilder;
 use App\Models\Catalog\Builders\WheelProductBuilder;
-use App\Models\Catalog\TireProduct;
-use App\Models\Catalog\WheelProduct;
+use App\Models\Catalog\Tire\TireProduct;
+use App\Models\Catalog\Wheel\WheelProduct;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 

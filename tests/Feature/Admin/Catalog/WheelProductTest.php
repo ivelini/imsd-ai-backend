@@ -4,8 +4,8 @@ namespace Tests\Feature\Admin\Catalog;
 
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
-use App\Models\Catalog\Brand;
-use App\Models\Catalog\ProductModel;
+use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\Model\ProductModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

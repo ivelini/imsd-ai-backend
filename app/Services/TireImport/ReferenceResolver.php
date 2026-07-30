@@ -2,11 +2,11 @@
 
 namespace App\Services\TireImport;
 
-use App\Models\Catalog\Brand;
-use App\Models\Catalog\Country;
-use App\Models\Catalog\ProductModel;
-use App\Models\Catalog\Supplier;
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\Country\Country;
+use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Supplier\Supplier;
+use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Support\Str;
 
 /** Поиск или создание справочных сущностей (Brand, Supplier, Country, Warehouse, ProductModel). */

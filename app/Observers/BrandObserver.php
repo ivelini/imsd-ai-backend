@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Catalog\Brand;
+use App\Models\Catalog\Brand\Brand;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 
 /** Инвалидация кеша справочников при изменении бренда. */

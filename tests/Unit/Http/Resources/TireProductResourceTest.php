@@ -3,8 +3,8 @@
 namespace Tests\Unit\Http\Resources;
 
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
-use App\Models\Catalog\Brand;
-use App\Models\Catalog\TireProduct;
+use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\Tire\TireProduct;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Tests\TestCase;

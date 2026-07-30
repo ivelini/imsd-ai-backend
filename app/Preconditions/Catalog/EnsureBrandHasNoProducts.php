@@ -2,7 +2,7 @@
 
 namespace App\Preconditions\Catalog;
 
-use App\Models\Catalog\Brand;
+use App\Models\Catalog\Brand\Brand;
 use DomainException;
 
 /** Проверка: у бренда нет товаров перед удалением. */

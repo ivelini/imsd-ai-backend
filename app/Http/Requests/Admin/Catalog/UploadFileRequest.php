@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin\Catalog;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/** Валидация загружаемого XLSX-файла с шинами. */
+/** Валидация загружаемого XLSX-файла импорта. */
 class UploadFileRequest extends FormRequest
 {
     public function rules(): array
@@ -23,7 +23,7 @@ class UploadFileRequest extends FormRequest
     {
         return [
             'file' => [
-                'description' => 'XLSX-файл каталога шин. Максимум 50 МБ.',
+                'description' => 'XLSX-файл импорта. Максимум 50 МБ.',
                 'required' => true,
                 'type' => 'file',
             ],

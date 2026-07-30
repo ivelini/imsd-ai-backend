@@ -4,8 +4,8 @@ namespace Tests\Feature\Admin\Catalog;
 
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
-use App\Models\Catalog\Warehouse;
-use App\Models\Catalog\WarehouseMarkupRule;
+use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
+use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

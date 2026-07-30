@@ -3,7 +3,7 @@
 namespace App\Actions\Catalog;
 
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
-use App\Models\Catalog\Stock;
+use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
 use App\Services\Catalog\PriceCalculator;

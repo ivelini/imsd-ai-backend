@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\Catalog\Wheel;
 
 use App\Actions\Catalog\EnsureProductDisplayName;
-use App\Actions\Catalog\GetWheelProductList;
+use App\Actions\Catalog\Wheel\GetWheelProductList;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductRequest;
 use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
-use App\Models\Catalog\WheelProduct;
+use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\DeliveryInfoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Common\WeekDay;
-use App\Models\Catalog\Warehouse;
+use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\DeliverySchedule;
 use Illuminate\Database\Seeder;
 

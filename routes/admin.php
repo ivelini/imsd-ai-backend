@@ -3,19 +3,21 @@
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\LogoutController;
 use App\Http\Controllers\Admin\Auth\MeController;
-use App\Http\Controllers\Admin\Catalog\BrandController;
+use App\Http\Controllers\Admin\Catalog\Brand\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
-use App\Http\Controllers\Admin\Catalog\CountryController;
-use App\Http\Controllers\Admin\Catalog\ImageController;
+use App\Http\Controllers\Admin\Catalog\Country\CountryController;
+use App\Http\Controllers\Admin\Catalog\Image\ImageController;
 use App\Http\Controllers\Admin\Catalog\ImportModelController;
-use App\Http\Controllers\Admin\Catalog\MarkupRuleController;
-use App\Http\Controllers\Admin\Catalog\ProductModelController;
-use App\Http\Controllers\Admin\Catalog\PromotionController;
-use App\Http\Controllers\Admin\Catalog\SupplierController;
+use App\Http\Controllers\Admin\Catalog\MarkupRule\MarkupRuleController;
+use App\Http\Controllers\Admin\Catalog\Model\ProductModelController;
+use App\Http\Controllers\Admin\Catalog\Promotion\PromotionController;
+use App\Http\Controllers\Admin\Catalog\Supplier\SupplierController;
+use App\Http\Controllers\Admin\Catalog\Tire\GetTireDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
-use App\Http\Controllers\Admin\Catalog\WarehouseController;
-use App\Http\Controllers\Admin\Catalog\WarehouseStockController;
+use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseController;
+use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseStockController;
+use App\Http\Controllers\Admin\Catalog\Wheel\GetWheelDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
 use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
@@ -53,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/catalog/brands/{id}', [BrandController::class, 'update']);
     Route::delete('/catalog/brands/{id}', [BrandController::class, 'destroy']);
 
+    Route::get('/catalog/tires/dimensions', GetTireDimensionsController::class);
     Route::get('/catalog/tires', [TireProductController::class, 'index']);
     Route::post('/catalog/tires/import', [ImportTireController::class, 'store']);
     Route::post('/catalog/tires', [TireProductController::class, 'store']);
@@ -85,6 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/catalog/promotions/{id}', [PromotionController::class, 'update']);
     Route::delete('/catalog/promotions/{id}', [PromotionController::class, 'destroy']);
 
+    Route::get('/catalog/wheels/dimensions', GetWheelDimensionsController::class);
     Route::get('/catalog/wheels', [WheelProductController::class, 'index']);
     Route::post('/catalog/wheels/import', [ImportWheelController::class, 'store']);
     Route::post('/catalog/wheels', [WheelProductController::class, 'store']);
