@@ -3,6 +3,7 @@
 namespace App\Actions\Import;
 
 use App\DTOs\Import\StartImportInput;
+use App\Enums\Import\ImportType;
 use App\Jobs\CatalogImport\MasterJob;
 use App\Jobs\CatalogImport\WheelMasterJob;
 use App\Jobs\GeoImport\PointImportJob;
@@ -21,45 +22,40 @@ final readonly class StartProductImport
     {
         $path = $input->file->store('import/uploads');
 
-        $importData = [
+        $import = ProductImport::create([
             'original_filename' => $input->file->getClientOriginalName(),
             'status' => 'pending',
-        ];
-
-        if ($input->type !== null) {
-            $importData['type'] = $input->type;
-        }
-
-        $import = ProductImport::create($importData);
+            'type' => $input->type,
+        ]);
 
         $fullPath = $this->filesystem->path($path);
 
-        if ($input->type === 'wheel') {
-            WheelMasterJob::dispatch(
-                $import->id,
+        $importId = $import->id;
+
+        match ($input->type) {
+            ImportType::Wheel => WheelMasterJob::dispatch(
+                $importId,
                 $fullPath,
                 config('wheel_import.chunk_size'),
                 config('wheel_import.chunk_path'),
                 config('wheel_import.required_columns'),
                 config('wheel_import.column_map'),
-            );
-        } elseif ($input->type === 'point') {
-            PointImportJob::dispatch(
-                $import->id,
+            ),
+            ImportType::Point => PointImportJob::dispatch(
+                $importId,
                 $fullPath,
                 config('point_import.column_map'),
                 config('point_import.required_columns'),
                 config('point_import.boolean_true'),
-            );
-        } else {
-            MasterJob::dispatch(
-                $import->id,
+            ),
+            ImportType::Tire => MasterJob::dispatch(
+                $importId,
                 $fullPath,
                 config('tire_import.chunk_size'),
                 config('tire_import.chunk_path'),
-            );
-        }
+            ),
+        };
 
-        return $import->id;
+        return $importId;
     }
 }

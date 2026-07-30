@@ -23,6 +23,11 @@ class Brand extends Model
         'type',
     ];
 
+    public function models(): HasMany
+    {
+        return $this->hasMany(ProductModel::class);
+    }
+
     public function tireProducts(): HasMany
     {
         return $this->hasMany(TireProduct::class);

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
+use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
 use App\Models\System\ProductImport;
@@ -63,7 +64,7 @@ class TireImportTest extends TestCase
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 
-        $this->assertDatabaseHas('product_imports', ['id' => 1, 'status' => 'pending']);
+        $this->assertDatabaseHas('product_imports', ['id' => 1, 'type' => ImportType::Tire->value, 'status' => 'pending']);
     }
 
     public function test_status_returns_import_data(): void

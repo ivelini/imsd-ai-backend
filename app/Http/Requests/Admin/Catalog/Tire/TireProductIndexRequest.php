@@ -18,11 +18,13 @@ class TireProductIndexRequest extends FormRequest
             'sort_dir' => ['nullable', Rule::in(['asc', 'desc'])],
             'search' => ['nullable', 'string', 'max:100'],
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'model_id' => ['nullable', 'integer', 'exists:product_models,id'],
             'season' => ['nullable', Rule::in(array_column(Season::cases(), 'value'))],
             'is_published' => ['nullable', 'boolean'],
             'is_studded' => ['nullable', 'boolean'],
             'is_runflat' => ['nullable', 'boolean'],
             'is_xl' => ['nullable', 'boolean'],
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
         ];
     }
 
@@ -94,6 +96,12 @@ class TireProductIndexRequest extends FormRequest
                 'required' => false,
                 'type' => 'boolean',
                 'example' => false,
+            ],
+            'city_id' => [
+                'description' => 'ID города для расчёта срока и стоимости доставки.',
+                'required' => false,
+                'type' => 'integer',
+                'example' => 1,
             ],
         ];
     }

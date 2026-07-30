@@ -15,7 +15,11 @@ class TireProductRequest extends FormRequest
 
         return [
             'brand_id' => ['required', 'integer', 'exists:brands,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'model_id' => [
+                'required', 'integer',
+                Rule::exists('product_models', 'id')->where('type', 'tire'),
+            ],
+            'name' => ['nullable', 'string', 'max:255'],
             'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'country_id' => ['nullable', 'integer', 'exists:countries,id'],
             'ean' => [
@@ -48,9 +52,15 @@ class TireProductRequest extends FormRequest
                 'type' => 'integer',
                 'example' => 1,
             ],
-            'name' => [
-                'description' => 'Название модели шины.',
+            'model_id' => [
+                'description' => 'ID модели товара.',
                 'required' => true,
+                'type' => 'integer',
+                'example' => 1,
+            ],
+            'name' => [
+                'description' => 'Отображаемое название (если не указано — берётся из модели).',
+                'required' => false,
                 'type' => 'string',
                 'example' => 'Primacy 4',
             ],

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin\Geo;
 
+use App\Enums\Import\ImportType;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
@@ -47,7 +48,7 @@ class PointImportTest extends TestCase
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 
-        $this->assertDatabaseHas('product_imports', ['type' => 'point', 'status' => 'pending']);
+        $this->assertDatabaseHas('product_imports', ['type' => ImportType::Point->value, 'status' => 'pending']);
     }
 
     public function test_parse_points_xlsx(): void

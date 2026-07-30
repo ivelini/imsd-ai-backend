@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-/** Остаток товара на складе: полиморф (шина/диск). */
+/** Остаток товара на складе: полиморф (шина/диск).
+ *
+ * @property int|null $deliveryDays Устанавливается перед Resource для сериализации.
+ */
 class Stock extends Model
 {
     protected $fillable = [

@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin\Catalog;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Brand;
+use App\Models\Catalog\ProductModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,6 +16,10 @@ class TireProductTest extends TestCase
 
     private Admin $admin;
 
+    private Brand $brand;
+
+    private ProductModel $model;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +28,11 @@ class TireProductTest extends TestCase
         $this->admin = Admin::create([
             'name' => 'Admin', 'email' => 'admin@test.ru',
             'password' => bcrypt('password'), 'admin_role_id' => $role->id, 'is_active' => true,
+        ]);
+
+        $this->brand = Brand::factory()->create();
+        $this->model = ProductModel::create([
+            'brand_id' => $this->brand->id, 'name' => 'TestModel', 'slug' => 'test-model', 'type' => 'tire',
         ]);
     }
 
@@ -34,12 +44,13 @@ class TireProductTest extends TestCase
 
     public function test_crud(): void
     {
-        $brand = Brand::factory()->create();
-
         // create
         $response = $this->actingAs($this->admin, 'sanctum')
             ->postJson('/api/admin/catalog/tires', [
-                'brand_id' => $brand->id, 'name' => 'Test', 'ean' => 'T-EAN', 'season' => 'summer',
+                'brand_id' => $this->brand->id,
+                'model_id' => $this->model->id,
+                'ean' => 'T-EAN',
+                'season' => 'summer',
             ]);
         $response->assertCreated();
         $id = $response->json('data.id');
@@ -48,15 +59,17 @@ class TireProductTest extends TestCase
         $this->actingAs($this->admin, 'sanctum')
             ->getJson("/api/admin/catalog/tires/{$id}")
             ->assertOk()
-            ->assertJsonPath('data.name', 'Test');
+            ->assertJsonPath('data.name', 'TestModel');
 
         // update
         $this->actingAs($this->admin, 'sanctum')
             ->putJson("/api/admin/catalog/tires/{$id}", [
-                'brand_id' => $brand->id, 'name' => 'Updated', 'season' => 'winter',
+                'brand_id' => $this->brand->id,
+                'model_id' => $this->model->id,
+                'season' => 'winter',
             ])
             ->assertOk()
-            ->assertJsonPath('data.name', 'Updated');
+            ->assertJsonPath('data.name', 'TestModel');
 
         // delete
         $this->actingAs($this->admin, 'sanctum')

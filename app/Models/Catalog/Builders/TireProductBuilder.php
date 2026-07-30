@@ -16,7 +16,8 @@ class TireProductBuilder extends Builder
         $q = '%'.$search.'%';
         $this->where(function (Builder $query) use ($q) {
             $query->where('tire_products.name', 'like', $q)
-                ->orWhere('tire_products.ean', 'like', $q);
+                ->orWhere('tire_products.ean', 'like', $q)
+                ->orWhereHas('model', fn (Builder $m) => $m->where('name', 'like', $q));
         });
 
         return $this;
@@ -25,6 +26,13 @@ class TireProductBuilder extends Builder
     public function byBrand(int $brandId): self
     {
         $this->where('tire_products.brand_id', $brandId);
+
+        return $this;
+    }
+
+    public function byModel(int $modelId): self
+    {
+        $this->where('tire_products.model_id', $modelId);
 
         return $this;
     }

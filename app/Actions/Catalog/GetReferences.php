@@ -8,6 +8,7 @@ use App\Enums\Catalog\WheelType;
 use App\Enums\Promotion\PromotionType;
 use App\Models\Catalog\Brand;
 use App\Models\Catalog\Country;
+use App\Models\Catalog\ProductModel;
 use App\Models\Catalog\Supplier;
 
 /** Все справочники и enum-значения для дропдаунов. */
@@ -19,6 +20,26 @@ final readonly class GetReferences
             'brands' => Brand::orderBy('name')
                 ->get(['id', 'name'])
                 ->map(fn (Brand $brand) => ['value' => $brand->id, 'label' => $brand->name])
+                ->values()
+                ->all(),
+
+            'models' => ProductModel::with('brand')
+                ->orderBy('type')
+                ->orderBy('name')
+                ->get()
+                ->map(function ($model) {
+                    /** @var ProductModel $model */
+                    /** @var Brand|null $brand */
+                    $brand = $model->brand;
+
+                    return [
+                        'value' => $model->id,
+                        'label' => $model->name,
+                        'type' => $model->type,
+                        'brand_id' => $model->brand_id,
+                        'brand_name' => $brand?->name,
+                    ];
+                })
                 ->values()
                 ->all(),
 

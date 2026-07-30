@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel \u2014 Admin API",
-        "_postman_id": "9e18c324-c1b2-40ce-a730-f1176de14a2e",
+        "_postman_id": "4275e1e0-97aa-40e7-aefe-6c091644c675",
         "description": "\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u0438\u0432\u043d\u0430\u044f \u043f\u0430\u043d\u0435\u043b\u044c \u0438\u043d\u0442\u0435\u0440\u043d\u0435\u0442-\u043c\u0430\u0433\u0430\u0437\u0438\u043d\u0430 \u0448\u0438\u043d \u0438 \u0434\u0438\u0441\u043a\u043e\u0432.",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -1048,6 +1048,73 @@
                         "description": ""
                     },
                     "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0413\u043e\u0440\u043e\u0434\u0430",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0433\u043e\u0440\u043e\u0434\u043e\u0432 \u0434\u043b\u044f \u0434\u0440\u043e\u043f\u0434\u0430\u0443\u043d\u0430.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/cities",
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "architecto",
+                                    "description": "\u041f\u043e\u0438\u0441\u043a \u043f\u043e \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u044e \u0433\u043e\u0440\u043e\u0434\u0430.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "region_code",
+                                    "value": "architecto",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u043a\u043e\u0434\u0443 \u0440\u0435\u0433\u0438\u043e\u043d\u0430.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/cities?search=architecto&region_code=architecto"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"search\":\"\u0427\u0435\u043b\u044f\u0431\u0438\u043d\u0441\u043a\",\"region_code\":\"74\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
                 }
             ]
         },
@@ -2141,7 +2208,7 @@
             "description": "",
             "item": [
                 {
-                    "name": "\u0412\u0441\u0435 \u0441\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a\u0438 \u043e\u0434\u043d\u0438\u043c \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u043c.",
+                    "name": "GET api\/admin\/references",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",

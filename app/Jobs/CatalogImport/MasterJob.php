@@ -102,10 +102,16 @@ final class MasterJob implements ShouldQueue
         Bus::batch($batch)
             ->name("tire-import-{$this->importId}")
             ->finally(function () use ($importId) {
-                $import = ProductImport::find($importId);
-                if ($import && $import->status === 'processing') {
-                    $import->update(['status' => 'completed', 'finished_at' => now()]);
-                    event(new ImportCompleted($import));
+                // Атомарный переход: только один вызов сможет обновить статус
+                $updated = ProductImport::where('id', $importId)
+                    ->where('status', 'processing')
+                    ->update(['status' => 'completed', 'finished_at' => now()]);
+
+                if ($updated) {
+                    $import = ProductImport::find($importId);
+                    if ($import) {
+                        event(new ImportCompleted($import));
+                    }
                 }
 
                 app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($importId));

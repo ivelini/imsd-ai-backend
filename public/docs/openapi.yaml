@@ -20,6 +20,8 @@ tags:
     description: ''
   - name: Акции
     description: ''
+  - name: Города
+    description: ''
   - name: 'Графики отгрузки'
     description: ''
   - name: Диски
@@ -974,6 +976,64 @@ paths:
         required: true
         schema:
           type: string
+  /api/admin/geo/cities:
+    get:
+      summary: 'Список городов для дропдауна.'
+      operationId: ''
+      description: ''
+      parameters:
+        -
+          in: query
+          name: search
+          description: 'Поиск по названию города.'
+          example: architecto
+          required: false
+          schema:
+            type: string
+            description: 'Поиск по названию города.'
+            example: architecto
+        -
+          in: query
+          name: region_code
+          description: 'Фильтр по коду региона.'
+          example: architecto
+          required: false
+          schema:
+            type: string
+            description: 'Фильтр по коду региона.'
+            example: architecto
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Города
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: string
+                  description: 'Поиск по названию города. Must not be greater than 100 characters.'
+                  example: Челябинск
+                  nullable: true
+                region_code:
+                  type: string
+                  description: 'Фильтр по коду региона. Must not be greater than 10 characters.'
+                  example: '74'
+                  nullable: true
   /api/admin/catalog/delivery-schedules:
     get:
       summary: ''
@@ -2017,8 +2077,8 @@ paths:
           type: string
   /api/admin/references:
     get:
-      summary: 'Все справочники одним запросом.'
-      operationId: ''
+      summary: ''
+      operationId: getApiAdminReferences
       description: ''
       parameters: []
       responses:

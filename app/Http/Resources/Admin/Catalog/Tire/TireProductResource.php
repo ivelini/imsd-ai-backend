@@ -3,13 +3,14 @@
 namespace App\Http\Resources\Admin\Catalog\Tire;
 
 use App\Models\Catalog\Brand;
+use App\Models\Catalog\ProductModel;
 use App\Models\Catalog\Stock;
 use App\Models\Catalog\TireProduct;
 use App\Models\Catalog\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс шины. */
+/** Ресурс шины — только форматирование, без логики. */
 final class TireProductResource extends JsonResource
 {
     /** @var TireProduct */
@@ -28,6 +29,17 @@ final class TireProductResource extends JsonResource
                 $brand = $tire->brand;
 
                 return ['id' => $brand->id, 'name' => $brand->name];
+            }),
+            'model' => $this->whenLoaded('model', function () use ($tire) {
+                /** @var ProductModel $model */
+                $model = $tire->model;
+
+                return [
+                    'id' => $model->id,
+                    'name' => $model->name,
+                    'slug' => $model->slug,
+                    'image' => $model->image,
+                ];
             }),
             'name' => $tire->name,
             'supplier_id' => $tire->supplier_id,
@@ -59,11 +71,13 @@ final class TireProductResource extends JsonResource
                         'quantity' => $s->quantity,
                         'purchase_price' => $s->purchase_price,
                         'price' => $s->price,
+                        'delivery_days' => $s->deliveryDays,
                     ];
                 }
 
                 return $result;
             }),
+            'delivery' => $this->whenLoaded('delivery'),
             'created_at' => $tire->created_at->toIso8601String(),
         ];
     }

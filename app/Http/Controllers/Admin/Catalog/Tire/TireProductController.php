@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Tire;
 
+use App\Actions\Catalog\EnsureProductDisplayName;
 use App\Actions\Catalog\GetTireProductList;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\TireProduct;
 use App\Services\Cache\Catalog\ProductCacheService;
+use App\Services\Catalog\DeliveryInfoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -17,6 +19,8 @@ final readonly class TireProductController
     public function __construct(
         private GetTireProductList $getTireProductList,
         private ProductCacheService $cache,
+        private DeliveryInfoService $deliveryInfo,
+        private EnsureProductDisplayName $ensureDisplayName,
     ) {}
 
     /**
@@ -26,9 +30,13 @@ final readonly class TireProductController
      */
     public function index(TireProductIndexRequest $request): AnonymousResourceCollection
     {
-        return TireProductResource::collection(
-            $this->getTireProductList->execute($request->validated())
-        );
+        $products = $this->getTireProductList->execute($request->validated());
+
+        foreach ($products->items() as $product) {
+            $this->deliveryInfo->enrichProduct($product, $request->validated('city_id'));
+        }
+
+        return TireProductResource::collection($products);
     }
 
     /**
@@ -38,10 +46,13 @@ final readonly class TireProductController
      */
     public function show(int $id): TireProductResource
     {
-        return new TireProductResource(
-            $this->cache->rememberTire($id, fn () => TireProduct::with('brand', 'stocks.warehouse')->findOrFail($id)
-            )
+        $tire = $this->cache->rememberTire($id, fn () => TireProduct::with('brand', 'model', 'stocks.warehouse.deliverySchedules')->findOrFail($id)
         );
+
+        $cityId = request()->get('city_id');
+        $this->deliveryInfo->enrichProduct($tire, $cityId ? (int) $cityId : null);
+
+        return new TireProductResource($tire);
     }
 
     /**
@@ -51,9 +62,10 @@ final readonly class TireProductController
      */
     public function store(TireProductRequest $request): JsonResponse
     {
-        $tire = TireProduct::create($request->validated());
+        $data = $this->ensureDisplayName->execute($request->validated());
+        $tire = TireProduct::create($data);
 
-        return (new TireProductResource($tire))->response()->setStatusCode(201);
+        return (new TireProductResource($tire->load('brand', 'model')))->response()->setStatusCode(201);
     }
 
     /**
@@ -64,9 +76,9 @@ final readonly class TireProductController
     public function update(TireProductRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::findOrFail($id);
-        $tire->update($request->validated());
+        $tire->update($this->ensureDisplayName->execute($request->validated()));
 
-        return new TireProductResource($tire->load('brand'));
+        return new TireProductResource($tire->load('brand', 'model'));
     }
 
     /**

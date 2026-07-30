@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Catalog\CatalogProductController;
 use App\Http\Controllers\Admin\Catalog\CountryController;
 use App\Http\Controllers\Admin\Catalog\ImageController;
 use App\Http\Controllers\Admin\Catalog\MarkupRuleController;
+use App\Http\Controllers\Admin\Catalog\ProductModelController;
 use App\Http\Controllers\Admin\Catalog\PromotionController;
 use App\Http\Controllers\Admin\Catalog\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
@@ -117,6 +118,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/warehouses/{id}', [WarehouseController::class, 'show']);
     Route::put('/catalog/warehouses/{id}', [WarehouseController::class, 'update']);
     Route::delete('/catalog/warehouses/{id}', [WarehouseController::class, 'destroy']);
+
+    Route::get('/catalog/models', [ProductModelController::class, 'index']);
+    Route::post('/catalog/models', [ProductModelController::class, 'store']);
+    Route::get('/catalog/models/{id}', [ProductModelController::class, 'show']);
+    Route::put('/catalog/models/{id}', [ProductModelController::class, 'update']);
+    Route::delete('/catalog/models/{id}', [ProductModelController::class, 'destroy']);
 
     Route::get('/catalog/countries', [CountryController::class, 'index']);
 

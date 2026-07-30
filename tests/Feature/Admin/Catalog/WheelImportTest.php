@@ -9,6 +9,7 @@ use App\DTOs\TireImport\ParseImportFileInput;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\TireImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
+use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
 use App\Models\Catalog\WheelProduct;
@@ -54,7 +55,7 @@ class WheelImportTest extends TestCase
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 
-        $this->assertDatabaseHas('product_imports', ['type' => 'wheel', 'status' => 'pending']);
+        $this->assertDatabaseHas('product_imports', ['type' => ImportType::Wheel->value, 'status' => 'pending']);
     }
 
     public function test_parse_wheels_xlsx(): void

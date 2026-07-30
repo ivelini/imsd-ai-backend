@@ -18,9 +18,11 @@ class WheelProductIndexRequest extends FormRequest
             'sort_dir' => ['nullable', Rule::in(['asc', 'desc'])],
             'search' => ['nullable', 'string', 'max:100'],
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'model_id' => ['nullable', 'integer', 'exists:product_models,id'],
             'type' => ['nullable', Rule::in(array_column(WheelType::cases(), 'value'))],
             'color' => ['nullable', 'string', 'max:50'],
             'is_published' => ['nullable', 'boolean'],
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
         ];
     }
 
@@ -80,6 +82,12 @@ class WheelProductIndexRequest extends FormRequest
                 'required' => false,
                 'type' => 'boolean',
                 'example' => true,
+            ],
+            'city_id' => [
+                'description' => 'ID города для расчёта срока и стоимости доставки.',
+                'required' => false,
+                'type' => 'integer',
+                'example' => 1,
             ],
         ];
     }

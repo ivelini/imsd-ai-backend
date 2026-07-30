@@ -3,13 +3,14 @@
 namespace App\Http\Resources\Admin\Catalog\Wheel;
 
 use App\Models\Catalog\Brand;
+use App\Models\Catalog\ProductModel;
 use App\Models\Catalog\Stock;
 use App\Models\Catalog\Warehouse;
 use App\Models\Catalog\WheelProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс диска. */
+/** Ресурс диска — только форматирование, без логики. */
 final class WheelProductResource extends JsonResource
 {
     /** @var WheelProduct */
@@ -28,6 +29,17 @@ final class WheelProductResource extends JsonResource
                 $brand = $wheel->brand;
 
                 return ['id' => $brand->id, 'name' => $brand->name];
+            }),
+            'model' => $this->whenLoaded('model', function () use ($wheel) {
+                /** @var ProductModel $model */
+                $model = $wheel->model;
+
+                return [
+                    'id' => $model->id,
+                    'name' => $model->name,
+                    'slug' => $model->slug,
+                    'image' => $model->image,
+                ];
             }),
             'name' => $wheel->name,
             'supplier_id' => $wheel->supplier_id,
@@ -56,11 +68,13 @@ final class WheelProductResource extends JsonResource
                         'quantity' => $s->quantity,
                         'purchase_price' => $s->purchase_price,
                         'price' => $s->price,
+                        'delivery_days' => $s->deliveryDays,
                     ];
                 }
 
                 return $result;
             }),
+            'delivery' => $this->whenLoaded('delivery'),
             'created_at' => $wheel->created_at->toIso8601String(),
         ];
     }

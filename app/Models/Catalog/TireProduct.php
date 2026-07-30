@@ -23,6 +23,7 @@ class TireProduct extends Model
 
     protected $fillable = [
         'brand_id',
+        'model_id',
         'name',
         'supplier_id',
         'country_id',
@@ -62,6 +63,11 @@ class TireProduct extends Model
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function model(): BelongsTo
+    {
+        return $this->belongsTo(ProductModel::class, 'model_id');
     }
 
     public function supplier(): BelongsTo
