@@ -7,8 +7,10 @@ use App\Models\Catalog\ProductModel;
 use App\Models\Catalog\Stock;
 use App\Models\Catalog\TireProduct;
 use App\Models\Catalog\Warehouse;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /** Ресурс шины — только форматирование, без логики. */
 final class TireProductResource extends JsonResource
@@ -78,6 +80,18 @@ final class TireProductResource extends JsonResource
                 return $result;
             }),
             'delivery' => $this->whenLoaded('delivery'),
+            'images' => $this->whenLoaded('images', function () use ($tire) {
+                return $tire->images->map(function ($img) {
+                    /** @var Image $img */
+                    return [
+                        'id' => $img->id,
+                        'path' => $img->path,
+                        'url' => Storage::url($img->path),
+                        'sort' => $img->sort,
+                        'is_main' => $img->is_main,
+                    ];
+                })->values()->all();
+            }),
             'created_at' => $tire->created_at->toIso8601String(),
         ];
     }

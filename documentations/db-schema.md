@@ -5,17 +5,20 @@
 | Таблица | Назначение | Ключевые поля |
 |---------|------------|---------------|
 | `brands` | Бренды товаров (Winter Drive...) | `id`, `name`, `slug`, `logo`, `description`, `type` (tire/wheel/both) |
+| `product_models` | Модели товаров (A503, LS 131) | `id`, `brand_id` (FK), `name`, `slug` (unique per brand), `description`, `image`, `type` (tire/wheel), timestamps |
 | `suppliers` | Заводы-производители (Cordiant, Nokian…) | `id`, `name`, `code` |
 | `countries` | Страны (ISO-3166) | `id`, `code`, `name` |
 | `warehouses` | Склады — крупные продавцы, у которых мы покупаем | `id`, `name` |
 | `warehouse_markup_rules` | Правила наценки по складам | `id`, `warehouse_id`, `price_from`, `price_to`, `coefficient` |
-| `tire_products` | Шины | `id`, `brand_id`, **`name`**, `supplier_id`, **`country_id`**, `season`, `width`, `profile`, `diameter`, `load_index`, `speed_index`, `is_studded`, `is_runflat`, `is_xl`, `year`, `ean`, `description` |
-| `wheel_products` | Диски | `id`, `brand_id`, **`name`**, `supplier_id`, **`country_id`**, `type` (alloy/steel/forged), `color`, `pcd`, `et`, `hub_diameter`, `width`, `diameter`, `ean` |
+| `tire_products` | Шины | `id`, `brand_id`, **`model_id`** (FK → product_models), `name` (отображаемое), `supplier_id`, **`country_id`**, `season`, `width`, `profile`, `diameter`, `load_index`, `speed_index`, `is_studded`, `is_runflat`, `is_xl`, `year`, `ean`, `description` |
+| `wheel_products` | Диски | `id`, `brand_id`, **`model_id`** (FK → product_models), `name` (отображаемое), `supplier_id`, **`country_id`**, `type` (alloy/steel/forged), `color`, `pcd`, `et`, `hub_diameter`, `width`, `diameter`, `ean` |
 | `stocks` | Остатки и цены на складах (полиморф) | `id`, `stockable_type`, `stockable_id`, `warehouse_id`, `price`, `quantity`, `purchase_price` |
 | `images` | Изображения (полиморф) | `id`, `imageable_type`, `imageable_id`, `path`, `sort`, `is_main` |
 | `promotions` | Акции (полиморф) | `id`, `name`, `description`, `type`, `value`, `starts_at`, `ends_at`, `promotable_type`, `promotable_id` |
 
 **Примечание:** `supplier_id` в товаре — кто произвёл. `warehouse_id` в stock — у кого купили. Это разные сущности.
+**Модель:** `product_models` — сущность, связывающая товары одного семейства (например, «A503» или «LS 131»). Одна модель — много продуктов с разными типоразмерами. Slug: `{brand.slug}-{model_slug}`. Для дисков название модели парсится из полного имени продукта (префикс «Диск » + размерная часть). `brand_id` на продукте сохранён денормализованно для фильтрации.
+**ImportType:** `app/Enums/Import/ImportType.php` — `Tire`/`Wheel`/`Point`/`Model`. Используется в `product_imports.type`.
 
 **Изображения:** таблица `images` поддерживает несколько изображений на один товар (полиморф). При импорте загружается основное фото (`is_main = true`). В админке можно добавлять/удалять дополнительные фото и менять порядок (`sort`).
 
@@ -96,6 +99,7 @@
 **Исходные файлы импорта** находятся в `documentations/import/`:
 - `tires.xlsx` — 382 товара (шины)
 - `wheels.xlsx` — 431 товар (диски)
+- `models.xlsx` — модели товаров (бренд + название + тип + описание)
 - `vehicle.csv` — ~450 строк (автомобили + совместимость)
 - `points.xlsx` — 80 городов (точки выдачи + цены + сроки)
 
@@ -143,6 +147,15 @@
 | Шины OEM/замена/тюнинг | vehicle_tire_sizes | split по `\|`, парсинг `235/50 R18` |
 | Диски OEM/замена/тюнинг | vehicle_wheel_specs | split по `\|`, парсинг `7.5 x 18 ET45` |
 | PCD, DIA, Болты | vehicle_wheel_specs | `pcd`, `hub_diameter`, `bolts` |
+
+### Модели (XLSX)
+
+| Колонка XLSX | Таблица | Поле | Примечание |
+|-------------|---------|------|------------|
+| `vendor` | brands → product_models | `brand_id` | Поиск/создание бренда по имени |
+| `name` | product_models | `name` | Для дисков — парсинг через `parseWheelModelName()` (убирает «Диск » и размерную часть) |
+| `type` | product_models | `type` | `tire` / `wheel` |
+| `description` | product_models | `description` | Общее описание модели |
 
 ### Точки выдачи (XLSX)
 

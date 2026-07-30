@@ -20,7 +20,7 @@ class BrandRequest extends FormRequest
                 'max:255',
                 Rule::unique('brands', 'slug')->ignore($brandId),
             ],
-            'logo' => ['nullable', 'string', 'max:255'],
+            'logo' => ['nullable', 'file', 'image', 'mimes:jpeg,png,webp', 'max:10240'],
             'description' => ['nullable', 'string'],
             'type' => ['required', Rule::in(['tire', 'wheel', 'both'])],
         ];
@@ -42,9 +42,9 @@ class BrandRequest extends FormRequest
                 'example' => 'michelin',
             ],
             'logo' => [
-                'description' => 'URL логотипа бренда.',
+                'description' => 'Файл логотипа бренда (jpeg, png, webp, до 10 МБ).',
                 'required' => false,
-                'type' => 'string',
+                'type' => 'file',
             ],
             'description' => [
                 'description' => 'Описание бренда.',

@@ -11,6 +11,7 @@ use App\Preconditions\Catalog\EnsureModelHasNoProducts;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Storage;
 
 /** CRUD моделей товаров.
  *
@@ -43,7 +44,14 @@ final readonly class ProductModelController
      */
     public function store(ProductModelRequest $request): JsonResponse
     {
-        $model = ProductModel::create($request->validated());
+        $data = $request->validated();
+        unset($data['image']);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('models', 'public');
+        }
+
+        $model = ProductModel::create($data);
         $this->referencesCache->forget();
 
         return (new ProductModelResource($model))->response()->setStatusCode(201);
@@ -71,7 +79,17 @@ final readonly class ProductModelController
     public function update(ProductModelRequest $request, int $id): ProductModelResource
     {
         $model = ProductModel::findOrFail($id);
-        $model->update($request->validated());
+        $data = $request->validated();
+        unset($data['image']);
+
+        if ($request->hasFile('image')) {
+            if ($model->image) {
+                Storage::disk('public')->delete($model->image);
+            }
+            $data['image'] = $request->file('image')->store('models', 'public');
+        }
+
+        $model->update($data);
         $this->referencesCache->forget();
 
         return new ProductModelResource($model);

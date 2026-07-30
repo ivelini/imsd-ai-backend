@@ -14,7 +14,7 @@ final readonly class GetTireProductList
     {
         $perPage = min(max((int) ($params['per_page'] ?? 50), 10), 100);
 
-        $query = TireProduct::with('brand', 'model', 'stocks.warehouse.deliverySchedules');
+        $query = TireProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules');
 
         if (! empty($params['search'])) {
             $query->search($params['search']);

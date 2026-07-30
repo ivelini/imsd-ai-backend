@@ -7,8 +7,10 @@ use App\Models\Catalog\ProductModel;
 use App\Models\Catalog\Stock;
 use App\Models\Catalog\Warehouse;
 use App\Models\Catalog\WheelProduct;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /** Ресурс диска — только форматирование, без логики. */
 final class WheelProductResource extends JsonResource
@@ -75,6 +77,18 @@ final class WheelProductResource extends JsonResource
                 return $result;
             }),
             'delivery' => $this->whenLoaded('delivery'),
+            'images' => $this->whenLoaded('images', function () use ($wheel) {
+                return $wheel->images->map(function ($img) {
+                    /** @var Image $img */
+                    return [
+                        'id' => $img->id,
+                        'path' => $img->path,
+                        'url' => Storage::url($img->path),
+                        'sort' => $img->sort,
+                        'is_main' => $img->is_main,
+                    ];
+                })->values()->all();
+            }),
             'created_at' => $wheel->created_at->toIso8601String(),
         ];
     }

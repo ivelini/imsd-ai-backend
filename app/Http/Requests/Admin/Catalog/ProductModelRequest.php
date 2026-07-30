@@ -24,7 +24,7 @@ class ProductModelRequest extends FormRequest
                     ->ignore($modelId),
             ],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,webp', 'max:10240'],
             'type' => ['required', Rule::in(['tire', 'wheel'])],
         ];
     }
@@ -56,9 +56,9 @@ class ProductModelRequest extends FormRequest
                 'type' => 'string',
             ],
             'image' => [
-                'description' => 'URL изображения модели.',
+                'description' => 'Файл изображения модели (jpeg, png, webp, до 10 МБ).',
                 'required' => false,
-                'type' => 'string',
+                'type' => 'file',
             ],
             'type' => [
                 'description' => 'Тип: tire или wheel.',

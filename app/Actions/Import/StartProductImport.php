@@ -5,6 +5,7 @@ namespace App\Actions\Import;
 use App\DTOs\Import\StartImportInput;
 use App\Enums\Import\ImportType;
 use App\Jobs\CatalogImport\MasterJob;
+use App\Jobs\CatalogImport\ModelImportJob;
 use App\Jobs\CatalogImport\WheelMasterJob;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\System\ProductImport;
@@ -53,6 +54,12 @@ final readonly class StartProductImport
                 $fullPath,
                 config('tire_import.chunk_size'),
                 config('tire_import.chunk_path'),
+            ),
+            ImportType::Model => ModelImportJob::dispatch(
+                $importId,
+                $fullPath,
+                config('model_import.column_map'),
+                config('model_import.required_columns'),
             ),
         };
 

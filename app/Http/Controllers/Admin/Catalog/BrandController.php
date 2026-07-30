@@ -10,6 +10,7 @@ use App\Models\Catalog\Brand;
 use App\Preconditions\Catalog\EnsureBrandHasNoProducts;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Storage;
 
 /** CRUD брендов.
  *
@@ -41,7 +42,14 @@ final readonly class BrandController
      */
     public function store(BrandRequest $request): JsonResponse
     {
-        $brand = Brand::create($request->validated());
+        $data = $request->validated();
+        unset($data['logo']);
+
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('brands', 'public');
+        }
+
+        $brand = Brand::create($data);
 
         return (new BrandResource($brand))->response()->setStatusCode(201);
     }
@@ -67,7 +75,17 @@ final readonly class BrandController
     public function update(BrandRequest $request, int $id): BrandResource
     {
         $brand = Brand::findOrFail($id);
-        $brand->update($request->validated());
+        $data = $request->validated();
+        unset($data['logo']);
+
+        if ($request->hasFile('logo')) {
+            if ($brand->logo) {
+                Storage::disk('public')->delete($brand->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('brands', 'public');
+        }
+
+        $brand->update($data);
 
         return new BrandResource($brand);
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\Catalog\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
 use App\Http\Controllers\Admin\Catalog\CountryController;
 use App\Http\Controllers\Admin\Catalog\ImageController;
+use App\Http\Controllers\Admin\Catalog\ImportModelController;
 use App\Http\Controllers\Admin\Catalog\MarkupRuleController;
 use App\Http\Controllers\Admin\Catalog\ProductModelController;
 use App\Http\Controllers\Admin\Catalog\PromotionController;
@@ -120,6 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/catalog/warehouses/{id}', [WarehouseController::class, 'destroy']);
 
     Route::get('/catalog/models', [ProductModelController::class, 'index']);
+    Route::post('/catalog/models/import', [ImportModelController::class, 'store']);
     Route::post('/catalog/models', [ProductModelController::class, 'store']);
     Route::get('/catalog/models/{id}', [ProductModelController::class, 'show']);
     Route::put('/catalog/models/{id}', [ProductModelController::class, 'update']);

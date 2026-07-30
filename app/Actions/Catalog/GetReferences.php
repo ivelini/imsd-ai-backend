@@ -23,8 +23,8 @@ final readonly class GetReferences
                 ->values()
                 ->all(),
 
-            'models' => ProductModel::with('brand')
-                ->orderBy('type')
+            'tire_models' => ProductModel::with('brand')
+                ->where('type', 'tire')
                 ->orderBy('name')
                 ->get()
                 ->map(function ($model) {
@@ -35,7 +35,25 @@ final readonly class GetReferences
                     return [
                         'value' => $model->id,
                         'label' => $model->name,
-                        'type' => $model->type,
+                        'brand_id' => $model->brand_id,
+                        'brand_name' => $brand?->name,
+                    ];
+                })
+                ->values()
+                ->all(),
+
+            'wheel_models' => ProductModel::with('brand')
+                ->where('type', 'wheel')
+                ->orderBy('name')
+                ->get()
+                ->map(function ($model) {
+                    /** @var ProductModel $model */
+                    /** @var Brand|null $brand */
+                    $brand = $model->brand;
+
+                    return [
+                        'value' => $model->id,
+                        'label' => $model->name,
                         'brand_id' => $model->brand_id,
                         'brand_name' => $brand?->name,
                     ];
