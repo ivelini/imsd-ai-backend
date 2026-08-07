@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\NotificationIndexRequest;
 use App\Http\Resources\Admin\NotificationResource;
+use App\Models\Auth\Admin;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 /** Уведомления для админ-панели (список, прочтение). */
 final readonly class NotificationController
@@ -17,7 +18,9 @@ final readonly class NotificationController
      */
     public function index(NotificationIndexRequest $request): JsonResponse
     {
-        $query = Auth::user()->notifications();
+        /** @var Admin $admin */
+        $admin = $request->user();
+        $query = $admin->notifications();
 
         if ($request->boolean('unread_only')) {
             $query->whereNull('read_at');
@@ -34,7 +37,7 @@ final readonly class NotificationController
                 'last_page' => $notifications->lastPage(),
                 'per_page' => $notifications->perPage(),
                 'total' => $notifications->total(),
-                'unread_count' => Auth::user()->unreadNotifications()->count(),
+                'unread_count' => $admin->unreadNotifications()->count(),
             ],
         ]);
     }
@@ -44,9 +47,11 @@ final readonly class NotificationController
      *
      * @group Уведомления
      */
-    public function read(string $id): JsonResponse
+    public function read(Request $request, string $id): JsonResponse
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
+        /** @var Admin $admin */
+        $admin = $request->user();
+        $notification = $admin->notifications()->findOrFail($id);
         $notification->markAsRead();
 
         return response()->json(['message' => 'OK']);
@@ -57,9 +62,11 @@ final readonly class NotificationController
      *
      * @group Уведомления
      */
-    public function readAll(): JsonResponse
+    public function readAll(Request $request): JsonResponse
     {
-        Auth::user()->unreadNotifications()->update(['read_at' => now()]);
+        /** @var Admin $admin */
+        $admin = $request->user();
+        $admin->unreadNotifications()->update(['read_at' => now()]);
 
         return response()->json(['message' => 'OK']);
     }
