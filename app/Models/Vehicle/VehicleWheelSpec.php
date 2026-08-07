@@ -11,6 +11,7 @@ class VehicleWheelSpec extends Model
     protected $fillable = [
         'modification_id',
         'type',
+        'position',
         'width',
         'diameter',
         'et',

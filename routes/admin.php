@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Catalog\Supplier\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\GetTireDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
+use App\Http\Controllers\Admin\Catalog\Vehicle\ImportVehicleController;
 use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseController;
 use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseStockController;
 use App\Http\Controllers\Admin\Catalog\Wheel\GetWheelDimensionsController;
@@ -87,6 +88,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/promotions/{id}', [PromotionController::class, 'show']);
     Route::put('/catalog/promotions/{id}', [PromotionController::class, 'update']);
     Route::delete('/catalog/promotions/{id}', [PromotionController::class, 'destroy']);
+
+    Route::post('/catalog/import/vehicle', [ImportVehicleController::class, 'store']);
 
     Route::get('/catalog/wheels/dimensions', GetWheelDimensionsController::class);
     Route::get('/catalog/wheels', [WheelProductController::class, 'index']);

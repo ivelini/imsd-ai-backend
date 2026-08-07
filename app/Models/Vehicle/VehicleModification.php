@@ -12,7 +12,15 @@ class VehicleModification extends Model
     protected $fillable = [
         'model_id',
         'name',
+        'year',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'year' => 'integer',
+        ];
+    }
 
     public function model(): BelongsTo
     {

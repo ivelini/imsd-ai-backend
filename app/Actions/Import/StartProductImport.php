@@ -4,11 +4,13 @@ namespace App\Actions\Import;
 
 use App\DTOs\Import\ImportMasterJobInput;
 use App\DTOs\Import\StartImportInput;
+use App\DTOs\VehicleImport\VehicleImportMasterJobInput;
 use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
 use App\Jobs\CatalogImport\ImportMasterJob;
 use App\Jobs\CatalogImport\ModelImportJob;
 use App\Jobs\GeoImport\PointImportJob;
+use App\Jobs\VehicleImport\VehicleImportMasterJob;
 use App\Models\System\ProductImport;
 use Illuminate\Contracts\Filesystem\Filesystem;
 
@@ -66,6 +68,12 @@ final readonly class StartProductImport
                 config('model_import.column_map'),
                 config('model_import.required_columns'),
             ),
+            ImportType::Vehicle => VehicleImportMasterJob::dispatch(new VehicleImportMasterJobInput(
+                importId: $importId,
+                filePath: $fullPath,
+                chunkSize: config('vehicle_import.chunk_size'),
+                chunkPath: config('vehicle_import.chunk_path'),
+            )),
         };
 
         return $importId;

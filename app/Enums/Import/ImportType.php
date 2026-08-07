@@ -9,6 +9,7 @@ enum ImportType: string
     case Wheel = 'wheel';
     case Point = 'point';
     case Model = 'model';
+    case Vehicle = 'vehicle';
 
     public function label(): string
     {
@@ -17,6 +18,7 @@ enum ImportType: string
             self::Wheel => 'Диски',
             self::Point => 'Точки выдачи',
             self::Model => 'Модели',
+            self::Vehicle => 'Автомобили',
         };
     }
 }

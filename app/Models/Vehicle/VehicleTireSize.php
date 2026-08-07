@@ -11,6 +11,7 @@ class VehicleTireSize extends Model
     protected $fillable = [
         'modification_id',
         'type',
+        'position',
         'width',
         'profile',
         'diameter',
