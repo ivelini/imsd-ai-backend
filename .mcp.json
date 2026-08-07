@@ -1,13 +1,18 @@
 {
-  "mcpServers": {
-    "db": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@bytebase/dbhub",
-        "--dsn",
-        "postgresql://imsd_ai:imsd_ai_secret@localhost:5432/imsd_ai"
-      ]
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "docker",
+            "args": [
+                "compose",
+                "-f",
+                "../docker-compose.yml",
+                "exec",
+                "-T",
+                "backend-app",
+                "php",
+                "artisan",
+                "boost:mcp"
+            ]
+        }
     }
-  }
 }
