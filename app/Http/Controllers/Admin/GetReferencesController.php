@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 /** Все справочники и enum-значения для дропдаунов.
  *
- * @group Справочники
  */
 final readonly class GetReferencesController
 {

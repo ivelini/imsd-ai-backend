@@ -13,13 +13,7 @@ final readonly class GetTireDimensionsController
         private GetTireDimensions $getTireDimensions,
     ) {}
 
-    /**
-     * Получить доступные значения фильтров шин.
-     *
-     * @authenticated
-     *
-     * @group Каталог — шины
-     */
+    /** Получить доступные значения фильтров шин. */
     public function __invoke(TireDimensionsRequest $request): JsonResponse
     {
         return response()->json([

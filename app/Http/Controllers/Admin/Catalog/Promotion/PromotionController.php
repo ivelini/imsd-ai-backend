@@ -21,9 +21,6 @@ final readonly class PromotionController
         private UpdatePromotion $updatePromotion,
     ) {}
 
-    /**
-     * @group Акции
-     */
     public function index(PromotionIndexRequest $request): AnonymousResourceCollection
     {
         return PromotionResource::collection(
@@ -31,9 +28,6 @@ final readonly class PromotionController
         );
     }
 
-    /**
-     * @group Акции
-     */
     public function store(PromotionRequest $request): JsonResponse
     {
         $promotion = $this->createPromotion->execute($request->validated());
@@ -41,17 +35,11 @@ final readonly class PromotionController
         return (new PromotionResource($promotion))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Акции
-     */
     public function show(int $id): PromotionResource
     {
         return new PromotionResource(Promotion::findOrFail($id));
     }
 
-    /**
-     * @group Акции
-     */
     public function update(PromotionRequest $request, int $id): PromotionResource
     {
         $promotion = $this->updatePromotion->execute($id, $request->validated());
@@ -59,9 +47,6 @@ final readonly class PromotionController
         return new PromotionResource($promotion);
     }
 
-    /**
-     * @group Акции
-     */
     public function destroy(int $id): JsonResponse
     {
         Promotion::findOrFail($id)->delete();

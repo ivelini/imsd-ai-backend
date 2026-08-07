@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 /** Остатки товара на складах с ценами и доставкой.
  *
- * @group Складские остатки
  */
 final readonly class WarehouseStockController
 {
@@ -17,13 +16,7 @@ final readonly class WarehouseStockController
         private GetWarehouseStock $getWarehouseStock,
     ) {}
 
-    /**
-     * Остатки товара на всех складах.
-     *
-     * @queryParam city_id int required ID города.
-     *
-     * @authenticated
-     */
+    /** Остатки товара на всех складах. */
     public function __invoke(Request $request): WarehouseStockResource
     {
         $productId = (int) ($request->route('tireId') ?? $request->route('wheelId'));

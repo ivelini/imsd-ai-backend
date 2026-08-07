@@ -17,9 +17,6 @@ final readonly class CityPriceRuleController
         private GetCityPriceRuleList $getCityPriceRuleList,
     ) {}
 
-    /**
-     * @group Правила наценки городов
-     */
     public function index(CityPriceRuleIndexRequest $request): AnonymousResourceCollection
     {
         return CityPriceRuleResource::collection(
@@ -27,9 +24,6 @@ final readonly class CityPriceRuleController
         );
     }
 
-    /**
-     * @group Правила наценки городов
-     */
     public function store(CityPriceRuleRequest $request): JsonResponse
     {
         $rule = CityPriceRule::create($request->validated());
@@ -37,9 +31,6 @@ final readonly class CityPriceRuleController
         return (new CityPriceRuleResource($rule))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Правила наценки городов
-     */
     public function show(int $id): CityPriceRuleResource
     {
         return new CityPriceRuleResource(
@@ -47,9 +38,6 @@ final readonly class CityPriceRuleController
         );
     }
 
-    /**
-     * @group Правила наценки городов
-     */
     public function update(CityPriceRuleRequest $request, int $id): CityPriceRuleResource
     {
         $rule = CityPriceRule::findOrFail($id);
@@ -58,9 +46,6 @@ final readonly class CityPriceRuleController
         return new CityPriceRuleResource($rule->load('city'));
     }
 
-    /**
-     * @group Правила наценки городов
-     */
     public function destroy(int $id): JsonResponse
     {
         CityPriceRule::findOrFail($id)->delete();

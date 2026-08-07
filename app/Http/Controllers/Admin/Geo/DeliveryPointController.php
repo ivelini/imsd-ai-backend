@@ -17,9 +17,6 @@ final readonly class DeliveryPointController
         private GetDeliveryPointList $getDeliveryPointList,
     ) {}
 
-    /**
-     * @group Точки выдачи
-     */
     public function index(DeliveryPointIndexRequest $request): AnonymousResourceCollection
     {
         return DeliveryPointResource::collection(
@@ -27,9 +24,6 @@ final readonly class DeliveryPointController
         );
     }
 
-    /**
-     * @group Точки выдачи
-     */
     public function store(DeliveryPointRequest $request): JsonResponse
     {
         $point = DeliveryPoint::create($request->validated());
@@ -37,9 +31,6 @@ final readonly class DeliveryPointController
         return (new DeliveryPointResource($point))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Точки выдачи
-     */
     public function show(int $id): DeliveryPointResource
     {
         return new DeliveryPointResource(
@@ -47,9 +38,6 @@ final readonly class DeliveryPointController
         );
     }
 
-    /**
-     * @group Точки выдачи
-     */
     public function update(DeliveryPointRequest $request, int $id): DeliveryPointResource
     {
         $point = DeliveryPoint::findOrFail($id);
@@ -58,9 +46,6 @@ final readonly class DeliveryPointController
         return new DeliveryPointResource($point->load('city'));
     }
 
-    /**
-     * @group Точки выдачи
-     */
     public function destroy(int $id): JsonResponse
     {
         DeliveryPoint::findOrFail($id)->delete();

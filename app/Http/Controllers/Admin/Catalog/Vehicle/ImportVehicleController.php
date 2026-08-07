@@ -17,15 +17,7 @@ final readonly class ImportVehicleController
         private EnsureNoActiveImport $ensureNoActiveImport,
     ) {}
 
-    /**
-     * Загрузить CSV-файл с характеристиками автомобилей.
-     *
-     * @authenticated
-     *
-     * @bodyParam file file required CSV-файл (макс. 50 МБ).
-     *
-     * @response status=202 {"data": {"import_id": 1}}
-     */
+    /** Загрузить CSV-файл с характеристиками автомобилей. */
     public function store(UploadCsvFileRequest $request): JsonResponse
     {
         $this->ensureNoActiveImport->ensure(ImportType::Vehicle);

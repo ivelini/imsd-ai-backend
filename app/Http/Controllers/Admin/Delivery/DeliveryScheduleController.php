@@ -17,9 +17,6 @@ final readonly class DeliveryScheduleController
         private GetDeliveryScheduleList $getDeliveryScheduleList,
     ) {}
 
-    /**
-     * @group Графики отгрузки
-     */
     public function index(DeliveryScheduleIndexRequest $request): AnonymousResourceCollection
     {
         return DeliveryScheduleResource::collection(
@@ -27,9 +24,6 @@ final readonly class DeliveryScheduleController
         );
     }
 
-    /**
-     * @group Графики отгрузки
-     */
     public function store(DeliveryScheduleRequest $request): JsonResponse
     {
         $schedule = DeliverySchedule::create($request->validated());
@@ -37,9 +31,6 @@ final readonly class DeliveryScheduleController
         return (new DeliveryScheduleResource($schedule))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Графики отгрузки
-     */
     public function show(int $id): DeliveryScheduleResource
     {
         return new DeliveryScheduleResource(
@@ -47,9 +38,6 @@ final readonly class DeliveryScheduleController
         );
     }
 
-    /**
-     * @group Графики отгрузки
-     */
     public function update(DeliveryScheduleRequest $request, int $id): DeliveryScheduleResource
     {
         $schedule = DeliverySchedule::findOrFail($id);
@@ -58,9 +46,6 @@ final readonly class DeliveryScheduleController
         return new DeliveryScheduleResource($schedule->load('warehouse'));
     }
 
-    /**
-     * @group Графики отгрузки
-     */
     public function destroy(int $id): JsonResponse
     {
         DeliverySchedule::findOrFail($id)->delete();

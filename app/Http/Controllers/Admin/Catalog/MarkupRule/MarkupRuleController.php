@@ -17,9 +17,6 @@ final readonly class MarkupRuleController
         private GetMarkupRuleList $getMarkupRuleList,
     ) {}
 
-    /**
-     * @group Правила наценки
-     */
     public function index(MarkupRuleIndexRequest $request): AnonymousResourceCollection
     {
         return MarkupRuleResource::collection(
@@ -27,9 +24,6 @@ final readonly class MarkupRuleController
         );
     }
 
-    /**
-     * @group Правила наценки
-     */
     public function store(MarkupRuleRequest $request): JsonResponse
     {
         $rule = WarehouseMarkupRule::create($request->validated());
@@ -37,9 +31,6 @@ final readonly class MarkupRuleController
         return (new MarkupRuleResource($rule))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Правила наценки
-     */
     public function show(int $id): MarkupRuleResource
     {
         return new MarkupRuleResource(
@@ -47,9 +38,6 @@ final readonly class MarkupRuleController
         );
     }
 
-    /**
-     * @group Правила наценки
-     */
     public function update(MarkupRuleRequest $request, int $id): MarkupRuleResource
     {
         $rule = WarehouseMarkupRule::findOrFail($id);
@@ -58,9 +46,6 @@ final readonly class MarkupRuleController
         return new MarkupRuleResource($rule->load('warehouse'));
     }
 
-    /**
-     * @group Правила наценки
-     */
     public function destroy(int $id): JsonResponse
     {
         WarehouseMarkupRule::findOrFail($id)->delete();

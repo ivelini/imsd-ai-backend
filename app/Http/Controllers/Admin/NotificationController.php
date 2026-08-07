@@ -11,11 +11,7 @@ use Illuminate\Http\Request;
 /** Уведомления для админ-панели (список, прочтение). */
 final readonly class NotificationController
 {
-    /**
-     * Список уведомлений текущего админа.
-     *
-     * @group Уведомления
-     */
+    /** Список уведомлений текущего админа. */
     public function index(NotificationIndexRequest $request): JsonResponse
     {
         /** @var Admin $admin */
@@ -42,11 +38,7 @@ final readonly class NotificationController
         ]);
     }
 
-    /**
-     * Отметить уведомление прочитанным.
-     *
-     * @group Уведомления
-     */
+    /** Отметить уведомление прочитанным. */
     public function read(Request $request, string $id): JsonResponse
     {
         /** @var Admin $admin */
@@ -57,11 +49,7 @@ final readonly class NotificationController
         return response()->json(['message' => 'OK']);
     }
 
-    /**
-     * Отметить все уведомления прочитанными.
-     *
-     * @group Уведомления
-     */
+    /** Отметить все уведомления прочитанными. */
     public function readAll(Request $request): JsonResponse
     {
         /** @var Admin $admin */

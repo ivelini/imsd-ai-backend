@@ -15,9 +15,6 @@ final readonly class CatalogProductController
         private GetCatalogProducts $getCatalogProducts,
     ) {}
 
-    /**
-     * @group Каталог
-     */
     public function index(CatalogProductIndexRequest $request): AnonymousResourceCollection
     {
         $result = $this->getCatalogProducts->execute(

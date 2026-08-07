@@ -9,7 +9,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Список городов.
  *
- * @group Города
  */
 final readonly class CityController
 {
@@ -19,10 +18,6 @@ final readonly class CityController
 
     /** Список городов для дропдауна.
      *
-     * @queryParam search string Поиск по названию города.
-     * @queryParam region_code string Фильтр по коду региона.
-     *
-     * @authenticated
      */
     public function index(CityIndexRequest $request): AnonymousResourceCollection
     {

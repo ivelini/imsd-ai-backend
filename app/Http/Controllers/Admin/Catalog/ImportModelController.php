@@ -9,9 +9,7 @@ use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Preconditions\Import\EnsureNoActiveImport;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Загрузка и запуск импорта моделей товаров.
- */
+/** Загрузка и запуск импорта моделей товаров. */
 final readonly class ImportModelController
 {
     public function __construct(
@@ -19,13 +17,7 @@ final readonly class ImportModelController
         private EnsureNoActiveImport $ensureNoActiveImport,
     ) {}
 
-    /**
-     * Загрузить XLSX-файл с моделями.
-     *
-     * @authenticated
-     *
-     * @group Импорт
-     */
+    /** Загрузить XLSX-файл с моделями. */
     public function store(UploadFileRequest $request): JsonResponse
     {
         $this->ensureNoActiveImport->ensure(ImportType::Model);

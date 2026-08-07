@@ -21,11 +21,7 @@ final readonly class TireProductController
         private DisplayNameResolver $displayName,
     ) {}
 
-    /**
-     * Список шин.
-     *
-     * @group Шины
-     */
+    /** Список шин. */
     public function index(TireProductIndexRequest $request): AnonymousResourceCollection
     {
         $products = $this->getTireProductList->execute($request->validated());
@@ -37,11 +33,7 @@ final readonly class TireProductController
         return TireProductResource::collection($products);
     }
 
-    /**
-     * Получить шину.
-     *
-     * @group Шины
-     */
+    /** Получить шину. */
     public function show(TireProductIndexRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
@@ -52,11 +44,7 @@ final readonly class TireProductController
         return new TireProductResource($tire);
     }
 
-    /**
-     * Создать шину.
-     *
-     * @group Шины
-     */
+    /** Создать шину. */
     public function store(TireProductRequest $request): JsonResponse
     {
         $data = $this->displayName->resolve($request->validated());
@@ -65,11 +53,7 @@ final readonly class TireProductController
         return (new TireProductResource($tire->load('brand', 'model', 'images')))->response()->setStatusCode(201);
     }
 
-    /**
-     * Обновить шину.
-     *
-     * @group Шины
-     */
+    /** Обновить шину. */
     public function update(TireProductRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::findOrFail($id);
@@ -78,11 +62,7 @@ final readonly class TireProductController
         return new TireProductResource($tire->load('brand', 'model', 'images'));
     }
 
-    /**
-     * Удалить шину.
-     *
-     * @group Шины
-     */
+    /** Удалить шину. */
     public function destroy(int $id): JsonResponse
     {
         TireProduct::findOrFail($id)->delete();

@@ -21,9 +21,6 @@ final readonly class WheelProductController
         private DisplayNameResolver $displayName,
     ) {}
 
-    /**
-     * @group Диски
-     */
     public function index(WheelProductIndexRequest $request): AnonymousResourceCollection
     {
         $products = $this->getWheelProductList->execute($request->validated());
@@ -35,9 +32,6 @@ final readonly class WheelProductController
         return WheelProductResource::collection($products);
     }
 
-    /**
-     * @group Диски
-     */
     public function show(WheelProductIndexRequest $request, int $id): WheelProductResource
     {
         $wheel = WheelProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
@@ -48,9 +42,6 @@ final readonly class WheelProductController
         return new WheelProductResource($wheel);
     }
 
-    /**
-     * @group Диски
-     */
     public function store(WheelProductRequest $request): JsonResponse
     {
         $data = $this->displayName->resolve($request->validated());
@@ -59,9 +50,6 @@ final readonly class WheelProductController
         return (new WheelProductResource($wheel->load('brand', 'model', 'images')))->response()->setStatusCode(201);
     }
 
-    /**
-     * @group Диски
-     */
     public function update(WheelProductRequest $request, int $id): WheelProductResource
     {
         $wheel = WheelProduct::findOrFail($id);
@@ -70,9 +58,6 @@ final readonly class WheelProductController
         return new WheelProductResource($wheel->load('brand', 'model', 'images'));
     }
 
-    /**
-     * @group Диски
-     */
     public function destroy(int $id): JsonResponse
     {
         WheelProduct::findOrFail($id)->delete();

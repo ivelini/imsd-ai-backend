@@ -15,7 +15,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD моделей товаров.
  *
- * @group Модели
  */
 final readonly class ProductModelController
 {
@@ -26,11 +25,7 @@ final readonly class ProductModelController
         private FileService $fileService,
     ) {}
 
-    /**
-     * Список моделей.
-     *
-     * @authenticated
-     */
+    /** Список моделей. */
     public function index(ProductModelIndexRequest $request): AnonymousResourceCollection
     {
         return ProductModelResource::collection(
@@ -38,11 +33,7 @@ final readonly class ProductModelController
         );
     }
 
-    /**
-     * Создать модель.
-     *
-     * @authenticated
-     */
+    /** Создать модель. */
     public function store(ProductModelRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -58,11 +49,7 @@ final readonly class ProductModelController
         return (new ProductModelResource($model))->response()->setStatusCode(201);
     }
 
-    /**
-     * Получить модель.
-     *
-     * @authenticated
-     */
+    /** Получить модель. */
     public function show(int $id): ProductModelResource
     {
         return new ProductModelResource(
@@ -72,11 +59,7 @@ final readonly class ProductModelController
         );
     }
 
-    /**
-     * Обновить модель.
-     *
-     * @authenticated
-     */
+    /** Обновить модель. */
     public function update(ProductModelRequest $request, int $id): ProductModelResource
     {
         $model = ProductModel::findOrFail($id);
@@ -93,14 +76,7 @@ final readonly class ProductModelController
         return new ProductModelResource($model);
     }
 
-    /**
-     * Удалить модель.
-     *
-     * @authenticated
-     *
-     * @response status=204
-     * @response status=409 {"message": "Невозможно удалить модель «A503»: 12 товаров использует её."}
-     */
+    /** Удалить модель. */
     public function destroy(int $id): JsonResponse
     {
         $model = ProductModel::withCount(['tireProducts', 'wheelProducts'])->findOrFail($id);

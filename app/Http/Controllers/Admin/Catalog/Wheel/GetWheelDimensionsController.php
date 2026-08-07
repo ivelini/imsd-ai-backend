@@ -13,13 +13,7 @@ final readonly class GetWheelDimensionsController
         private GetWheelDimensions $getWheelDimensions,
     ) {}
 
-    /**
-     * Получить доступные значения фильтров дисков.
-     *
-     * @authenticated
-     *
-     * @group Каталог — диски
-     */
+    /** Получить доступные значения фильтров дисков. */
     public function __invoke(WheelDimensionsRequest $request): JsonResponse
     {
         return response()->json([

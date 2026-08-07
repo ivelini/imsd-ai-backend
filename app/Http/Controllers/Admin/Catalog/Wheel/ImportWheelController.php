@@ -19,17 +19,7 @@ final readonly class ImportWheelController
         private EnsureNoActiveImport $ensureNoActiveImport,
     ) {}
 
-    /**
-     * Загрузить XLSX-файл с дисками.
-     *
-     * @authenticated
-     *
-     * @bodyParam file file required XLSX-файл (макс. 50 МБ).
-     *
-     * @response status=202 {"data": {"import_id": 1}}
-     *
-     * @group Импорт
-     */
+    /** Загрузить XLSX-файл с дисками. */
     public function store(UploadFileRequest $request): JsonResponse
     {
         $this->ensureNoActiveImport->ensure(ImportType::Wheel);
@@ -42,13 +32,7 @@ final readonly class ImportWheelController
         return response()->json(['data' => ['import_id' => $importId]], 202);
     }
 
-    /**
-     * Статус импорта дисков.
-     *
-     * @authenticated
-     *
-     * @urlParam id int required ID импорта.
-     */
+    /** Статус импорта дисков. */
     public function show(int $id): ProductImportResource
     {
         return new ProductImportResource(ProductImport::findOrFail($id));

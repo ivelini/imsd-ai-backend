@@ -11,9 +11,7 @@ use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
 use Illuminate\Http\JsonResponse;
 
-/**
- * Загрузка и запуск импорта точек выдачи.
- */
+/** Загрузка и запуск импорта точек выдачи. */
 final readonly class ImportPointController
 {
     public function __construct(
@@ -21,13 +19,7 @@ final readonly class ImportPointController
         private EnsureNoActiveImport $ensureNoActiveImport,
     ) {}
 
-    /**
-     * Загрузить XLSX-файл с точками выдачи.
-     *
-     * @authenticated
-     *
-     * @group Импорт
-     */
+    /** Загрузить XLSX-файл с точками выдачи. */
     public function store(UploadFileRequest $request): JsonResponse
     {
         $this->ensureNoActiveImport->ensure(ImportType::Point);
@@ -40,13 +32,7 @@ final readonly class ImportPointController
         return response()->json(['data' => ['import_id' => $importId]], 202);
     }
 
-    /**
-     * Статус импорта точек выдачи.
-     *
-     * @authenticated
-     *
-     * @group Импорт точек выдачи
-     */
+    /** Статус импорта точек выдачи. */
     public function show(int $id): ProductImportResource
     {
         return new ProductImportResource(ProductImport::findOrFail($id));

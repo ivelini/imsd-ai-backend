@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD брендов.
  *
- * @group Бренды
  */
 final readonly class BrandController
 {
@@ -24,11 +23,7 @@ final readonly class BrandController
         private FileService $fileService,
     ) {}
 
-    /**
-     * Список брендов.
-     *
-     * @authenticated
-     */
+    /** Список брендов. */
     public function index(BrandIndexRequest $request): AnonymousResourceCollection
     {
         return BrandResource::collection(
@@ -36,11 +31,7 @@ final readonly class BrandController
         );
     }
 
-    /**
-     * Создать бренд.
-     *
-     * @authenticated
-     */
+    /** Создать бренд. */
     public function store(BrandRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -55,11 +46,7 @@ final readonly class BrandController
         return (new BrandResource($brand))->response()->setStatusCode(201);
     }
 
-    /**
-     * Получить бренд.
-     *
-     * @authenticated
-     */
+    /** Получить бренд. */
     public function show(int $id): BrandResource
     {
         $brand = Brand::withCount(['tireProducts', 'wheelProducts'])
@@ -68,11 +55,7 @@ final readonly class BrandController
         return new BrandResource($brand);
     }
 
-    /**
-     * Обновить бренд.
-     *
-     * @authenticated
-     */
+    /** Обновить бренд. */
     public function update(BrandRequest $request, int $id): BrandResource
     {
         $brand = Brand::findOrFail($id);
@@ -88,14 +71,7 @@ final readonly class BrandController
         return new BrandResource($brand);
     }
 
-    /**
-     * Удалить бренд.
-     *
-     * @authenticated
-     *
-     * @response status=204
-     * @response status=409 {"message": "Невозможно удалить бренд: 5 товаров использует его."}
-     */
+    /** Удалить бренд. */
     public function destroy(int $id): JsonResponse
     {
         $brand = Brand::withCount(['tireProducts', 'wheelProducts'])->findOrFail($id);

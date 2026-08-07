@@ -13,10 +13,6 @@ final readonly class LogoutController
      * Выход из админ-панели.
      *
      * Удаляет текущий Sanctum-токен.
-     *
-     * @group Аутентификация
-     *
-     * @authenticated
      */
     public function __invoke(Request $request): JsonResponse
     {

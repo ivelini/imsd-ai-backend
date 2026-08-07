@@ -12,10 +12,6 @@ final readonly class MeController
      * Профиль администратора.
      *
      * Возвращает данные текущего авторизованного администратора.
-     *
-     * @group Аутентификация
-     *
-     * @authenticated
      */
     public function __invoke(Request $request): JsonResponse
     {

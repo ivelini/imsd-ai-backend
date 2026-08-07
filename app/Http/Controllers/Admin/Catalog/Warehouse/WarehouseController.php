@@ -12,7 +12,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD складов.
  *
- * @group Склады
  */
 final readonly class WarehouseController
 {

@@ -9,11 +9,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 /** Справочник стран. */
 final readonly class CountryController
 {
-    /**
-     * Список стран для дропдауна.
-     *
-     * @group Страны
-     */
+    /** Список стран для дропдауна. */
     public function index(): AnonymousResourceCollection
     {
         return CountryResource::collection(

@@ -13,7 +13,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD поставщиков.
  *
- * @group Поставщики
  */
 final readonly class SupplierController
 {

@@ -25,11 +25,7 @@ final readonly class ImageController
         private ReorderImages $reorderImages,
     ) {}
 
-    /**
-     * Список изображений товара.
-     *
-     * @group Изображения
-     */
+    /** Список изображений товара. */
     public function index(ImageIndexRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -39,11 +35,7 @@ final readonly class ImageController
         return response()->json(['data' => $images]);
     }
 
-    /**
-     * Загрузить изображение.
-     *
-     * @group Изображения
-     */
+    /** Загрузить изображение. */
     public function store(UploadImageRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -57,11 +49,7 @@ final readonly class ImageController
         return response()->json(['data' => $image], 201);
     }
 
-    /**
-     * Удалить изображение.
-     *
-     * @group Изображения
-     */
+    /** Удалить изображение. */
     public function destroy(int $id): JsonResponse
     {
         $this->deleteImage->execute($id);
@@ -69,11 +57,7 @@ final readonly class ImageController
         return response()->json(null, 204);
     }
 
-    /**
-     * Установить главное изображение.
-     *
-     * @group Изображения
-     */
+    /** Установить главное изображение. */
     public function setMain(int $id): JsonResponse
     {
         $this->setMainImage->execute($id);
@@ -83,11 +67,7 @@ final readonly class ImageController
         return response()->json(['data' => $image]);
     }
 
-    /**
-     * Обновить порядок изображений.
-     *
-     * @group Изображения
-     */
+    /** Обновить порядок изображений. */
     public function reorder(ReorderImagesRequest $request): JsonResponse
     {
         $this->reorderImages->execute($request->validated('ids'));
