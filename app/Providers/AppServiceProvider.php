@@ -9,6 +9,9 @@ use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Observers\BrandObserver;
 use App\Observers\SupplierObserver;
+use App\Services\Cache\Catalog\ReferencesCacheService;
+use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,7 +19,12 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(ReferencesCacheService::class, function (Application $app): ReferencesCacheService {
+            return new ReferencesCacheService(
+                $app->make(Repository::class),
+                (int) config('cache_ttl.references'),
+            );
+        });
     }
 
     public function boot(): void

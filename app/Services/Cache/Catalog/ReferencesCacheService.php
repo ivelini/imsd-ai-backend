@@ -15,18 +15,13 @@ final readonly class ReferencesCacheService
 
     public function __construct(
         private Repository $cache,
+        private int $ttl,
     ) {}
 
     public function remember(callable $query): array
     {
-        $cached = $this->cache->get(self::KEY);
-
-        if ($cached !== null) {
-            return $cached;
-        }
-
-        $data = $query();
-        $this->cache->put(self::KEY, $data, config('cache_ttl.references'));
+        /** @var array $data */
+        $data = $this->cache->remember(self::KEY, $this->ttl, $query);
 
         return $data;
     }
