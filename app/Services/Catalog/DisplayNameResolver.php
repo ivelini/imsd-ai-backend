@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Actions\Catalog;
+namespace App\Services\Catalog;
 
 use App\Models\Catalog\Model\ProductModel;
 
 /** Если name не передан — заполняет из model.name. */
-final readonly class EnsureProductDisplayName
+final readonly class DisplayNameResolver
 {
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    public function execute(array $data): array
+    public function resolve(array $data): array
     {
         if (empty($data['name'])) {
-            $model = ProductModel::find($data['model_id']);
-            $data['name'] = $model->name;
+            $data['name'] = ProductModel::findOrFail($data['model_id'])->name;
         }
 
         return $data;

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Wheel;
 
-use App\Actions\Catalog\EnsureProductDisplayName;
 use App\Actions\Catalog\Wheel\GetWheelProductList;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductRequest;
 use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\DeliveryInfoService;
+use App\Services\Catalog\DisplayNameResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -18,7 +18,7 @@ final readonly class WheelProductController
     public function __construct(
         private GetWheelProductList $getWheelProductList,
         private DeliveryInfoService $deliveryInfo,
-        private EnsureProductDisplayName $ensureDisplayName,
+        private DisplayNameResolver $displayName,
     ) {}
 
     /**
@@ -53,7 +53,7 @@ final readonly class WheelProductController
      */
     public function store(WheelProductRequest $request): JsonResponse
     {
-        $data = $this->ensureDisplayName->execute($request->validated());
+        $data = $this->displayName->resolve($request->validated());
         $wheel = WheelProduct::create($data);
 
         return (new WheelProductResource($wheel->load('brand', 'model', 'images')))->response()->setStatusCode(201);
@@ -65,7 +65,7 @@ final readonly class WheelProductController
     public function update(WheelProductRequest $request, int $id): WheelProductResource
     {
         $wheel = WheelProduct::findOrFail($id);
-        $wheel->update($this->ensureDisplayName->execute($request->validated()));
+        $wheel->update($this->displayName->resolve($request->validated()));
 
         return new WheelProductResource($wheel->load('brand', 'model', 'images'));
     }

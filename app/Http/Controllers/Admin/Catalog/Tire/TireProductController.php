@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Catalog\Tire;
 
-use App\Actions\Catalog\EnsureProductDisplayName;
 use App\Actions\Catalog\Tire\GetTireProductList;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Services\Catalog\DeliveryInfoService;
+use App\Services\Catalog\DisplayNameResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -18,7 +18,7 @@ final readonly class TireProductController
     public function __construct(
         private GetTireProductList $getTireProductList,
         private DeliveryInfoService $deliveryInfo,
-        private EnsureProductDisplayName $ensureDisplayName,
+        private DisplayNameResolver $displayName,
     ) {}
 
     /**
@@ -59,7 +59,7 @@ final readonly class TireProductController
      */
     public function store(TireProductRequest $request): JsonResponse
     {
-        $data = $this->ensureDisplayName->execute($request->validated());
+        $data = $this->displayName->resolve($request->validated());
         $tire = TireProduct::create($data);
 
         return (new TireProductResource($tire->load('brand', 'model', 'images')))->response()->setStatusCode(201);
@@ -73,7 +73,7 @@ final readonly class TireProductController
     public function update(TireProductRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::findOrFail($id);
-        $tire->update($this->ensureDisplayName->execute($request->validated()));
+        $tire->update($this->displayName->resolve($request->validated()));
 
         return new TireProductResource($tire->load('brand', 'model', 'images'));
     }
