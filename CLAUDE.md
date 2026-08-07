@@ -213,3 +213,13 @@ Controller
 | № | Решение | Статус | Дата |
 |---|---|---|---|
 | 0001 | Чистые алгоритмы в Services — БД-обвязка снаружи | Accepted | 2026-08-07 |
+
+## Документация
+
+| Слой | Где | Что отвечает |
+|---|---|---|
+| Эксплуатация | `documentations/operations.md` | env, очереди/импорты, ручные сценарии |
+| Схема БД | `documentations/db-schema.md` | таблицы и связи |
+| Архитектура | `documentations/architecture.md` | устройство системы |
+| API | `documentations/api.md` (Scribe подключён — кандидат на генерацию OpenAPI) | контракты потребителей |
+| ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |
