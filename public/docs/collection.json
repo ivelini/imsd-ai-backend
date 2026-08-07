@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel \u2014 Admin API",
-        "_postman_id": "4275e1e0-97aa-40e7-aefe-6c091644c675",
+        "_postman_id": "412d9e5c-342f-4f11-a4a1-1dc2eb31e353",
         "description": "\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u0438\u0432\u043d\u0430\u044f \u043f\u0430\u043d\u0435\u043b\u044c \u0438\u043d\u0442\u0435\u0440\u043d\u0435\u0442-\u043c\u0430\u0433\u0430\u0437\u0438\u043d\u0430 \u0448\u0438\u043d \u0438 \u0434\u0438\u0441\u043a\u043e\u0432.",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -187,7 +187,7 @@
                         "header": [
                             {
                                 "key": "Content-Type",
-                                "value": "application\/json"
+                                "value": "multipart\/form-data"
                             },
                             {
                                 "key": "Accept",
@@ -195,8 +195,38 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\"name\":\"Michelin\",\"slug\":\"michelin\",\"logo\":\"b\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"tire\"}"
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Michelin",
+                                    "type": "text",
+                                    "description": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0431\u0440\u0435\u043d\u0434\u0430. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "michelin",
+                                    "type": "text",
+                                    "description": "URL-\u043f\u0441\u0435\u0432\u0434\u043e\u043d\u0438\u043c \u0431\u0440\u0435\u043d\u0434\u0430. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Eius et animi quos velit et.",
+                                    "type": "text",
+                                    "description": "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0431\u0440\u0435\u043d\u0434\u0430."
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "tire",
+                                    "type": "text",
+                                    "description": "\u0422\u0438\u043f \u0442\u043e\u0432\u0430\u0440\u043e\u0432 \u0431\u0440\u0435\u043d\u0434\u0430: tire, wheel \u0438\u043b\u0438 both."
+                                },
+                                {
+                                    "key": "logo",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
                         },
                         "description": ""
                     },
@@ -272,11 +302,11 @@
                                 }
                             ]
                         },
-                        "method": "PUT",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Content-Type",
-                                "value": "application\/json"
+                                "value": "multipart\/form-data"
                             },
                             {
                                 "key": "Accept",
@@ -284,8 +314,43 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\"name\":\"Michelin\",\"slug\":\"michelin\",\"logo\":\"b\",\"description\":\"Eius et animi quos velit et.\",\"type\":\"tire\"}"
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Michelin",
+                                    "type": "text",
+                                    "description": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u0431\u0440\u0435\u043d\u0434\u0430. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "michelin",
+                                    "type": "text",
+                                    "description": "URL-\u043f\u0441\u0435\u0432\u0434\u043e\u043d\u0438\u043c \u0431\u0440\u0435\u043d\u0434\u0430. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Eius et animi quos velit et.",
+                                    "type": "text",
+                                    "description": "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0431\u0440\u0435\u043d\u0434\u0430."
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "tire",
+                                    "type": "text",
+                                    "description": "\u0422\u0438\u043f \u0442\u043e\u0432\u0430\u0440\u043e\u0432 \u0431\u0440\u0435\u043d\u0434\u0430: tire, wheel \u0438\u043b\u0438 both."
+                                },
+                                {
+                                    "key": "logo",
+                                    "src": [],
+                                    "type": "file"
+                                },
+                                {
+                                    "key": "_method",
+                                    "value": "PUT",
+                                    "type": "text"
+                                }
+                            ]
                         },
                         "description": ""
                     },
@@ -848,6 +913,37 @@
             ]
         },
         {
+            "name": "Endpoints",
+            "description": "",
+            "item": [
+                {
+                    "name": "POST api\/admin\/broadcasting\/auth",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/broadcasting\/auth",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/broadcasting\/auth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
             "name": "\u0410\u043a\u0446\u0438\u0438",
             "description": "",
             "item": [
@@ -1348,7 +1444,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"ANNA\",\"brand_id\":1,\"type\":\"alloy\",\"color\":\"\u0427\u0451\u0440\u043d\u044b\u0439\",\"is_published\":true}"
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"type\":\"alloy\",\"color\":\"\u0427\u0451\u0440\u043d\u044b\u0439\",\"width\":[1],\"diameter\":[22],\"pcd\":[\"gzmiyvdljnikhway\"],\"et\":[4326.41688],\"hub_diameter\":[4326.41688],\"is_published\":true,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1,\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"ANNA\"}"
                         },
                         "description": ""
                     },
@@ -1396,7 +1492,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"brand_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                            "raw": "{\"brand_id\":1,\"model_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
                         },
                         "description": ""
                     },
@@ -1430,7 +1526,10 @@
                                 "value": "application\/json"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"type\":\"alloy\",\"color\":\"\u0427\u0451\u0440\u043d\u044b\u0439\",\"width\":[1],\"diameter\":[22],\"pcd\":[\"gzmiyvdljnikhway\"],\"et\":[4326.41688],\"hub_diameter\":[4326.41688],\"is_published\":true,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1,\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"ANNA\"}"
+                        },
                         "description": ""
                     },
                     "response": [
@@ -1485,7 +1584,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"brand_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                            "raw": "{\"brand_id\":1,\"model_id\":1,\"name\":\"SL 521\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691098765\",\"type\":\"alloy\",\"color\":\"Silver\",\"pcd\":\"5x112\",\"et\":45,\"hub_diameter\":66.6,\"width\":7.5,\"diameter\":17,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
                         },
                         "description": ""
                     },
@@ -1780,6 +1879,46 @@
             ]
         },
         {
+            "name": "\u0418\u043c\u043f\u043e\u0440\u0442 \u043c\u043e\u0434\u0435\u043b\u0435\u0439",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c XLSX-\u0444\u0430\u0439\u043b \u0441 \u043c\u043e\u0434\u0435\u043b\u044f\u043c\u0438.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models\/import",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models\/import"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
             "name": "\u0418\u043c\u043f\u043e\u0440\u0442 \u0442\u043e\u0447\u0435\u043a \u0432\u044b\u0434\u0430\u0447\u0438",
             "description": "",
             "item": [
@@ -1867,6 +2006,442 @@
                             ],
                             "code": 401,
                             "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u2014 \u0434\u0438\u0441\u043a\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0435 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u0444\u0438\u043b\u044c\u0442\u0440\u043e\u0432 \u0434\u0438\u0441\u043a\u043e\u0432.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/wheels\/dimensions",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/wheels\/dimensions"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"type\":\"alloy\",\"color\":\"\u0427\u0451\u0440\u043d\u044b\u0439\",\"width\":[1],\"diameter\":[22],\"pcd\":[\"gzmiyvdljnikhway\"],\"et\":[4326.41688],\"hub_diameter\":[4326.41688],\"is_published\":true,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u2014 \u0448\u0438\u043d\u044b",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0435 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u0444\u0438\u043b\u044c\u0442\u0440\u043e\u0432 \u0448\u0438\u043d.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/tires\/dimensions",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/tires\/dimensions"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"season\":\"winter\",\"width\":[1],\"profile\":[22],\"diameter\":[\"gzmiyv\"],\"load_index\":[\"dljnik\"],\"speed_index\":[\"h\"],\"year\":[18],\"is_published\":true,\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "\u041c\u043e\u0434\u0435\u043b\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u043c\u043e\u0434\u0435\u043b\u0435\u0439.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models",
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "tire",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u0442\u0438\u043f\u0443: tire \u0438\u043b\u0438 wheel.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "brand_id",
+                                    "value": "1",
+                                    "description": "\u0424\u0438\u043b\u044c\u0442\u0440 \u043f\u043e \u0431\u0440\u0435\u043d\u0434\u0443. Must match an existing stored value.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "type",
+                                    "description": "\u041f\u043e\u043b\u0435 \u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0438: id, name, type, created_at.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "sort_dir",
+                                    "value": "desc",
+                                    "description": "\u041d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435: asc \u0438\u043b\u0438 desc.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "per_page",
+                                    "value": "1",
+                                    "description": "\u042d\u043b\u0435\u043c\u0435\u043d\u0442\u043e\u0432 \u043d\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435 (10\u2013100). Must be at least 10. Must not be greater than 100.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "22",
+                                    "description": "Must be at least 1.",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models?type=tire&brand_id=1&sort_by=type&sort_dir=desc&per_page=1&page=22"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "brand_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "ID \u0431\u0440\u0435\u043d\u0434\u0430. Must match an existing stored value."
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "A503",
+                                    "type": "text",
+                                    "description": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u043c\u043e\u0434\u0435\u043b\u0438. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "cordiant-a503",
+                                    "type": "text",
+                                    "description": "URL-\u043f\u0441\u0435\u0432\u0434\u043e\u043d\u0438\u043c (\u0431\u0440\u0435\u043d\u0434-\u043c\u043e\u0434\u0435\u043b\u044c). Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Eius et animi quos velit et.",
+                                    "type": "text",
+                                    "description": "\u041e\u0431\u0449\u0435\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u043b\u0438\u043d\u0435\u0439\u043a\u0438 \u043c\u043e\u0434\u0435\u043b\u0438."
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "tire",
+                                    "type": "text",
+                                    "description": "\u0422\u0438\u043f: tire \u0438\u043b\u0438 wheel."
+                                },
+                                {
+                                    "key": "image",
+                                    "src": [],
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the model."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the model."
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "multipart\/form-data"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "brand_id",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "ID \u0431\u0440\u0435\u043d\u0434\u0430. Must match an existing stored value."
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "A503",
+                                    "type": "text",
+                                    "description": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u043c\u043e\u0434\u0435\u043b\u0438. Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "cordiant-a503",
+                                    "type": "text",
+                                    "description": "URL-\u043f\u0441\u0435\u0432\u0434\u043e\u043d\u0438\u043c (\u0431\u0440\u0435\u043d\u0434-\u043c\u043e\u0434\u0435\u043b\u044c). Must not be greater than 255 characters."
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Eius et animi quos velit et.",
+                                    "type": "text",
+                                    "description": "\u041e\u0431\u0449\u0435\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u043b\u0438\u043d\u0435\u0439\u043a\u0438 \u043c\u043e\u0434\u0435\u043b\u0438."
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "tire",
+                                    "type": "text",
+                                    "description": "\u0422\u0438\u043f: tire \u0438\u043b\u0438 wheel."
+                                },
+                                {
+                                    "key": "image",
+                                    "src": [],
+                                    "type": "file"
+                                },
+                                {
+                                    "key": "_method",
+                                    "value": "PUT",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/catalog\/models\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/catalog\/models\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the model."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 204,
+                            "body": "",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 409,
+                            "body": "{\"message\": \"\u041d\u0435\u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e \u0443\u0434\u0430\u043b\u0438\u0442\u044c \u043c\u043e\u0434\u0435\u043b\u044c \u00abA503\u00bb: 12 \u0442\u043e\u0432\u0430\u0440\u043e\u0432 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442 \u0435\u0451.\"}",
                             "name": ""
                         }
                     ]
@@ -2056,6 +2631,210 @@
                                     "key": "id",
                                     "value": "architecto",
                                     "description": "The ID of the markup rule."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u041f\u0440\u0430\u0432\u0438\u043b\u0430 \u043d\u0430\u0446\u0435\u043d\u043a\u0438 \u0433\u043e\u0440\u043e\u0434\u043e\u0432",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/admin\/geo\/city-price-rules",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/city-price-rules",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/city-price-rules"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"city_id\",\"sort_dir\":\"asc\",\"city_id\":1}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "POST api\/admin\/geo\/city-price-rules",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/city-price-rules",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/city-price-rules"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"city_id\":1,\"price_from\":0,\"price_to\":5000,\"markup\":300}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/admin\/geo\/city-price-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/city-price-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/city-price-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the city price rule."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT api\/admin\/geo\/city-price-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/city-price-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/city-price-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the city price rule."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"city_id\":1,\"price_from\":0,\"price_to\":5000,\"markup\":300}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/admin\/geo\/city-price-rules\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/city-price-rules\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/city-price-rules\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the city price rule."
                                 }
                             ]
                         },
@@ -2306,6 +3085,322 @@
             ]
         },
         {
+            "name": "\u0422\u043e\u0447\u043a\u0438 \u0432\u044b\u0434\u0430\u0447\u0438",
+            "description": "",
+            "item": [
+                {
+                    "name": "GET api\/admin\/geo\/delivery-points",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/delivery-points",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/delivery-points"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"city_id\",\"sort_dir\":\"asc\",\"city_id\":1,\"search\":\"\u041b\u0435\u043d\u0438\u043d\u0430\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "POST api\/admin\/geo\/delivery-points",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/delivery-points",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/delivery-points"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"city_id\":1,\"address\":\"\u0443\u043b. \u041b\u0435\u043d\u0438\u043d\u0430, 10\",\"phone\":\"+7 (351) 000-00-00\",\"email\":\"info@example.ru\",\"work_hours\":\"\u043f\u043d-\u043f\u0442 9:00\u201318:00, \u0441\u0431 10:00\u201315:00\",\"info\":\"\u0412\u0445\u043e\u0434 \u0441\u043e \u0434\u0432\u043e\u0440\u0430\",\"pickup_from_truck\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GET api\/admin\/geo\/delivery-points\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/delivery-points\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/delivery-points\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the delivery point."
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "PUT api\/admin\/geo\/delivery-points\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/delivery-points\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/delivery-points\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the delivery point."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"city_id\":1,\"address\":\"\u0443\u043b. \u041b\u0435\u043d\u0438\u043d\u0430, 10\",\"phone\":\"+7 (351) 000-00-00\",\"email\":\"info@example.ru\",\"work_hours\":\"\u043f\u043d-\u043f\u0442 9:00\u201318:00, \u0441\u0431 10:00\u201315:00\",\"info\":\"\u0412\u0445\u043e\u0434 \u0441\u043e \u0434\u0432\u043e\u0440\u0430\",\"pickup_from_truck\":false}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE api\/admin\/geo\/delivery-points\/{id}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/geo\/delivery-points\/:id",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/geo\/delivery-points\/:id",
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "architecto",
+                                    "description": "The ID of the delivery point."
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f",
+            "description": "",
+            "item": [
+                {
+                    "name": "\u0421\u043f\u0438\u0441\u043e\u043a \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0439 \u0442\u0435\u043a\u0443\u0449\u0435\u0433\u043e \u0430\u0434\u043c\u0438\u043d\u0430.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/notifications",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/notifications"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"unread_only\":false,\"per_page\":1,\"page\":22}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "\u041e\u0442\u043c\u0435\u0442\u0438\u0442\u044c \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u0435 \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u043c.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/notifications\/:notification\/read",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/notifications\/:notification\/read",
+                            "variable": [
+                                {
+                                    "id": "notification",
+                                    "key": "notification",
+                                    "value": "architecto",
+                                    "description": "The notification."
+                                }
+                            ]
+                        },
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                },
+                {
+                    "name": "\u041e\u0442\u043c\u0435\u0442\u0438\u0442\u044c \u0432\u0441\u0435 \u0443\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u043d\u043d\u044b\u043c\u0438.",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/admin\/notifications\/read-all",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/admin\/notifications\/read-all"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
             "name": "\u0428\u0438\u043d\u044b",
             "description": "",
             "item": [
@@ -2331,7 +3426,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"Winter\",\"brand_id\":1,\"season\":\"winter\",\"is_published\":true,\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false}"
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"season\":\"winter\",\"width\":[1],\"profile\":[22],\"diameter\":[\"gzmiyv\"],\"load_index\":[\"dljnik\"],\"speed_index\":[\"h\"],\"year\":[18],\"is_published\":true,\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1,\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"Winter\"}"
                         },
                         "description": ""
                     },
@@ -2379,7 +3474,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"brand_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                            "raw": "{\"brand_id\":1,\"model_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
                         },
                         "description": ""
                     },
@@ -2413,7 +3508,10 @@
                                 "value": "application\/json"
                             }
                         ],
-                        "body": null,
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"brand_id\":1,\"model_id\":5,\"season\":\"winter\",\"width\":[1],\"profile\":[22],\"diameter\":[\"gzmiyv\"],\"load_index\":[\"dljnik\"],\"speed_index\":[\"h\"],\"year\":[18],\"is_published\":true,\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"is_bestseller\":false,\"is_new\":true,\"city_id\":1,\"page\":1,\"per_page\":50,\"sort_by\":\"created_at\",\"sort_dir\":\"desc\",\"search\":\"Winter\"}"
+                        },
                         "description": ""
                     },
                     "response": [
@@ -2468,7 +3566,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"brand_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
+                            "raw": "{\"brand_id\":1,\"model_id\":1,\"name\":\"Primacy 4\",\"supplier_id\":16,\"country_id\":16,\"ean\":\"8714691012345\",\"season\":\"summer\",\"width\":225,\"profile\":55,\"diameter\":\"R17\",\"load_index\":\"91\",\"speed_index\":\"V\",\"is_studded\":false,\"is_runflat\":false,\"is_xl\":false,\"year\":2025,\"description\":\"Eius et animi quos velit et.\",\"is_published\":true,\"is_bestseller\":false,\"is_new\":false}"
                         },
                         "description": ""
                     },

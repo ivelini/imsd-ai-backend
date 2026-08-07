@@ -18,6 +18,8 @@ tags:
     description: ''
   - name: 'Импорт дисков'
     description: ''
+  - name: Endpoints
+    description: ''
   - name: Акции
     description: ''
   - name: Города
@@ -30,17 +32,31 @@ tags:
     description: ''
   - name: Импорт
     description: ''
+  - name: 'Импорт моделей'
+    description: ''
   - name: 'Импорт точек выдачи'
     description: ''
   - name: Каталог
     description: ''
+  - name: 'Каталог — диски'
+    description: ''
+  - name: 'Каталог — шины'
+    description: ''
+  - name: Модели
+    description: ''
   - name: 'Правила наценки'
+    description: ''
+  - name: 'Правила наценки городов'
     description: ''
   - name: 'Складские остатки'
     description: ''
   - name: Справочники
     description: ''
   - name: Страны
+    description: ''
+  - name: 'Точки выдачи'
+    description: ''
+  - name: Уведомления
     description: ''
   - name: Шины
     description: ''
@@ -193,7 +209,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -207,8 +223,8 @@ paths:
                   example: michelin
                 logo:
                   type: string
-                  description: 'URL логотипа бренда. Must not be greater than 255 characters.'
-                  example: b
+                  format: binary
+                  description: 'Файл логотипа бренда (jpeg, png, webp, до 10 МБ). Must be a file. Must be an image. Must not be greater than 10240 kilobytes.'
                   nullable: true
                 description:
                   type: string
@@ -259,7 +275,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -273,8 +289,8 @@ paths:
                   example: michelin
                 logo:
                   type: string
-                  description: 'URL логотипа бренда. Must not be greater than 255 characters.'
-                  example: b
+                  format: binary
+                  description: 'Файл логотипа бренда (jpeg, png, webp, до 10 МБ). Must be a file. Must be an image. Must not be greater than 10240 kilobytes.'
                   nullable: true
                 description:
                   type: string
@@ -720,6 +736,15 @@ paths:
                   description: 'XLSX-файл (макс. 50 МБ).'
               required:
                 - file
+  /api/admin/broadcasting/auth:
+    post:
+      summary: ''
+      operationId: postApiAdminBroadcastingAuth
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Endpoints
   /api/admin/catalog/promotions:
     get:
       summary: ''
@@ -1259,6 +1284,85 @@ paths:
             schema:
               type: object
               properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                type:
+                  type: string
+                  description: 'Тип диска: alloy, steel, forged.'
+                  example: alloy
+                  enum:
+                    - alloy
+                    - steel
+                    - forged
+                  nullable: true
+                color:
+                  type: string
+                  description: 'Цвет диска. Must not be greater than 50 characters.'
+                  example: Чёрный
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: number
+                diameter:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 50.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                pcd:
+                  type: array
+                  description: 'Must not be greater than 20 characters.'
+                  example:
+                    - gzmiyvdljnikhway
+                  items:
+                    type: string
+                et:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                hub_diameter:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
                 page:
                   type: integer
                   description: 'Номер страницы. Must be at least 1.'
@@ -1300,30 +1404,6 @@ paths:
                   description: 'Поиск по названию модели или EAN. Must not be greater than 100 characters.'
                   example: ANNA
                   nullable: true
-                brand_id:
-                  type: integer
-                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
-                  example: 1
-                  nullable: true
-                type:
-                  type: string
-                  description: 'Тип диска: alloy, steel, forged.'
-                  example: alloy
-                  enum:
-                    - alloy
-                    - steel
-                    - forged
-                  nullable: true
-                color:
-                  type: string
-                  description: 'Цвет диска. Must not be greater than 50 characters.'
-                  example: Чёрный
-                  nullable: true
-                is_published:
-                  type: boolean
-                  description: 'Опубликован на сайте.'
-                  example: true
-                  nullable: true
     post:
       summary: ''
       operationId: postApiAdminCatalogWheels
@@ -1343,10 +1423,15 @@ paths:
                   type: integer
                   description: 'ID бренда. Must match an existing stored value.'
                   example: 1
+                model_id:
+                  type: integer
+                  description: 'ID модели товара. Must match an existing stored value.'
+                  example: 1
                 name:
                   type: string
-                  description: 'Название модели диска. Must not be greater than 255 characters.'
+                  description: 'Отображаемое название (если не указано — берётся из модели). Must not be greater than 255 characters.'
                   example: 'SL 521'
+                  nullable: true
                 supplier_id:
                   type: integer
                   description: 'ID поставщика. Must match an existing stored value.'
@@ -1420,7 +1505,7 @@ paths:
                   example: false
               required:
                 - brand_id
-                - name
+                - model_id
   '/api/admin/catalog/wheels/{id}':
     get:
       summary: ''
@@ -1442,6 +1527,133 @@ paths:
                     example: Unauthenticated.
       tags:
         - Диски
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                type:
+                  type: string
+                  description: 'Тип диска: alloy, steel, forged.'
+                  example: alloy
+                  enum:
+                    - alloy
+                    - steel
+                    - forged
+                  nullable: true
+                color:
+                  type: string
+                  description: 'Цвет диска. Must not be greater than 50 characters.'
+                  example: Чёрный
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: number
+                diameter:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 50.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                pcd:
+                  type: array
+                  description: 'Must not be greater than 20 characters.'
+                  example:
+                    - gzmiyvdljnikhway
+                  items:
+                    type: string
+                et:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                hub_diameter:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: id, name, ean, type, color, pcd, et, hub_diameter, width, diameter, is_published, created_at.'
+                  example: created_at
+                  enum:
+                    - id
+                    - name
+                    - ean
+                    - type
+                    - color
+                    - pcd
+                    - et
+                    - hub_diameter
+                    - width
+                    - diameter
+                    - is_published
+                    - created_at
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: desc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                search:
+                  type: string
+                  description: 'Поиск по названию модели или EAN. Must not be greater than 100 characters.'
+                  example: ANNA
+                  nullable: true
     put:
       summary: ''
       operationId: putApiAdminCatalogWheelsId
@@ -1461,10 +1673,15 @@ paths:
                   type: integer
                   description: 'ID бренда. Must match an existing stored value.'
                   example: 1
+                model_id:
+                  type: integer
+                  description: 'ID модели товара. Must match an existing stored value.'
+                  example: 1
                 name:
                   type: string
-                  description: 'Название модели диска. Must not be greater than 255 characters.'
+                  description: 'Отображаемое название (если не указано — берётся из модели). Must not be greater than 255 characters.'
                   example: 'SL 521'
+                  nullable: true
                 supplier_id:
                   type: integer
                   description: 'ID поставщика. Must match an existing stored value.'
@@ -1538,7 +1755,7 @@ paths:
                   example: false
               required:
                 - brand_id
-                - name
+                - model_id
     delete:
       summary: ''
       operationId: deleteApiAdminCatalogWheelsId
@@ -1721,6 +1938,28 @@ paths:
         required: true
         schema:
           type: string
+  /api/admin/catalog/models/import:
+    post:
+      summary: 'Загрузить XLSX-файл с моделями.'
+      operationId: XLSX
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Импорт моделей'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 'XLSX-файл импорта. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes.'
+              required:
+                - file
   /api/admin/geo/points/import:
     post:
       summary: 'Загрузить XLSX-файл с точками выдачи.'
@@ -1740,7 +1979,7 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: 'XLSX-файл каталога шин. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes.'
+                  description: 'XLSX-файл импорта. Максимум 50 МБ. Must be a file. Must not be greater than 51200 kilobytes.'
               required:
                 - file
   /api/admin/catalog/products:
@@ -1822,6 +2061,490 @@ paths:
                   description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
                   example: 50
                   nullable: true
+  /api/admin/catalog/wheels/dimensions:
+    get:
+      summary: 'Получить доступные значения фильтров дисков.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Каталог — диски'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                type:
+                  type: string
+                  description: 'Тип диска: alloy, steel, forged.'
+                  example: alloy
+                  enum:
+                    - alloy
+                    - steel
+                    - forged
+                  nullable: true
+                color:
+                  type: string
+                  description: 'Цвет диска. Must not be greater than 50 characters.'
+                  example: Чёрный
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: number
+                diameter:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 50.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                pcd:
+                  type: array
+                  description: 'Must not be greater than 20 characters.'
+                  example:
+                    - gzmiyvdljnikhway
+                  items:
+                    type: string
+                et:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                hub_diameter:
+                  type: array
+                  description: ''
+                  example:
+                    - 4326.41688
+                  items:
+                    type: number
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+  /api/admin/catalog/tires/dimensions:
+    get:
+      summary: 'Получить доступные значения фильтров шин.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Каталог — шины'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                season:
+                  type: string
+                  description: 'Сезонность: summer, winter, all-season.'
+                  example: winter
+                  enum:
+                    - winter
+                    - summer
+                    - all-season
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: integer
+                profile:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 150.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                diameter:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - gzmiyv
+                  items:
+                    type: string
+                load_index:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - dljnik
+                  items:
+                    type: string
+                speed_index:
+                  type: array
+                  description: 'Must not be greater than 5 characters.'
+                  example:
+                    - h
+                  items:
+                    type: string
+                year:
+                  type: array
+                  description: 'Must be at least 2000. Must not be greater than 2100.'
+                  example:
+                    - 18
+                  items:
+                    type: integer
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_studded:
+                  type: boolean
+                  description: Шипованная.
+                  example: false
+                  nullable: true
+                is_runflat:
+                  type: boolean
+                  description: Runflat-технология.
+                  example: false
+                  nullable: true
+                is_xl:
+                  type: boolean
+                  description: 'Усиленная (Extra Load).'
+                  example: false
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+  /api/admin/catalog/models:
+    get:
+      summary: 'Список моделей.'
+      operationId: ''
+      description: ''
+      parameters:
+        -
+          in: query
+          name: type
+          description: 'Фильтр по типу: tire или wheel.'
+          example: tire
+          required: false
+          schema:
+            type: string
+            description: 'Фильтр по типу: tire или wheel.'
+            example: tire
+            enum:
+              - tire
+              - wheel
+            nullable: true
+        -
+          in: query
+          name: brand_id
+          description: 'Фильтр по бренду. Must match an existing stored value.'
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: 'Фильтр по бренду. Must match an existing stored value.'
+            example: 1
+            nullable: true
+        -
+          in: query
+          name: sort_by
+          description: 'Поле сортировки: id, name, type, created_at.'
+          example: type
+          required: false
+          schema:
+            type: string
+            description: 'Поле сортировки: id, name, type, created_at.'
+            example: type
+            enum:
+              - id
+              - name
+              - type
+              - created_at
+            nullable: true
+        -
+          in: query
+          name: sort_dir
+          description: 'Направление: asc или desc.'
+          example: desc
+          required: false
+          schema:
+            type: string
+            description: 'Направление: asc или desc.'
+            example: desc
+            enum:
+              - asc
+              - desc
+            nullable: true
+        -
+          in: query
+          name: per_page
+          description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+            example: 1
+            nullable: true
+        -
+          in: query
+          name: page
+          description: 'Must be at least 1.'
+          example: 22
+          required: false
+          schema:
+            type: integer
+            description: 'Must be at least 1.'
+            example: 22
+            nullable: true
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Модели
+    post:
+      summary: 'Создать модель.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Модели
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда. Must match an existing stored value.'
+                  example: 1
+                name:
+                  type: string
+                  description: 'Название модели. Must not be greater than 255 characters.'
+                  example: A503
+                slug:
+                  type: string
+                  description: 'URL-псевдоним (бренд-модель). Must not be greater than 255 characters.'
+                  example: cordiant-a503
+                description:
+                  type: string
+                  description: 'Общее описание линейки модели.'
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                image:
+                  type: string
+                  format: binary
+                  description: 'Файл изображения модели (jpeg, png, webp, до 10 МБ). Must be a file. Must be an image. Must not be greater than 10240 kilobytes.'
+                  nullable: true
+                type:
+                  type: string
+                  description: 'Тип: tire или wheel.'
+                  example: tire
+                  enum:
+                    - tire
+                    - wheel
+              required:
+                - brand_id
+                - name
+                - slug
+                - type
+  '/api/admin/catalog/models/{id}':
+    get:
+      summary: 'Получить модель.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Модели
+    put:
+      summary: 'Обновить модель.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Модели
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда. Must match an existing stored value.'
+                  example: 1
+                name:
+                  type: string
+                  description: 'Название модели. Must not be greater than 255 characters.'
+                  example: A503
+                slug:
+                  type: string
+                  description: 'URL-псевдоним (бренд-модель). Must not be greater than 255 characters.'
+                  example: cordiant-a503
+                description:
+                  type: string
+                  description: 'Общее описание линейки модели.'
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                image:
+                  type: string
+                  format: binary
+                  description: 'Файл изображения модели (jpeg, png, webp, до 10 МБ). Must be a file. Must be an image. Must not be greater than 10240 kilobytes.'
+                  nullable: true
+                type:
+                  type: string
+                  description: 'Тип: tire или wheel.'
+                  example: tire
+                  enum:
+                    - tire
+                    - wheel
+              required:
+                - brand_id
+                - name
+                - slug
+                - type
+    delete:
+      summary: 'Удалить модель.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        204:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+        409:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Невозможно удалить модель «A503»: 12 товаров использует её.'
+                properties:
+                  message:
+                    type: string
+                    example: 'Невозможно удалить модель «A503»: 12 товаров использует её.'
+      tags:
+        - Модели
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the model.'
+        example: architecto
+        required: true
+        schema:
+          type: string
   /api/admin/catalog/markup-rules:
     get:
       summary: ''
@@ -1995,6 +2718,179 @@ paths:
         required: true
         schema:
           type: string
+  /api/admin/geo/city-price-rules:
+    get:
+      summary: ''
+      operationId: getApiAdminGeoCityPriceRules
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Правила наценки городов'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: id, city_id, price_from, price_to, markup, created_at.'
+                  example: city_id
+                  enum:
+                    - id
+                    - city_id
+                    - price_from
+                    - price_to
+                    - markup
+                    - created_at
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: asc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+    post:
+      summary: ''
+      operationId: postApiAdminGeoCityPriceRules
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Правила наценки городов'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                city_id:
+                  type: integer
+                  description: 'ID города. Must match an existing stored value.'
+                  example: 1
+                price_from:
+                  type: number
+                  description: 'Начало диапазона цены (включительно). Must be at least 0.'
+                  example: 0.0
+                price_to:
+                  type: number
+                  description: 'Конец диапазона цены (включительно). Must be at least 0.'
+                  example: 5000.0
+                markup:
+                  type: number
+                  description: 'Наценка в рублях. Must be at least 0.'
+                  example: 300.0
+              required:
+                - city_id
+                - price_from
+                - price_to
+                - markup
+  '/api/admin/geo/city-price-rules/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminGeoCityPriceRulesId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Правила наценки городов'
+    put:
+      summary: ''
+      operationId: putApiAdminGeoCityPriceRulesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Правила наценки городов'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                city_id:
+                  type: integer
+                  description: 'ID города. Must match an existing stored value.'
+                  example: 1
+                price_from:
+                  type: number
+                  description: 'Начало диапазона цены (включительно). Must be at least 0.'
+                  example: 0.0
+                price_to:
+                  type: number
+                  description: 'Конец диапазона цены (включительно). Must be at least 0.'
+                  example: 5000.0
+                markup:
+                  type: number
+                  description: 'Наценка в рублях. Must be at least 0.'
+                  example: 300.0
+              required:
+                - city_id
+                - price_from
+                - price_to
+                - markup
+    delete:
+      summary: ''
+      operationId: deleteApiAdminGeoCityPriceRulesId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Правила наценки городов'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the city price rule.'
+        example: architecto
+        required: true
+        schema:
+          type: string
   '/api/admin/catalog/tires/{tireId}/warehouse-stock':
     get:
       summary: 'Остатки товара на всех складах.'
@@ -2117,6 +3013,279 @@ paths:
                     example: Unauthenticated.
       tags:
         - Страны
+  /api/admin/geo/delivery-points:
+    get:
+      summary: ''
+      operationId: getApiAdminGeoDeliveryPoints
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Точки выдачи'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: id, city_id, address, created_at.'
+                  example: city_id
+                  enum:
+                    - id
+                    - city_id
+                    - address
+                    - created_at
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: asc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                search:
+                  type: string
+                  description: 'Поиск по адресу или телефону. Must not be greater than 100 characters.'
+                  example: Ленина
+                  nullable: true
+    post:
+      summary: ''
+      operationId: postApiAdminGeoDeliveryPoints
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Точки выдачи'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                city_id:
+                  type: integer
+                  description: 'ID города. Must match an existing stored value.'
+                  example: 1
+                address:
+                  type: string
+                  description: 'Адрес точки выдачи. Must not be greater than 500 characters.'
+                  example: 'ул. Ленина, 10'
+                phone:
+                  type: string
+                  description: 'Телефон. Must not be greater than 50 characters.'
+                  example: '+7 (351) 000-00-00'
+                  nullable: true
+                email:
+                  type: string
+                  description: 'Email. Must be a valid email address. Must not be greater than 255 characters.'
+                  example: info@example.ru
+                  nullable: true
+                work_hours:
+                  type: string
+                  description: 'Режим работы. Must not be greater than 500 characters.'
+                  example: 'пн-пт 9:00–18:00, сб 10:00–15:00'
+                  nullable: true
+                info:
+                  type: string
+                  description: 'Дополнительная информация. Must not be greater than 1000 characters.'
+                  example: 'Вход со двора'
+                  nullable: true
+                pickup_from_truck:
+                  type: boolean
+                  description: 'Возможен самовывоз из фуры.'
+                  example: false
+                  nullable: true
+              required:
+                - city_id
+                - address
+  '/api/admin/geo/delivery-points/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminGeoDeliveryPointsId
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Точки выдачи'
+    put:
+      summary: ''
+      operationId: putApiAdminGeoDeliveryPointsId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Точки выдачи'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                city_id:
+                  type: integer
+                  description: 'ID города. Must match an existing stored value.'
+                  example: 1
+                address:
+                  type: string
+                  description: 'Адрес точки выдачи. Must not be greater than 500 characters.'
+                  example: 'ул. Ленина, 10'
+                phone:
+                  type: string
+                  description: 'Телефон. Must not be greater than 50 characters.'
+                  example: '+7 (351) 000-00-00'
+                  nullable: true
+                email:
+                  type: string
+                  description: 'Email. Must be a valid email address. Must not be greater than 255 characters.'
+                  example: info@example.ru
+                  nullable: true
+                work_hours:
+                  type: string
+                  description: 'Режим работы. Must not be greater than 500 characters.'
+                  example: 'пн-пт 9:00–18:00, сб 10:00–15:00'
+                  nullable: true
+                info:
+                  type: string
+                  description: 'Дополнительная информация. Must not be greater than 1000 characters.'
+                  example: 'Вход со двора'
+                  nullable: true
+                pickup_from_truck:
+                  type: boolean
+                  description: 'Возможен самовывоз из фуры.'
+                  example: false
+                  nullable: true
+              required:
+                - city_id
+                - address
+    delete:
+      summary: ''
+      operationId: deleteApiAdminGeoDeliveryPointsId
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Точки выдачи'
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the delivery point.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/admin/notifications:
+    get:
+      summary: 'Список уведомлений текущего админа.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Уведомления
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unread_only:
+                  type: boolean
+                  description: ''
+                  example: false
+                per_page:
+                  type: integer
+                  description: 'Must be at least 1. Must not be greater than 100.'
+                  example: 1
+                page:
+                  type: integer
+                  description: 'Must be at least 1.'
+                  example: 22
+  '/api/admin/notifications/{notification}/read':
+    patch:
+      summary: 'Отметить уведомление прочитанным.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Уведомления
+    parameters:
+      -
+        in: path
+        name: notification
+        description: 'The notification.'
+        example: architecto
+        required: true
+        schema:
+          type: string
+  /api/admin/notifications/read-all:
+    post:
+      summary: 'Отметить все уведомления прочитанными.'
+      operationId: ''
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Уведомления
   /api/admin/catalog/tires:
     get:
       summary: 'Список шин.'
@@ -2145,6 +3314,102 @@ paths:
             schema:
               type: object
               properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                season:
+                  type: string
+                  description: 'Сезонность: summer, winter, all-season.'
+                  example: winter
+                  enum:
+                    - winter
+                    - summer
+                    - all-season
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: integer
+                profile:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 150.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                diameter:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - gzmiyv
+                  items:
+                    type: string
+                load_index:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - dljnik
+                  items:
+                    type: string
+                speed_index:
+                  type: array
+                  description: 'Must not be greater than 5 characters.'
+                  example:
+                    - h
+                  items:
+                    type: string
+                year:
+                  type: array
+                  description: 'Must be at least 2000. Must not be greater than 2100.'
+                  example:
+                    - 18
+                  items:
+                    type: integer
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_studded:
+                  type: boolean
+                  description: Шипованная.
+                  example: false
+                  nullable: true
+                is_runflat:
+                  type: boolean
+                  description: Runflat-технология.
+                  example: false
+                  nullable: true
+                is_xl:
+                  type: boolean
+                  description: 'Усиленная (Extra Load).'
+                  example: false
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
                 page:
                   type: integer
                   description: 'Номер страницы. Must be at least 1.'
@@ -2186,40 +3451,6 @@ paths:
                   description: 'Поиск по названию модели или EAN. Must not be greater than 100 characters.'
                   example: Winter
                   nullable: true
-                brand_id:
-                  type: integer
-                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
-                  example: 1
-                  nullable: true
-                season:
-                  type: string
-                  description: 'Сезонность: summer, winter, all-season.'
-                  example: winter
-                  enum:
-                    - winter
-                    - summer
-                    - all-season
-                  nullable: true
-                is_published:
-                  type: boolean
-                  description: 'Опубликован на сайте.'
-                  example: true
-                  nullable: true
-                is_studded:
-                  type: boolean
-                  description: Шипованная.
-                  example: false
-                  nullable: true
-                is_runflat:
-                  type: boolean
-                  description: Runflat-технология.
-                  example: false
-                  nullable: true
-                is_xl:
-                  type: boolean
-                  description: 'Усиленная (Extra Load).'
-                  example: false
-                  nullable: true
     post:
       summary: 'Создать шину.'
       operationId: ''
@@ -2239,10 +3470,15 @@ paths:
                   type: integer
                   description: 'ID бренда. Must match an existing stored value.'
                   example: 1
+                model_id:
+                  type: integer
+                  description: 'ID модели товара. Must match an existing stored value.'
+                  example: 1
                 name:
                   type: string
-                  description: 'Название модели шины. Must not be greater than 255 characters.'
+                  description: 'Отображаемое название (если не указано — берётся из модели). Must not be greater than 255 characters.'
                   example: 'Primacy 4'
+                  nullable: true
                 supplier_id:
                   type: integer
                   description: 'ID поставщика. Must match an existing stored value.'
@@ -2327,7 +3563,7 @@ paths:
                   example: false
               required:
                 - brand_id
-                - name
+                - model_id
                 - season
   '/api/admin/catalog/tires/{id}':
     get:
@@ -2350,6 +3586,150 @@ paths:
                     example: Unauthenticated.
       tags:
         - Шины
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                brand_id:
+                  type: integer
+                  description: 'ID бренда для фильтрации. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                model_id:
+                  type: integer
+                  description: 'ID модели для фильтрации. Must match an existing stored value.'
+                  example: 5
+                  nullable: true
+                season:
+                  type: string
+                  description: 'Сезонность: summer, winter, all-season.'
+                  example: winter
+                  enum:
+                    - winter
+                    - summer
+                    - all-season
+                  nullable: true
+                width:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 500.'
+                  example:
+                    - 1
+                  items:
+                    type: integer
+                profile:
+                  type: array
+                  description: 'Must be at least 1. Must not be greater than 150.'
+                  example:
+                    - 22
+                  items:
+                    type: integer
+                diameter:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - gzmiyv
+                  items:
+                    type: string
+                load_index:
+                  type: array
+                  description: 'Must not be greater than 10 characters.'
+                  example:
+                    - dljnik
+                  items:
+                    type: string
+                speed_index:
+                  type: array
+                  description: 'Must not be greater than 5 characters.'
+                  example:
+                    - h
+                  items:
+                    type: string
+                year:
+                  type: array
+                  description: 'Must be at least 2000. Must not be greater than 2100.'
+                  example:
+                    - 18
+                  items:
+                    type: integer
+                is_published:
+                  type: boolean
+                  description: 'Опубликован на сайте.'
+                  example: true
+                  nullable: true
+                is_studded:
+                  type: boolean
+                  description: Шипованная.
+                  example: false
+                  nullable: true
+                is_runflat:
+                  type: boolean
+                  description: Runflat-технология.
+                  example: false
+                  nullable: true
+                is_xl:
+                  type: boolean
+                  description: 'Усиленная (Extra Load).'
+                  example: false
+                  nullable: true
+                is_bestseller:
+                  type: boolean
+                  description: 'Хит продаж.'
+                  example: false
+                  nullable: true
+                is_new:
+                  type: boolean
+                  description: Новинка.
+                  example: true
+                  nullable: true
+                city_id:
+                  type: integer
+                  description: 'ID города для расчёта доставки. Must match an existing stored value.'
+                  example: 1
+                  nullable: true
+                page:
+                  type: integer
+                  description: 'Номер страницы. Must be at least 1.'
+                  example: 1
+                  nullable: true
+                per_page:
+                  type: integer
+                  description: 'Элементов на странице (10–100). Must be at least 10. Must not be greater than 100.'
+                  example: 50
+                  nullable: true
+                sort_by:
+                  type: string
+                  description: 'Поле сортировки: id, name, ean, season, width, profile, diameter, load_index, speed_index, year, is_published, created_at.'
+                  example: created_at
+                  enum:
+                    - id
+                    - name
+                    - ean
+                    - season
+                    - width
+                    - profile
+                    - diameter
+                    - load_index
+                    - speed_index
+                    - year
+                    - is_published
+                    - created_at
+                  nullable: true
+                sort_dir:
+                  type: string
+                  description: 'Направление сортировки: asc или desc.'
+                  example: desc
+                  enum:
+                    - asc
+                    - desc
+                  nullable: true
+                search:
+                  type: string
+                  description: 'Поиск по названию модели или EAN. Must not be greater than 100 characters.'
+                  example: Winter
+                  nullable: true
     put:
       summary: 'Обновить шину.'
       operationId: ''
@@ -2369,10 +3749,15 @@ paths:
                   type: integer
                   description: 'ID бренда. Must match an existing stored value.'
                   example: 1
+                model_id:
+                  type: integer
+                  description: 'ID модели товара. Must match an existing stored value.'
+                  example: 1
                 name:
                   type: string
-                  description: 'Название модели шины. Must not be greater than 255 characters.'
+                  description: 'Отображаемое название (если не указано — берётся из модели). Must not be greater than 255 characters.'
                   example: 'Primacy 4'
+                  nullable: true
                 supplier_id:
                   type: integer
                   description: 'ID поставщика. Must match an existing stored value.'
@@ -2457,7 +3842,7 @@ paths:
                   example: false
               required:
                 - brand_id
-                - name
+                - model_id
                 - season
     delete:
       summary: 'Удалить шину.'

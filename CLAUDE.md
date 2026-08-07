@@ -221,5 +221,5 @@ Controller
 | Эксплуатация | `documentations/operations.md` | env, очереди/импорты, ручные сценарии |
 | Схема БД | `documentations/db-schema.md` | таблицы и связи |
 | Архитектура | `documentations/architecture.md` | устройство системы |
-| API | `documentations/api.md` (Scribe подключён — кандидат на генерацию OpenAPI) | контракты потребителей |
+| API | Scribe → `public/docs/` (`make docs`): HTML + OpenAPI + Postman | контракты потребителей |
 | ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |
