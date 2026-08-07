@@ -70,6 +70,7 @@ Controller::__invoke()
       fn () => $this->getReferences->execute()          // Action только при промахе
     )
   → JsonResponse
+```
 
 ### Response — что выбрать
 
@@ -99,7 +100,6 @@ Controller::__invoke()
 
 - Анализируй контекст перед ответом: к какому домену относится вопрос, какой слой затронут
 - Если вопрос размытый — уточни перед написанием кода
-- **Лаконично:** без воды, без перечисления очевидного. Только суть
 - Показывай diff/план, а не пересказывай изменения словами
 
 ---
@@ -113,17 +113,15 @@ Controller::__invoke()
 
 2. **Action не должен знать об HTTP.** `execute(DTO): DTO`. Action — `final readonly class`. Никаких `Request`, `Response`, `JsonResource`.
    - Для тривиального CRUD в админке можно `array<string, mixed>` вместо DTO. Не злоупотребляй.
-   - **Action не проверяет данные.** Все проверки — до Action (FormRequest + Preconditions).
    - Не вызывай другие Action из Action. Исключение: одна транзакция — через инжектированный `Connection`, без фасада `DB::`.
    - **Разделяй чтение и запись.** Action либо читает, либо пишет. Исключение: `lockForUpdate` + `increment` в одном Action.
-   - Чистые функции (без БД/HTTP/FS) выноси в отдельный Action под unit-тест.
 
 3. **Проверяй бизнес-правила в Preconditions.** Метод `ensure*()`, бросает `DomainException` с HTTP-кодом. Если ≥3 проверок — цепочка handler-ов через `setNext()`.
 
 4. **Модель — только Eloquent.** `$table`, `$fillable`, `$casts`, отношения, скоупы, аксессоры.
    - У каждой модели, енума и каста — краткий phpdoc `/** Для чего. */` над классом. Одна строка, без шаблонов.
    - `$timestamps` не отключай — они включены по умолчанию.
-   - **Scopes для повторяющихся фильтров.** Если один и тот же `where` используется в нескольких местах — выноси в scope на модели или метод кастомного Builder.
+   - **Scopes для повторяющихся фильтров.** Выноси в scope на модели или метод кастомного Builder.
    - **Кастомный Builder** — `@extends Builder<Model>` — сохраняет generic-тип для PHPStan.
 
 5. **DTO — `final readonly class`.** Никакой логики, только `fromRequest` / `toArray` / `JsonSerializable`.
@@ -132,8 +130,7 @@ Controller::__invoke()
 
 7. **Одна миграция — одна таблица** (исключение: pivot). Данные — только в сидерах.
 
-8. **Resource — только маппинг полей.** Никаких вычислений, запросов к БД, вызовов сервисов. Данные должны быть подготовлены до Resource.
-
+8. **Resource — только маппинг полей.** Никаких вычислений, запросов к БД, вызовов сервисов.
    ```
    // ❌ Resource сам считает
    'delivery' => $this->computeDelivery($tire, $cityId)
@@ -141,29 +138,14 @@ Controller::__invoke()
    // ✅ Controller подготовил, Resource выводит
    'delivery' => $this->whenLoaded('delivery')
    ```
+   Если нужно вычислить — делай в Controller/Service до передачи в Resource. Используй `setRelation()` или прямые свойства модели.
 
-   Если нужно вычислить — делай это в Controller/Service до передачи в Resource. Используй `setRelation()` или прямые свойства модели для передачи готовых данных.
+9. **Enum — только Backed Enum.** Никаких строковых констант. Каждый enum — отдельный файл в `app/Enums/`.
 
-9. **Дублирование кода в контроллерах — выноси в Service после второго вхождения.** Одна копия — ок, две — уже кандидат на вынос, три — обязательно.
+10. **Валидируй только в `FormRequest`.** Бизнес-ошибки — `DomainException` с HTTP-кодом.
 
-### Принципы кодирования
+11. **Конфиги — в `config/*.php`.** Один параметр — одно место. Без fallback-ов (`config('key', default)`).
 
-- **Пиши код под unit-тесты.** Если для проверки бизнес-логики нужна БД, HTTP или Response — архитектура сломана. Выделяй чистые функции в отдельные классы: тестируются без `DatabaseMigrations`, без моков, формулой «вход → выход».
-- **CQS: команда не возвращает данные, запрос не меняет состояние.** Метод либо меняет состояние (void), либо возвращает данные. `save()` не возвращает модель, `getTotal()` не пишет в кэш.
-- **Fail Fast: проверяй контракты на входе.** Параметр не может быть null или отрицательным — брось исключение сразу. Не давай невалидным данным уходить вглубь.
-- **Не возвращай null.** null на выходе — NPE в caller'е. Используй null-object, `Optional` через `?->`, или бросай исключение. null на входе — только если это явное бизнес-требование.
-- **Конструктор — только присвоение полей.** Никакой логики, валидации, вызовов БД. Для инициализации — named constructor (`public static function fromXxx()`).
-- **SOLID**, guard → early return. Забудь про `else`.
-- **Один уровень абстракции** в методе. Не мешай «найти склад» и `Warehouse::with('stocks')->find()`.
-- **≤3 параметра** у метода. Больше — группируй в DTO (исключение: конструкторы DI).
-- **Инжекть зависимости явно** в конструкторе. Никаких `Auth::`, `Cache::`, `Redis::`. Исключения: `DB::raw`/`DB::table` для выразительных SQL, `Storage` для URL файлов, `Log`.
-- **Называй по намерению:** глагол + существительное. Если метод `confirmView` — он не проверяет баланс.
-- **Пиши комментарии «почему», а не «что».** Код сам расскажет «что» через имена.
-- **Оставляй код чище, чем нашёл** (правило бойскаута).
-- **Обобщай только на третий раз** (Rule of Three). Две копии — ок.
-- **Конфиги — в `config/*.php`.** Один параметр — одно место. Без fallback-ов (`config('key', default)`).
-- **Не привязывайся к name/title.** Используй `code`, enum или config-маппинг.
-- **Валидируй только в `FormRequest`.** Бизнес-ошибки — `DomainException` с HTTP-кодом.
 ### Кеширование
 
 Если Action выполняет несколько запросов к БД — кеш размещается **до Action**, в контроллере. Action не знает о кеше.
@@ -176,40 +158,13 @@ Controller
   └── response
 ```
 
-Паттерн из трёх компонентов:
+Компоненты:
 
-1. **Cache Service** (`Services/Cache/{Domain}/XxxCacheService`) — тонкая обёртка над `Repository`:
-   ```php
-   final readonly class ReferencesCacheService
-   {
-       private const KEY = 'references';
-       public function __construct(private Repository $cache) {}
-   
-       public function remember(callable $query): array
-       {
-           $cached = $this->cache->get(self::KEY);
-           if ($cached !== null) return $cached;
-           $data = $query();
-           $this->cache->put(self::KEY, $data, config('cache_ttl.references'));
-           return $data;
-       }
-   
-       public function forget(): void { $this->cache->forget(self::KEY); }
-   }
-   ```
-
-2. **Controller** — оркестратор: вызывает `remember(fn () => $this->action->execute())`. Кеш прозрачен для Action: он либо вызывается (miss), либо нет (hit).
-
-3. **Observer** (`app/Observers/`) — инвалидация при изменении данных: `saved()`/`deleted()` → `$cache->forget()`. Регистрируется в `AppServiceProvider::boot()` через `Model::observe()`.
-
-4. **TTL** — в единый конфиг `config/cache_ttl.php`, один ключ — один параметр:
-   ```php
-   return ['references' => (int) env('CACHE_TTL_REFERENCES', 3600)];
-   ```
-
-5. **Action** — чистый запрос, без проверок кеша и побочных эффектов записи.
-
-6. **В кеш — только массивы/скаляры**, не Eloquent-модели. Перед `put()` данные сериализованы через Resource или `toArray()`.
+1. **Cache Service** (`Services/Cache/{Domain}/XxxCacheService`) — тонкая обёртка над `Repository`: `remember(callable): array` + `forget(): void`.
+2. **Controller** — оркестратор: вызывает `remember(fn () => $this->action->execute())`.
+3. **Observer** (`app/Observers/`) — инвалидация: `saved()`/`deleted()` → `$cache->forget()`. Регистрируется в `AppServiceProvider::boot()` через `Model::observe()`.
+4. **TTL** — в `config/cache_ttl.php`, один ключ — один параметр.
+5. **В кеш — только массивы/скаляры**, не Eloquent-модели. Перед `put()` данные сериализованы через Resource или `toArray()`.
 
 Не добавляй кеш молча — сначала предложи.
 
@@ -244,21 +199,17 @@ Controller
 
 ## Работа с кодом
 
+- Перед планированием или редактированием файла — читай `.ai/rules/index.md` и правила под глоб файла
+- Перед изменениями кода проверяй актуальную документацию через `search-docs` (версии пакетов проекта)
 - Перед коммитом: `make lint-fix` + `make phpstan` + `make test`
 - Статический анализ: `make phpstan` (level 6, config: `phpstan.neon`)
-- **В сообщении коммита указывай модель AI-агента.** Формат: `model: <имя-модели>` в теле коммита.
 
-## Документация
+---
 
-Вся документация проекта — в `documentations/`:
+## Решения (ADR)
 
-| Файл | О чём |
-|------|-------|
-| `architecture.md` | Архитектура проекта (стек, Docker, слои, API, ценообразование, сроки доставки) |
-| `db-schema.md` | Полная схема БД, все таблицы и поля, маппинг импорта (XLSX/CSV → БД) |
-| `api.md` | Стандарты API: форматы запросов/ответов, ошибки, пагинация |
-| `tz/user-functional-spec.md` | ТЗ пользовательской части (бизнес-язык) |
-| `tz/admin-functional-spec.md` | ТЗ административной павители (бизнес-язык) |
-| `fr/user-functional-spec.md` | Функциональные требования для пользователя (FR-*) |
-| `fr/admin-functional-spec.md` | Функциональные требования для админки (ADM-*) |
-| `import/` | Примеры исходных файлов для импорта (tires.xlsx, wheels.xlsx, vehicle.csv, points.xlsx) |
+Правила ведения — `documentations/adr/README.md` (создаётся при первом ADR).
+
+| № | Решение | Статус | Дата |
+|---|---|---|---|
+| 0001 | Чистые алгоритмы в Services — БД-обвязка снаружи | Accepted | 2026-08-07 |
