@@ -32,6 +32,7 @@ Artisan — только через контейнер: `docker compose exec bac
 | `TIRE_IMPORT_DISK` | Диск JSON-чанков импорта шин | local |
 | `POINT_IMPORT_DISK` | Диск чанков импорта пунктов выдачи | local |
 | `POSTMARK_API_KEY` и др. | Почтовые драйверы (не используются активно) | — |
+| `DOCS_ENABLED` | Доступ к API-документации (`/docs`) — только dev (`true`); prod: `false` → 404 | true |
 
 Секреты в репозиторий не коммитятся — только имена.
 
