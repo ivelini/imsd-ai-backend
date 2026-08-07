@@ -8,10 +8,10 @@ use App\Http\Requests\Admin\Catalog\Model\ProductModelRequest;
 use App\Http\Resources\Admin\Catalog\Model\ProductModelResource;
 use App\Models\Catalog\Model\ProductModel;
 use App\Preconditions\Catalog\EnsureModelHasNoProducts;
+use App\Services\Admin\FileService;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Storage;
 
 /** CRUD моделей товаров.
  *
@@ -23,6 +23,7 @@ final readonly class ProductModelController
         private GetProductModelList $getProductModelList,
         private EnsureModelHasNoProducts $ensureModelHasNoProducts,
         private ReferencesCacheService $referencesCache,
+        private FileService $fileService,
     ) {}
 
     /**
@@ -48,7 +49,7 @@ final readonly class ProductModelController
         unset($data['image']);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('models', 'public');
+            $data['image'] = $this->fileService->store($request->file('image'), 'models');
         }
 
         $model = ProductModel::create($data);
@@ -83,10 +84,7 @@ final readonly class ProductModelController
         unset($data['image']);
 
         if ($request->hasFile('image')) {
-            if ($model->image) {
-                Storage::disk('public')->delete($model->image);
-            }
-            $data['image'] = $request->file('image')->store('models', 'public');
+            $data['image'] = $this->fileService->replace($model->image, $request->file('image'), 'models');
         }
 
         $model->update($data);

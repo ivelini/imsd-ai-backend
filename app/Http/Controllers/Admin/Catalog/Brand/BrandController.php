@@ -8,9 +8,9 @@ use App\Http\Requests\Admin\Catalog\Brand\BrandRequest;
 use App\Http\Resources\Admin\Catalog\Brand\BrandResource;
 use App\Models\Catalog\Brand\Brand;
 use App\Preconditions\Catalog\EnsureBrandHasNoProducts;
+use App\Services\Admin\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Storage;
 
 /** CRUD брендов.
  *
@@ -21,6 +21,7 @@ final readonly class BrandController
     public function __construct(
         private GetBrandList $getBrandList,
         private EnsureBrandHasNoProducts $ensureBrandHasNoProducts,
+        private FileService $fileService,
     ) {}
 
     /**
@@ -46,7 +47,7 @@ final readonly class BrandController
         unset($data['logo']);
 
         if ($request->hasFile('logo')) {
-            $data['logo'] = $request->file('logo')->store('brands', 'public');
+            $data['logo'] = $this->fileService->store($request->file('logo'), 'brands');
         }
 
         $brand = Brand::create($data);
@@ -79,10 +80,7 @@ final readonly class BrandController
         unset($data['logo']);
 
         if ($request->hasFile('logo')) {
-            if ($brand->logo) {
-                Storage::disk('public')->delete($brand->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('brands', 'public');
+            $data['logo'] = $this->fileService->replace($brand->logo, $request->file('logo'), 'brands');
         }
 
         $brand->update($data);
