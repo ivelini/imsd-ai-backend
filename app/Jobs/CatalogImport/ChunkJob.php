@@ -2,14 +2,10 @@
 
 namespace App\Jobs\CatalogImport;
 
-use App\Actions\TireImport\UpsertStock;
-use App\Actions\TireImport\UpsertTireProduct;
-use App\DTOs\TireImport\ImportTireRow;
-use App\DTOs\TireImport\UpsertStockInput;
-use App\Events\Admin\ImportCompleted;
-use App\Models\Catalog\Tire\TireProduct;
+use App\Enums\Import\ImportType;
 use App\Models\System\ProductImport;
-use App\Preconditions\TireImport\EnsureEanNotEmpty;
+use App\Services\Import\ChunkRowProcessorFactory;
+use App\Services\Import\ImportStatusUpdater;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,7 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use RuntimeException;
 
-/** Обработка одного JSON-чанка: создание/обновление товаров и остатков. */
+/** Обработка одного JSON-чанка: создание/обновление товаров и остатков (tire|wheel). */
 final class ChunkJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
@@ -32,21 +28,41 @@ final class ChunkJob implements ShouldQueue
     public function __construct(
         public readonly int $importId,
         public readonly string $chunkFilePath,
+        public readonly ImportType $importType,
     ) {}
 
     public function handle(
-        UpsertTireProduct $upsertTireProduct,
-        UpsertStock $upsertStock,
-        EnsureEanNotEmpty $ensureEanNotEmpty,
+        ChunkRowProcessorFactory $factory,
     ): void {
         $data = $this->readChunkFile();
+        $processor = $factory->create($this->importType);
 
-        [$created, $updated, $failed, $errors] = $this->processRows(
-            $data['rows'],
-            $upsertTireProduct,
-            $upsertStock,
-            $ensureEanNotEmpty,
-        );
+        $created = 0;
+        $updated = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($data['rows'] as $rowIndex => $rowData) {
+            try {
+                if ($processor->process($rowData)) {
+                    $created++;
+                } else {
+                    $updated++;
+                }
+            } catch (\Throwable $e) {
+                $failed++;
+                $errors[] = [
+                    'row' => $rowIndex + 1,
+                    'ean' => $rowData['ean'] ?? 'N/A',
+                    'error' => $e->getMessage(),
+                ];
+
+                // Прерываем при критическом числе ошибок — данные вероятно повреждены
+                if (count($errors) > 100) {
+                    break;
+                }
+            }
+        }
 
         $this->updateCounters($created, $updated, $failed);
         $this->appendErrors($errors);
@@ -68,70 +84,6 @@ final class ChunkJob implements ShouldQueue
             512,
             JSON_THROW_ON_ERROR,
         );
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $rows
-     * @return array{int, int, int, array<int, array{row: int, ean: string, error: string}>}
-     */
-    private function processRows(
-        array $rows,
-        UpsertTireProduct $upsertTireProduct,
-        UpsertStock $upsertStock,
-        EnsureEanNotEmpty $ensureEanNotEmpty,
-    ): array {
-        $created = 0;
-        $updated = 0;
-        $failed = 0;
-        $errors = [];
-
-        foreach ($rows as $rowIndex => $rowData) {
-            try {
-                $row = ImportTireRow::fromArray($rowData);
-
-                $ensureEanNotEmpty->ensure($row->ean);
-
-                $result = $upsertTireProduct->execute($row);
-
-                if ($result->created) {
-                    $created++;
-                } else {
-                    $updated++;
-                }
-
-                $this->importStock($row, $upsertStock);
-            } catch (\Throwable $e) {
-                $failed++;
-                $errors[] = [
-                    'row' => $rowIndex + 1,
-                    'ean' => $rowData['ean'] ?? 'N/A',
-                    'error' => $e->getMessage(),
-                ];
-
-                // Прерываем при критическом числе ошибок — данные вероятно повреждены
-                if (count($errors) > 100) {
-                    break;
-                }
-            }
-        }
-
-        return [$created, $updated, $failed, $errors];
-    }
-
-    private function importStock(ImportTireRow $row, UpsertStock $upsertStock): void
-    {
-        if ($row->warehouse_name === null) {
-            return;
-        }
-
-        $tire = TireProduct::where('ean', $row->ean)->firstOrFail();
-        $upsertStock->execute(new UpsertStockInput(
-            stockableType: $tire->getMorphClass(),
-            stockableId: $tire->id,
-            warehouseName: $row->warehouse_name,
-            quantity: $row->quantity,
-            purchasePrice: $row->purchase_price,
-        ));
     }
 
     private function updateCounters(int $created, int $updated, int $failed): void
@@ -173,17 +125,9 @@ final class ChunkJob implements ShouldQueue
         }
     }
 
+    /** Laravel failed()-hook не поддерживает DI — только через app(). */
     public function failed(\Throwable $e): void
     {
-        ProductImport::where('id', $this->importId)->update([
-            'status' => 'failed',
-            'error_message' => 'ChunkJob: '.$e->getMessage(),
-            'finished_at' => now(),
-        ]);
-
-        $import = ProductImport::find($this->importId);
-        if ($import) {
-            event(new ImportCompleted($import));
-        }
+        app(ImportStatusUpdater::class)->markFailed($this->importId, $e, 'ChunkJob');
     }
 }

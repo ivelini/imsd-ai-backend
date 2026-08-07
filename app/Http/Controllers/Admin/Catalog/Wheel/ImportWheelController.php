@@ -11,10 +11,7 @@ use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
 use Illuminate\Http\JsonResponse;
 
-/** Загрузка и запуск импорта дисков.
- *
- * @group Импорт дисков
- */
+/** Загрузка и запуск импорта дисков.*/
 final readonly class ImportWheelController
 {
     public function __construct(
@@ -30,6 +27,8 @@ final readonly class ImportWheelController
      * @bodyParam file file required XLSX-файл (макс. 50 МБ).
      *
      * @response status=202 {"data": {"import_id": 1}}
+     *
+     * @group Импорт
      */
     public function store(UploadFileRequest $request): JsonResponse
     {

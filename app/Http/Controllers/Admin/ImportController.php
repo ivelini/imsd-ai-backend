@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
 use App\Models\System\ProductImport;
 
-/** Универсальный статус асинхронного импорта (шины, диски, точки выдачи). */
+/**
+ * Универсальный статус асинхронного импорта (шины, диски, точки выдачи).
+ */
 final readonly class ImportController
 {
     /**

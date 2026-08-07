@@ -2,6 +2,7 @@
 
 namespace App\Preconditions\Import;
 
+use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
 use App\Models\System\ProductImport;
 use DomainException;
@@ -12,7 +13,7 @@ final readonly class EnsureNoActiveImport
     public function ensure(ImportType $type): void
     {
         $exists = ProductImport::where('type', $type->value)
-            ->whereIn('status', ['pending', 'processing'])
+            ->whereIn('status', [ImportState::Pending->value, ImportState::Processing->value])
             ->exists();
 
         if ($exists) {

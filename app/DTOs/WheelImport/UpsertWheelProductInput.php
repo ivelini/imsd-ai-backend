@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\TireImport;
+namespace App\DTOs\WheelImport;
 
 /** Входные данные для Action UpsertWheelProduct. */
 final readonly class UpsertWheelProductInput

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions\TireImport;
+namespace App\Actions\WheelImport;
 
-use App\DTOs\TireImport\UpsertWheelProductInput;
+use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\TireImport\ReferenceResolver;

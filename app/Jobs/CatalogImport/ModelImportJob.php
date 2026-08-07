@@ -2,8 +2,7 @@
 
 namespace App\Jobs\CatalogImport;
 
-use App\Events\Admin\ImportCompleted;
-use App\Models\System\ProductImport;
+use App\Services\Import\ImportStatusUpdater;
 use App\Services\TireImport\ReferenceResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -42,17 +41,23 @@ final class ModelImportJob implements ShouldQueue
         $this->requiredColumns = $requiredColumns;
     }
 
-    public function handle(ReferenceResolver $resolver): void
+    public function handle(ReferenceResolver $resolver, ImportStatusUpdater $statusUpdater): void
     {
-        $import = ProductImport::findOrFail($this->importId);
-        $this->markProcessing($import);
+        $statusUpdater->markProcessing($this->importId);
 
         try {
             [$total, $created, $updated, $errors] = $this->processFile($resolver);
 
-            $this->markCompleted($import, $total, $created, $updated, $errors);
+            $statusUpdater->markCompleted($this->importId, [
+                'total_rows' => $total,
+                'processed_rows' => $total,
+                'created_rows' => $created,
+                'updated_rows' => $updated,
+                'failed_rows' => count($errors),
+                'errors' => $errors ?: null,
+            ]);
         } catch (\Throwable $e) {
-            $this->markFailed($import, $e);
+            $statusUpdater->markFailed($this->importId, $e);
             throw $e;
         }
     }
@@ -170,39 +175,5 @@ final class ModelImportJob implements ShouldQueue
         }
 
         return $result;
-    }
-
-    private function markProcessing(ProductImport $import): void
-    {
-        $import->update(['status' => 'processing', 'started_at' => now()]);
-    }
-
-    /**
-     * @param  array<int, array{row: int, name: string, error: string}>  $errors
-     */
-    private function markCompleted(ProductImport $import, int $total, int $created, int $updated, array $errors): void
-    {
-        $import->update([
-            'status' => 'completed',
-            'total_rows' => $total,
-            'processed_rows' => $total,
-            'created_rows' => $created,
-            'updated_rows' => $updated,
-            'failed_rows' => count($errors),
-            'errors' => $errors ?: null,
-            'finished_at' => now(),
-        ]);
-
-        event(new ImportCompleted($import));
-    }
-
-    private function markFailed(ProductImport $import, \Throwable $e): void
-    {
-        $import->update([
-            'status' => 'failed',
-            'error_message' => $e->getMessage(),
-            'finished_at' => now(),
-        ]);
-        event(new ImportCompleted($import));
     }
 }

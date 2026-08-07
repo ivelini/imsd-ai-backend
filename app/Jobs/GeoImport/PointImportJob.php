@@ -4,13 +4,12 @@ namespace App\Jobs\GeoImport;
 
 use App\Actions\Catalog\PopulateCatalogPrices;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
-use App\Events\Admin\ImportCompleted;
 use App\Models\Delivery\City;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliveryPoint;
 use App\Models\Delivery\Region;
-use App\Models\System\ProductImport;
+use App\Services\Import\ImportStatusUpdater;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -61,53 +60,25 @@ final class PointImportJob implements ShouldQueue
         return $price;
     }
 
-    public function handle(): void
+    public function handle(ImportStatusUpdater $statusUpdater): void
     {
-        $import = ProductImport::findOrFail($this->importId);
-        $this->markImportProcessing($import);
+        $statusUpdater->markProcessing($this->importId);
 
         try {
             [$total, $errors] = $this->processFile();
 
-            $this->markImportCompleted($import, $total, $errors);
+            $statusUpdater->markCompleted($this->importId, [
+                'total_rows' => $total,
+                'processed_rows' => $total,
+                'failed_rows' => count($errors),
+                'errors' => $errors ?: null,
+            ]);
+
+            app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
         } catch (\Throwable $e) {
-            $this->markImportFailed($import, $e);
+            $statusUpdater->markFailed($this->importId, $e);
             throw $e;
         }
-    }
-
-    private function markImportProcessing(ProductImport $import): void
-    {
-        $import->update(['status' => 'processing', 'started_at' => now()]);
-    }
-
-    /**
-     * @param  array<int, array{row: int, city: string, error: string}>  $errors
-     */
-    private function markImportCompleted(ProductImport $import, int $total, array $errors): void
-    {
-        $import->update([
-            'status' => 'completed',
-            'total_rows' => $total,
-            'processed_rows' => $total,
-            'failed_rows' => count($errors),
-            'errors' => $errors ?: null,
-            'finished_at' => now(),
-        ]);
-
-        app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
-
-        event(new ImportCompleted($import));
-    }
-
-    private function markImportFailed(ProductImport $import, \Throwable $e): void
-    {
-        $import->update([
-            'status' => 'failed',
-            'error_message' => $e->getMessage(),
-            'finished_at' => now(),
-        ]);
-        event(new ImportCompleted($import));
     }
 
     /**

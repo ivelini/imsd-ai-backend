@@ -13,7 +13,6 @@ use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта шин.
  *
- * @group Импорт шин
  */
 final readonly class ImportTireController
 {
@@ -24,6 +23,8 @@ final readonly class ImportTireController
 
     /**
      * Загрузить XLSX-файл с шинами.
+     *
+     * @group Импорт
      *
      * @authenticated
      *

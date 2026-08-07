@@ -4,10 +4,10 @@ namespace Tests\Feature\Admin\Catalog;
 
 use App\Actions\TireImport\ParseImportFile;
 use App\Actions\TireImport\UpsertStock;
-use App\Actions\TireImport\UpsertWheelProduct;
+use App\Actions\WheelImport\UpsertWheelProduct;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\DTOs\TireImport\UpsertStockInput;
-use App\DTOs\TireImport\UpsertWheelProductInput;
+use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;

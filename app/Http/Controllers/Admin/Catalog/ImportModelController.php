@@ -9,7 +9,9 @@ use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Preconditions\Import\EnsureNoActiveImport;
 use Illuminate\Http\JsonResponse;
 
-/** Загрузка и запуск импорта моделей товаров. */
+/**
+ * Загрузка и запуск импорта моделей товаров.
+ */
 final readonly class ImportModelController
 {
     public function __construct(
@@ -22,7 +24,7 @@ final readonly class ImportModelController
      *
      * @authenticated
      *
-     * @group Импорт моделей
+     * @group Импорт
      */
     public function store(UploadFileRequest $request): JsonResponse
     {

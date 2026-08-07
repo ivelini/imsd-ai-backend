@@ -22,8 +22,8 @@ final readonly class ParseImportFile
         $chunkFilePaths = [];
         $buffer = [];
         $chunkIndex = 0;
-        $columnMap = $input->columnMap ?: config('tire_import.column_map', []);
-        $requiredColumns = $input->requiredColumns ?: config('tire_import.required_columns', []);
+        $columnMap = $input->columnMap;
+        $requiredColumns = $input->requiredColumns;
         $headerRead = false;
 
         foreach ($sheet->getRowIterator() as $rowIndex => $row) {

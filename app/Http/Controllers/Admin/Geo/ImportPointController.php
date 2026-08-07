@@ -11,7 +11,9 @@ use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
 use Illuminate\Http\JsonResponse;
 
-/** Загрузка и запуск импорта точек выдачи. */
+/**
+ * Загрузка и запуск импорта точек выдачи.
+ */
 final readonly class ImportPointController
 {
     public function __construct(
@@ -24,7 +26,7 @@ final readonly class ImportPointController
      *
      * @authenticated
      *
-     * @group Импорт точек выдачи
+     * @group Импорт
      */
     public function store(UploadFileRequest $request): JsonResponse
     {

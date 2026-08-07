@@ -2,12 +2,14 @@
 
 namespace App\Models\System;
 
+use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /** Аудит импорта товаров (шины/диски): статус, статистика, ошибки.
  *
+ * @property-read ImportState $status
  * @property-read Carbon|null $started_at
  * @property-read Carbon|null $finished_at
  */
@@ -34,6 +36,7 @@ class ProductImport extends Model
     {
         return [
             'type' => ImportType::class,
+            'status' => ImportState::class,
             'total_rows' => 'integer',
             'processed_rows' => 'integer',
             'created_rows' => 'integer',
