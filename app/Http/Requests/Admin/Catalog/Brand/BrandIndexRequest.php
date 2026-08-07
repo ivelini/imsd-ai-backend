@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog\Brand;
 
+use App\Enums\Catalog\BrandType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +17,7 @@ class BrandIndexRequest extends FormRequest
             'sort_by' => ['nullable', Rule::in(['id', 'name', 'type', 'created_at'])],
             'sort_dir' => ['nullable', Rule::in(['asc', 'desc'])],
             'search' => ['nullable', 'string', 'max:100'],
-            'type' => ['nullable', Rule::in(['tire', 'wheel', 'both'])],
+            'type' => ['nullable', Rule::in(array_column(BrandType::cases(), 'value'))],
         ];
     }
 

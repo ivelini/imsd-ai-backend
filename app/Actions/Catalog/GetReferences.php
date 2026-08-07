@@ -2,6 +2,7 @@
 
 namespace App\Actions\Catalog;
 
+use App\Enums\Catalog\BrandType;
 use App\Enums\Catalog\ProductType;
 use App\Enums\Catalog\Season;
 use App\Enums\Catalog\WheelType;
@@ -93,11 +94,10 @@ final readonly class GetReferences
                 'label' => $case->label(),
             ], PromotionType::cases()),
 
-            'brand_types' => [
-                ['value' => 'tire', 'label' => 'Шинные'],
-                ['value' => 'wheel', 'label' => 'Дисковые'],
-                ['value' => 'both', 'label' => 'Шины и диски'],
-            ],
+            'brand_types' => array_map(fn (BrandType $case) => [
+                'value' => $case->value,
+                'label' => $case->label(),
+            ], BrandType::cases()),
         ];
     }
 }

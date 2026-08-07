@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog\Brand;
 
+use App\Enums\Catalog\BrandType;
 use App\Enums\Catalog\ProductType;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
@@ -12,7 +13,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Бренд товара (Winter Drive…). Привязан к одному поставщику. */
+/** Бренд товара (Winter Drive…). Привязан к одному поставщику.
+ *
+ * @property-read BrandType $type
+ */
 class Brand extends Model
 {
     /** @use HasFactory<BrandFactory> */
@@ -25,6 +29,13 @@ class Brand extends Model
         'description',
         'type',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => BrandType::class,
+        ];
+    }
 
     public function models(): HasMany
     {
@@ -43,12 +54,12 @@ class Brand extends Model
 
     public function isTireBrand(): bool
     {
-        return in_array($this->type, [ProductType::Tire->value, 'both']);
+        return $this->type->covers(ProductType::Tire);
     }
 
     public function isWheelBrand(): bool
     {
-        return in_array($this->type, [ProductType::Wheel->value, 'both']);
+        return $this->type->covers(ProductType::Wheel);
     }
 
     /** Поиск по названию бренда. */

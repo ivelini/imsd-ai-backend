@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog\Brand;
 
+use App\Enums\Catalog\BrandType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,7 +23,7 @@ class BrandRequest extends FormRequest
             ],
             'logo' => ['nullable', 'file', 'image', 'mimes:jpeg,png,webp', 'max:10240'],
             'description' => ['nullable', 'string'],
-            'type' => ['required', Rule::in(['tire', 'wheel', 'both'])],
+            'type' => ['required', Rule::in(array_column(BrandType::cases(), 'value'))],
         ];
     }
 

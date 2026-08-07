@@ -116,4 +116,20 @@ class BrandTest extends TestCase
             ->assertStatus(409)
             ->assertJsonPath('message', fn (string $m) => str_contains($m, 'Невозможно удалить'));
     }
+
+    public function test_both_brand_covers_both_categories(): void
+    {
+        $brand = Brand::factory()->create(['type' => 'both']);
+
+        $this->assertTrue($brand->isTireBrand());
+        $this->assertTrue($brand->isWheelBrand());
+    }
+
+    public function test_tire_brand_covers_only_tires(): void
+    {
+        $brand = Brand::factory()->create(['type' => 'tire']);
+
+        $this->assertTrue($brand->isTireBrand());
+        $this->assertFalse($brand->isWheelBrand());
+    }
 }
