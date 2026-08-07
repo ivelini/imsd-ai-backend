@@ -6,6 +6,7 @@ use App\Enums\Catalog\ProductType;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Database\Factories\Catalog\Brand\BrandFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** Бренд товара (Winter Drive…). Привязан к одному поставщику. */
 class Brand extends Model
 {
-    /** @use HasFactory<\Database\Factories\Catalog\Brand\BrandFactory> */
+    /** @use HasFactory<BrandFactory> */
     use HasFactory;
 
     protected $fillable = [

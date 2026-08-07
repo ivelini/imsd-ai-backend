@@ -4,6 +4,7 @@ namespace App\Models\Catalog\Warehouse;
 
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Delivery\DeliverySchedule;
+use Database\Factories\Catalog\Warehouse\WarehouseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Warehouse extends Model
 {
-    /** @use HasFactory<\Database\Factories\Catalog\Warehouse\WarehouseFactory> */
+    /** @use HasFactory<WarehouseFactory> */
     use HasFactory;
 
     protected $fillable = [

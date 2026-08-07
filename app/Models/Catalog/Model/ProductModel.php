@@ -5,6 +5,7 @@ namespace App\Models\Catalog\Model;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Database\Factories\Catalog\Model\ProductModelFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** Модель товара (A503, LS 131). Принадлежит бренду, содержит общее описание и изображение. */
 class ProductModel extends Model
 {
-    /** @use HasFactory<\Database\Factories\Catalog\Model\ProductModelFactory> */
+    /** @use HasFactory<ProductModelFactory> */
     use HasFactory;
 
     protected $fillable = [

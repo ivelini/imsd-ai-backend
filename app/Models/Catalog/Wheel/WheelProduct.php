@@ -12,6 +12,7 @@ use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Image;
+use Database\Factories\Catalog\Wheel\WheelProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class WheelProduct extends Model
 {
-    /** @use HasFactory<\Database\Factories\Catalog\Wheel\WheelProductFactory> */
+    /** @use HasFactory<WheelProductFactory> */
     use HasFactory;
 
     protected $fillable = [

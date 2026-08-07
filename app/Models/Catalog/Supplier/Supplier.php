@@ -4,6 +4,7 @@ namespace App\Models\Catalog\Supplier;
 
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Database\Factories\Catalog\Supplier\SupplierFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** Завод-производитель (Cordiant, Nokian…). Внутренний справочник. */
 class Supplier extends Model
 {
-    /** @use HasFactory<\Database\Factories\Catalog\Supplier\SupplierFactory> */
+    /** @use HasFactory<SupplierFactory> */
     use HasFactory;
 
     protected $fillable = [
