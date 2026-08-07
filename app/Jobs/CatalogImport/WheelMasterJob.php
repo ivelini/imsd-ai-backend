@@ -122,7 +122,7 @@ final class WheelMasterJob implements ShouldQueue
                     }
                 }
 
-                app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($importId));
+                app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
             })
             ->dispatch();
     }

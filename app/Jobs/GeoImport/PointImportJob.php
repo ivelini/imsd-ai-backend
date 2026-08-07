@@ -95,7 +95,7 @@ final class PointImportJob implements ShouldQueue
             'finished_at' => now(),
         ]);
 
-        app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput($import->id));
+        app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
         event(new ImportCompleted($import));
     }
