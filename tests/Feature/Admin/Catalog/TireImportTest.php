@@ -39,7 +39,7 @@ class TireImportTest extends TestCase
 
     public function test_upload_requires_auth(): void
     {
-        $this->postJson('/api/admin/catalog/tires/import')
+        $this->postJson('/api/admin/catalog/import/tires')
             ->assertUnauthorized();
     }
 
@@ -48,7 +48,7 @@ class TireImportTest extends TestCase
         $file = UploadedFile::fake()->create('test.pdf', 100);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/tires/import', ['file' => $file])
+            ->postJson('/api/admin/catalog/import/tires', ['file' => $file])
             ->assertStatus(422);
     }
 
@@ -60,7 +60,7 @@ class TireImportTest extends TestCase
         $file = UploadedFile::fake()->create('tires.xlsx', 100);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/tires/import', ['file' => $file])
+            ->postJson('/api/admin/catalog/import/tires', ['file' => $file])
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 

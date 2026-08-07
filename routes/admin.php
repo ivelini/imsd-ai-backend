@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/catalog/tires/dimensions', GetTireDimensionsController::class);
     Route::get('/catalog/tires', [TireProductController::class, 'index']);
-    Route::post('/catalog/tires/import', [ImportTireController::class, 'store']);
+    Route::post('/catalog/import/tires', [ImportTireController::class, 'store']);
     Route::post('/catalog/tires', [TireProductController::class, 'store']);
     Route::get('/catalog/tires/{id}', [TireProductController::class, 'show']);
     Route::put('/catalog/tires/{id}', [TireProductController::class, 'update']);
@@ -90,7 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/catalog/wheels/dimensions', GetWheelDimensionsController::class);
     Route::get('/catalog/wheels', [WheelProductController::class, 'index']);
-    Route::post('/catalog/wheels/import', [ImportWheelController::class, 'store']);
+    Route::post('/catalog/import/wheels', [ImportWheelController::class, 'store']);
     Route::post('/catalog/wheels', [WheelProductController::class, 'store']);
     Route::get('/catalog/wheels/{id}', [WheelProductController::class, 'show']);
     Route::put('/catalog/wheels/{id}', [WheelProductController::class, 'update']);
@@ -98,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/catalog/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
 
     Route::get('/geo/cities', [CityController::class, 'index']);
-    Route::post('/geo/points/import', [ImportPointController::class, 'store']);
+    Route::post('/geo/import/points', [ImportPointController::class, 'store']);
 
     Route::get('/geo/city-price-rules', [CityPriceRuleController::class, 'index']);
     Route::post('/geo/city-price-rules', [CityPriceRuleController::class, 'store']);
@@ -125,7 +125,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/catalog/warehouses/{id}', [WarehouseController::class, 'destroy']);
 
     Route::get('/catalog/models', [ProductModelController::class, 'index']);
-    Route::post('/catalog/models/import', [ImportModelController::class, 'store']);
+    Route::post('/catalog/import/models', [ImportModelController::class, 'store']);
     Route::post('/catalog/models', [ProductModelController::class, 'store']);
     Route::get('/catalog/models/{id}', [ProductModelController::class, 'show']);
     Route::put('/catalog/models/{id}', [ProductModelController::class, 'update']);

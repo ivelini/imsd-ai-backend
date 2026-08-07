@@ -33,7 +33,7 @@ class PointImportTest extends TestCase
 
     public function test_requires_auth(): void
     {
-        $this->postJson('/api/admin/geo/points/import')->assertUnauthorized();
+        $this->postJson('/api/admin/geo/import/points')->assertUnauthorized();
     }
 
     public function test_upload_returns_202(): void
@@ -44,7 +44,7 @@ class PointImportTest extends TestCase
         $file = UploadedFile::fake()->create('points.xlsx', 100);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/points/import', ['file' => $file])
+            ->postJson('/api/admin/geo/import/points', ['file' => $file])
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 

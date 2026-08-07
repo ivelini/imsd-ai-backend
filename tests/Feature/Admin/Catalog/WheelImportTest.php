@@ -40,7 +40,7 @@ class WheelImportTest extends TestCase
 
     public function test_upload_requires_auth(): void
     {
-        $this->postJson('/api/admin/catalog/wheels/import')->assertUnauthorized();
+        $this->postJson('/api/admin/catalog/import/wheels')->assertUnauthorized();
     }
 
     public function test_upload_returns_202(): void
@@ -51,7 +51,7 @@ class WheelImportTest extends TestCase
         $file = UploadedFile::fake()->create('wheels.xlsx', 100);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/wheels/import', ['file' => $file])
+            ->postJson('/api/admin/catalog/import/wheels', ['file' => $file])
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 
