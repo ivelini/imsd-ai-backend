@@ -6,6 +6,9 @@ use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Promotion\Promotion;
+use App\Models\Catalog\Tire\TireProduct;
+use App\Models\Image;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -75,5 +78,15 @@ class TireProductTest extends TestCase
         $this->actingAs($this->admin, 'sanctum')
             ->deleteJson("/api/admin/catalog/tires/{$id}")
             ->assertNoContent();
+    }
+
+    public function test_promotions_relation_returns_promotions_not_images(): void
+    {
+        $product = TireProduct::factory()->create();
+
+        $relation = $product->promotions();
+
+        $this->assertInstanceOf(Promotion::class, $relation->getRelated());
+        $this->assertNotInstanceOf(Image::class, $relation->getRelated());
     }
 }

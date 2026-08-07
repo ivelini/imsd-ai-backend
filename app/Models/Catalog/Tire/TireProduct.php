@@ -8,6 +8,7 @@ use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Builders\TireProductBuilder;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Image;
@@ -96,7 +97,7 @@ class TireProduct extends Model
 
     public function promotions(): MorphMany
     {
-        return $this->morphMany(Image::class, 'promotable');
+        return $this->morphMany(Promotion::class, 'promotable');
     }
 
     public function newEloquentBuilder($query): TireProductBuilder
