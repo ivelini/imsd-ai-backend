@@ -42,13 +42,12 @@ final readonly class TireProductController
      *
      * @group Шины
      */
-    public function show(int $id): TireProductResource
+    public function show(TireProductIndexRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
             ->findOrFail($id);
 
-        $cityId = request()->get('city_id');
-        $this->deliveryInfo->enrichProduct($tire, $cityId ? (int) $cityId : null);
+        $this->deliveryInfo->enrichProduct($tire, $request->validated('city_id'));
 
         return new TireProductResource($tire);
     }

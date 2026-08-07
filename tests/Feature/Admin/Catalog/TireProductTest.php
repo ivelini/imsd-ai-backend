@@ -8,8 +8,15 @@ use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Tire\TireProduct;
+use App\Models\Catalog\Warehouse\Stock;
+use App\Models\Catalog\Warehouse\Warehouse;
+use App\Models\Delivery\City;
+use App\Models\Delivery\CityDeliveryTime;
+use App\Models\Delivery\DeliverySchedule;
+use App\Models\Delivery\Region;
 use App\Models\Image;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 /** HTTP-слой CRUD шин. */
@@ -88,5 +95,67 @@ class TireProductTest extends TestCase
 
         $this->assertInstanceOf(Promotion::class, $relation->getRelated());
         $this->assertNotInstanceOf(Image::class, $relation->getRelated());
+    }
+
+    public function test_show_enriches_delivery_with_city_id(): void
+    {
+        Carbon::setTestNow(now()->startOfDay()->addHours(10));
+        $tire = TireProduct::factory()->create();
+        $city = $this->createCityWithDeliveryTime();
+        $warehouse = $this->createWarehouseWithScheduleForToday();
+
+        Stock::create([
+            'stockable_type' => $tire->getMorphClass(),
+            'stockable_id' => $tire->id,
+            'warehouse_id' => $warehouse->id,
+            'quantity' => 5,
+            'price' => 100,
+            'purchase_price' => 50,
+        ]);
+
+        $this->actingAs($this->admin, 'sanctum')
+            ->getJson("/api/admin/catalog/tires/{$tire->id}?city_id={$city->id}")
+            ->assertOk()
+            ->assertJsonPath('data.delivery.delivery_days', 3);
+    }
+
+    public function test_show_rejects_invalid_city_id(): void
+    {
+        $tire = TireProduct::factory()->create();
+
+        $this->actingAs($this->admin, 'sanctum')
+            ->getJson("/api/admin/catalog/tires/{$tire->id}?city_id=abc")
+            ->assertUnprocessable();
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
+    }
+
+    private function createCityWithDeliveryTime(): City
+    {
+        $region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
+        $city = City::create(['region_id' => $region->id, 'name' => 'Челябинск', 'sort' => 1]);
+
+        CityDeliveryTime::create(['city_id' => $city->id, 'delivery_days' => 1, 'priority' => 1]);
+
+        return $city;
+    }
+
+    private function createWarehouseWithScheduleForToday(): Warehouse
+    {
+        $warehouse = Warehouse::factory()->create();
+
+        DeliverySchedule::create([
+            'warehouse_id' => $warehouse->id,
+            'day_of_week' => now()->dayOfWeekIso - 1,
+            'cutoff_time' => '18:00',
+            'days_before' => 2,
+            'days_after' => 5,
+        ]);
+
+        return $warehouse;
     }
 }

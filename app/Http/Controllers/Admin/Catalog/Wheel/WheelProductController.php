@@ -38,13 +38,12 @@ final readonly class WheelProductController
     /**
      * @group Диски
      */
-    public function show(int $id): WheelProductResource
+    public function show(WheelProductIndexRequest $request, int $id): WheelProductResource
     {
         $wheel = WheelProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
             ->findOrFail($id);
 
-        $cityId = request()->get('city_id');
-        $this->deliveryInfo->enrichProduct($wheel, $cityId ? (int) $cityId : null);
+        $this->deliveryInfo->enrichProduct($wheel, $request->validated('city_id'));
 
         return new WheelProductResource($wheel);
     }
