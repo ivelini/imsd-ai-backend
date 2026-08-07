@@ -221,5 +221,5 @@ Controller
 | Эксплуатация | `documentations/operations.md` | env, очереди/импорты, ручные сценарии |
 | Схема БД | `documentations/db-schema.md` | таблицы и связи |
 | Архитектура | `documentations/architecture.md` | устройство системы |
-| API | Scribe → `public/docs/` (`make docs`): HTML + OpenAPI + Postman | контракты потребителей |
+| API | Scribe → `documentations/openapi/` (`make docs`): HTML + OpenAPI + Postman (в IDE, без HTTP) | контракты потребителей |
 | ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |

@@ -30,4 +30,4 @@ Thumbs.db
 /.scribe/
 
 # Сгенерированная документация API (Scribe) — только в dev, в git не хранится
-/public/docs/
+/documentations/openapi/
