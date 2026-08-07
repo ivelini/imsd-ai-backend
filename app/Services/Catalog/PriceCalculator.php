@@ -3,26 +3,46 @@
 namespace App\Services\Catalog;
 
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
+use Illuminate\Support\Collection;
 
 /** Расчёт финальной цены товара: purchase_price × коэффициент наценки склада. */
 final readonly class PriceCalculator
 {
-    /**
-     * @return float purchase_price, если правило не найдено; иначе price × coefficient (округлено до 2 знаков)
-     */
-    public function calculateFinalPrice(float $purchasePrice, int $warehouseId): float
+    /** Правило наценки для цены и склада (SQL, единичные вызовы — импорт). */
+    public function findRule(float $purchasePrice, int $warehouseId): ?WarehouseMarkupRule
     {
-        $rule = WarehouseMarkupRule::where('warehouse_id', $warehouseId)
+        return WarehouseMarkupRule::query()
+            ->where('warehouse_id', $warehouseId)
             ->where('price_from', '<=', $purchasePrice)
             ->where('price_to', '>=', $purchasePrice)
             ->orderBy('price_from')
             ->orderBy('price_to')
             ->first();
+    }
 
-        if ($rule === null) {
-            return $purchasePrice;
-        }
+    /** Финальная цена по правилу; без правила — закупочная цена. */
+    public function applyRule(float $purchasePrice, ?WarehouseMarkupRule $rule): float
+    {
+        return $rule === null
+            ? $purchasePrice
+            : round($purchasePrice * $rule->coefficient, 2);
+    }
 
-        return round($purchasePrice * $rule->coefficient, 2);
+    /**
+     * Массовый пересчёт: поиск правила в предзагруженной коллекции (без БД).
+     *
+     * @param  Collection<array-key, Collection<int, array<string, int|float>>>  $allRules  правила, сгруппированные по warehouse_id
+     */
+    public function calculateFinalPrice(float $purchasePrice, int $warehouseId, Collection $allRules): float
+    {
+        $rule = $allRules->get($warehouseId, collect())
+            ->sortBy([['price_from', 'asc'], ['price_to', 'asc']])
+            ->first(
+                fn (array $r) => $purchasePrice >= $r['price_from'] && $purchasePrice <= $r['price_to']
+            );
+
+        return $rule === null
+            ? $purchasePrice
+            : round($purchasePrice * $rule['coefficient'], 2);
     }
 }

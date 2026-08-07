@@ -20,6 +20,7 @@ class CatalogPrice extends Model
     protected function casts(): array
     {
         return [
+            'price' => 'float',
             'delivery_min' => 'integer',
             'delivery_max' => 'integer',
         ];

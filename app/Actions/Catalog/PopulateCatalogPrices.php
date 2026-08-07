@@ -3,11 +3,12 @@
 namespace App\Actions\Catalog;
 
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
+use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
 use App\Services\Catalog\PriceCalculator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 /** Пересчитывает catalog_prices для всех stocks × все cities с учётом наценок. */
 final readonly class PopulateCatalogPrices
@@ -21,6 +22,16 @@ final readonly class PopulateCatalogPrices
         $stocks = Stock::with('warehouse')->get();
         $cityIds = City::pluck('id');
 
+        // Правила загружаются один раз и сериализуются в массивы — сервис не знает о БД
+        /** @var Collection<array-key, Collection<int, array<string, int|float>>> $allRules */
+        $allRules = WarehouseMarkupRule::all()
+            ->groupBy('warehouse_id')
+            ->map(fn (Collection $group) => $group->map(fn (WarehouseMarkupRule $r) => [
+                'price_from' => $r->price_from,
+                'price_to' => $r->price_to,
+                'coefficient' => $r->coefficient,
+            ])->values());
+
         foreach ($stocks->chunk(50) as $stocksChunk) {
             $records = [];
 
@@ -32,6 +43,7 @@ final readonly class PopulateCatalogPrices
                 $finalPrice = $this->priceCalculator->calculateFinalPrice(
                     (float) $stock->purchase_price,
                     $stock->warehouse_id,
+                    $allRules,
                 );
 
                 foreach ($cityIds as $cityId) {
@@ -39,8 +51,8 @@ final readonly class PopulateCatalogPrices
                         'stock_id' => $stock->id,
                         'city_id' => $cityId,
                         'price' => $finalPrice,
-                        'created_at' => DB::raw('now()'),
-                        'updated_at' => DB::raw('now()'),
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
             }
