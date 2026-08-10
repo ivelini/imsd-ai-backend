@@ -15,22 +15,4 @@ class ImageIndexRequest extends FormRequest
             'imageable_id' => ['required', 'integer'],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'imageable_type' => [
-                'description' => 'Тип товара: tire или wheel.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'tire',
-            ],
-            'imageable_id' => [
-                'description' => 'ID товара.',
-                'required' => true,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-        ];
-    }
 }

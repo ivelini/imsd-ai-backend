@@ -14,16 +14,4 @@ class ReorderImagesRequest extends FormRequest
             'ids.*' => ['integer'],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'ids' => [
-                'description' => 'Массив ID изображений в новом порядке.',
-                'required' => true,
-                'type' => 'array',
-                'example' => [3, 1, 2],
-            ],
-        ];
-    }
 }

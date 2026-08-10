@@ -27,7 +27,3 @@ Homestead.yaml
 Thumbs.db
 *.Identifier
 /.claude/
-/.scribe/
-
-# Сгенерированная документация API (Scribe) — только в dev, в git не хранится
-/documentations/openapi/

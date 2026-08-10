@@ -19,17 +19,6 @@ class UploadFileRequest extends FormRequest
         ];
     }
 
-    public function bodyParameters(): array
-    {
-        return [
-            'file' => [
-                'description' => 'XLSX-файл импорта. Максимум 50 МБ.',
-                'required' => true,
-                'type' => 'file',
-            ],
-        ];
-    }
-
     public function messages(): array
     {
         return [

@@ -15,24 +15,6 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    public function bodyParameters(): array
-    {
-        return [
-            'email' => [
-                'description' => 'Email администратора.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'admin@example.com',
-            ],
-            'password' => [
-                'description' => 'Пароль.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'secret123',
-            ],
-        ];
-    }
-
     public function messages(): array
     {
         return [

@@ -17,21 +17,4 @@ class CityIndexRequest extends FormRequest
     }
 
     /** @return array<string, mixed> */
-    public function bodyParameters(): array
-    {
-        return [
-            'search' => [
-                'description' => 'Поиск по названию города.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'Челябинск',
-            ],
-            'region_code' => [
-                'description' => 'Фильтр по коду региона.',
-                'required' => false,
-                'type' => 'string',
-                'example' => '74',
-            ],
-        ];
-    }
 }

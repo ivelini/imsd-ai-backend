@@ -29,46 +29,6 @@ class ProductModelRequest extends FormRequest
         ];
     }
 
-    public function bodyParameters(): array
-    {
-        return [
-            'brand_id' => [
-                'description' => 'ID бренда.',
-                'required' => true,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'name' => [
-                'description' => 'Название модели.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'A503',
-            ],
-            'slug' => [
-                'description' => 'URL-псевдоним (бренд-модель).',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'cordiant-a503',
-            ],
-            'description' => [
-                'description' => 'Общее описание линейки модели.',
-                'required' => false,
-                'type' => 'string',
-            ],
-            'image' => [
-                'description' => 'Файл изображения модели (jpeg, png, webp, до 10 МБ).',
-                'required' => false,
-                'type' => 'file',
-            ],
-            'type' => [
-                'description' => 'Тип: tire или wheel.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'tire',
-            ],
-        ];
-    }
-
     public function messages(): array
     {
         return [

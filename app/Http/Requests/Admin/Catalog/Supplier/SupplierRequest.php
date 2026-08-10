@@ -22,22 +22,4 @@ class SupplierRequest extends FormRequest
             ],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'name' => [
-                'description' => 'Название поставщика.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'ООО Шины-Опт',
-            ],
-            'code' => [
-                'description' => 'Код поставщика.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'SUP-001',
-            ],
-        ];
-    }
 }

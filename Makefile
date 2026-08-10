@@ -2,7 +2,7 @@
 # Все Docker-команды теперь в ../Makefile
 
 .PHONY: up stop down build bash root shell artisan fresh cache-clear optimize-clear \
-        test lint lint-fix phpstan docs help \
+        test lint lint-fix phpstan help \
         admin-dev admin-build admin-install
 
 up:
@@ -49,9 +49,6 @@ lint-fix:
 
 phpstan:
 	$(MAKE) -C .. phpstan
-
-docs:
-	$(MAKE) -C .. docs
 
 help:
 	$(MAKE) -C .. help

@@ -19,37 +19,4 @@ class ProductModelIndexRequest extends FormRequest
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
-
-    public function queryParameters(): array
-    {
-        return [
-            'type' => [
-                'description' => 'Фильтр по типу: tire или wheel.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'tire',
-            ],
-            'brand_id' => [
-                'description' => 'Фильтр по бренду.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'sort_by' => [
-                'description' => 'Поле сортировки: id, name, type, created_at.',
-                'required' => false,
-                'type' => 'string',
-            ],
-            'sort_dir' => [
-                'description' => 'Направление: asc или desc.',
-                'required' => false,
-                'type' => 'string',
-            ],
-            'per_page' => [
-                'description' => 'Элементов на странице (10–100).',
-                'required' => false,
-                'type' => 'integer',
-            ],
-        ];
-    }
 }

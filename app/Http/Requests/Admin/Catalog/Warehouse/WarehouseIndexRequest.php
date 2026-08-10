@@ -18,40 +18,4 @@ class WarehouseIndexRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:100'],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'page' => [
-                'description' => 'Номер страницы.',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'per_page' => [
-                'description' => 'Элементов на странице (10–100).',
-                'required' => false,
-                'type' => 'integer',
-                'example' => 50,
-            ],
-            'sort_by' => [
-                'description' => 'Поле сортировки: id, name, created_at.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'name',
-            ],
-            'sort_dir' => [
-                'description' => 'Направление сортировки: asc или desc.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'asc',
-            ],
-            'search' => [
-                'description' => 'Поиск по названию склада.',
-                'required' => false,
-                'type' => 'string',
-                'example' => 'Основной',
-            ],
-        ];
-    }
 }

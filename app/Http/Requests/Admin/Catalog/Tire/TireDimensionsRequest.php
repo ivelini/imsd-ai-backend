@@ -14,9 +14,4 @@ class TireDimensionsRequest extends FormRequest
     {
         return $this->tireFilterRules();
     }
-
-    public function bodyParameters(): array
-    {
-        return $this->tireFilterBodyParameters();
-    }
 }

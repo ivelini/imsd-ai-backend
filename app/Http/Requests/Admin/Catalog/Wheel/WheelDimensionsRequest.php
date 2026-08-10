@@ -14,9 +14,4 @@ class WheelDimensionsRequest extends FormRequest
     {
         return $this->wheelFilterRules();
     }
-
-    public function bodyParameters(): array
-    {
-        return $this->wheelFilterBodyParameters();
-    }
 }

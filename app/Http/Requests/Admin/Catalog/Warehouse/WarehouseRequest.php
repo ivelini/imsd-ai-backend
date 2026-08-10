@@ -13,16 +13,4 @@ class WarehouseRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'name' => [
-                'description' => 'Название склада.',
-                'required' => true,
-                'type' => 'string',
-                'example' => 'Основной склад',
-            ],
-        ];
-    }
 }

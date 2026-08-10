@@ -16,34 +16,4 @@ class CityPriceRuleRequest extends FormRequest
             'markup' => ['required', 'numeric', 'min:0'],
         ];
     }
-
-    public function bodyParameters(): array
-    {
-        return [
-            'city_id' => [
-                'description' => 'ID города.',
-                'required' => true,
-                'type' => 'integer',
-                'example' => 1,
-            ],
-            'price_from' => [
-                'description' => 'Начало диапазона цены (включительно).',
-                'required' => true,
-                'type' => 'number',
-                'example' => 0,
-            ],
-            'price_to' => [
-                'description' => 'Конец диапазона цены (включительно).',
-                'required' => true,
-                'type' => 'number',
-                'example' => 5000,
-            ],
-            'markup' => [
-                'description' => 'Наценка в рублях.',
-                'required' => true,
-                'type' => 'number',
-                'example' => 300,
-            ],
-        ];
-    }
 }
