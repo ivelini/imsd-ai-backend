@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Catalog\Wheel;
 use App\Actions\Catalog\Wheel\GetWheelProductList;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Wheel\WheelProductRequest;
+use App\Http\Requests\Admin\Catalog\Wheel\WheelProductShowRequest;
 use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\DeliveryInfoService;
@@ -32,7 +33,7 @@ final readonly class WheelProductController
         return WheelProductResource::collection($products);
     }
 
-    public function show(WheelProductIndexRequest $request, int $id): WheelProductResource
+    public function show(WheelProductShowRequest $request, int $id): WheelProductResource
     {
         $wheel = WheelProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
             ->findOrFail($id);

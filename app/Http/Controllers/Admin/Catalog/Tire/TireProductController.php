@@ -5,14 +5,21 @@ namespace App\Http\Controllers\Admin\Catalog\Tire;
 use App\Actions\Catalog\Tire\GetTireProductList;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductIndexRequest;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
+use App\Http\Requests\Admin\Catalog\Tire\TireProductShowRequest;
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Services\Catalog\DeliveryInfoService;
 use App\Services\Catalog\DisplayNameResolver;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/** CRUD шин. */
+/**
+ * CRUD шин.
+ *
+ * Управление товарами шин: список с фильтрацией, создание, просмотр, обновление, удаление.
+ */
+#[Group('Каталог — шины')]
 final readonly class TireProductController
 {
     public function __construct(
@@ -34,7 +41,7 @@ final readonly class TireProductController
     }
 
     /** Получить шину. */
-    public function show(TireProductIndexRequest $request, int $id): TireProductResource
+    public function show(TireProductShowRequest $request, int $id): TireProductResource
     {
         $tire = TireProduct::with('brand', 'model', 'images', 'stocks.warehouse.deliverySchedules')
             ->findOrFail($id);

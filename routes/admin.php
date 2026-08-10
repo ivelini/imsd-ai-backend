@@ -48,101 +48,117 @@ Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 Route::get('/me', MeController::class)->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/catalog/products', [CatalogProductController::class, 'index']);
 
-    Route::get('/catalog/brands', [BrandController::class, 'index']);
-    Route::post('/catalog/brands', [BrandController::class, 'store']);
-    Route::get('/catalog/brands/{id}', [BrandController::class, 'show']);
-    Route::put('/catalog/brands/{id}', [BrandController::class, 'update']);
-    Route::delete('/catalog/brands/{id}', [BrandController::class, 'destroy']);
 
-    Route::get('/catalog/tires/dimensions', GetTireDimensionsController::class);
-    Route::get('/catalog/tires', [TireProductController::class, 'index']);
-    Route::post('/catalog/import/tires', [ImportTireController::class, 'store']);
-    Route::post('/catalog/tires', [TireProductController::class, 'store']);
-    Route::get('/catalog/tires/{id}', [TireProductController::class, 'show']);
-    Route::put('/catalog/tires/{id}', [TireProductController::class, 'update']);
-    Route::delete('/catalog/tires/{id}', [TireProductController::class, 'destroy']);
-    Route::get('/catalog/tires/{tireId}/warehouse-stock', WarehouseStockController::class);
 
-    Route::get('/catalog/images', [ImageController::class, 'index']);
-    Route::post('/catalog/images', [ImageController::class, 'store']);
-    Route::delete('/catalog/images/{id}', [ImageController::class, 'destroy']);
-    Route::put('/catalog/images/{id}/main', [ImageController::class, 'setMain']);
-    Route::put('/catalog/images/reorder', [ImageController::class, 'reorder']);
+    Route::prefix('/catalog')->group(function () {
 
-    Route::get('/catalog/markup-rules', [MarkupRuleController::class, 'index']);
-    Route::post('/catalog/markup-rules', [MarkupRuleController::class, 'store']);
-    Route::get('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'show']);
-    Route::put('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'update']);
-    Route::delete('/catalog/markup-rules/{id}', [MarkupRuleController::class, 'destroy']);
+        Route::prefix('/import')->group(function () {
+            Route::get('/import/{id}', [ImportController::class, 'show']);
+            Route::post('/tires', [ImportTireController::class, 'store']);
+            Route::post('/vehicle', [ImportVehicleController::class, 'store']);
+            Route::post('/wheels', [ImportWheelController::class, 'store']);
+            Route::post('/geo-points', [ImportPointController::class, 'store']);
+            Route::post('/models', [ImportModelController::class, 'store']);
+        });
 
-    Route::get('/catalog/delivery-schedules', [DeliveryScheduleController::class, 'index']);
-    Route::post('/catalog/delivery-schedules', [DeliveryScheduleController::class, 'store']);
-    Route::get('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'show']);
-    Route::put('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'update']);
-    Route::delete('/catalog/delivery-schedules/{id}', [DeliveryScheduleController::class, 'destroy']);
+        Route::get('/products', [CatalogProductController::class, 'index']);
+        Route::apiResource('/brands', BrandController::class);
 
-    Route::get('/catalog/promotions', [PromotionController::class, 'index']);
-    Route::post('/catalog/promotions', [PromotionController::class, 'store']);
-    Route::get('/catalog/promotions/{id}', [PromotionController::class, 'show']);
-    Route::put('/catalog/promotions/{id}', [PromotionController::class, 'update']);
-    Route::delete('/catalog/promotions/{id}', [PromotionController::class, 'destroy']);
 
-    Route::post('/catalog/import/vehicle', [ImportVehicleController::class, 'store']);
+        Route::prefix('/tires')->group(function () {
+            Route::get('/dimensions', GetTireDimensionsController::class);
+            Route::get('', [TireProductController::class, 'index']);
+            Route::post('', [TireProductController::class, 'store']);
+            Route::get('/{id}', [TireProductController::class, 'show']);
+            Route::put('/{id}', [TireProductController::class, 'update']);
+            Route::delete('/{id}', [TireProductController::class, 'destroy']);
+            Route::get('/{tireId}/warehouse-stock', WarehouseStockController::class);
+        });
 
-    Route::get('/catalog/wheels/dimensions', GetWheelDimensionsController::class);
-    Route::get('/catalog/wheels', [WheelProductController::class, 'index']);
-    Route::post('/catalog/import/wheels', [ImportWheelController::class, 'store']);
-    Route::post('/catalog/wheels', [WheelProductController::class, 'store']);
-    Route::get('/catalog/wheels/{id}', [WheelProductController::class, 'show']);
-    Route::put('/catalog/wheels/{id}', [WheelProductController::class, 'update']);
-    Route::delete('/catalog/wheels/{id}', [WheelProductController::class, 'destroy']);
-    Route::get('/catalog/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
 
-    Route::get('/geo/cities', [CityController::class, 'index']);
-    Route::post('/geo/import/points', [ImportPointController::class, 'store']);
 
-    Route::get('/geo/city-price-rules', [CityPriceRuleController::class, 'index']);
-    Route::post('/geo/city-price-rules', [CityPriceRuleController::class, 'store']);
-    Route::get('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'show']);
-    Route::put('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'update']);
-    Route::delete('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'destroy']);
 
-    Route::get('/geo/delivery-points', [DeliveryPointController::class, 'index']);
-    Route::post('/geo/delivery-points', [DeliveryPointController::class, 'store']);
-    Route::get('/geo/delivery-points/{id}', [DeliveryPointController::class, 'show']);
-    Route::put('/geo/delivery-points/{id}', [DeliveryPointController::class, 'update']);
-    Route::delete('/geo/delivery-points/{id}', [DeliveryPointController::class, 'destroy']);
+        Route::get('/images', [ImageController::class, 'index']);
+        Route::post('/images', [ImageController::class, 'store']);
+        Route::delete('/images/{id}', [ImageController::class, 'destroy']);
+        Route::put('/images/{id}/main', [ImageController::class, 'setMain']);
+        Route::put('/images/reorder', [ImageController::class, 'reorder']);
 
-    Route::get('/catalog/suppliers', [SupplierController::class, 'index']);
-    Route::post('/catalog/suppliers', [SupplierController::class, 'store']);
-    Route::get('/catalog/suppliers/{id}', [SupplierController::class, 'show']);
-    Route::put('/catalog/suppliers/{id}', [SupplierController::class, 'update']);
-    Route::delete('/catalog/suppliers/{id}', [SupplierController::class, 'destroy']);
+        Route::get('/markup-rules', [MarkupRuleController::class, 'index']);
+        Route::post('/markup-rules', [MarkupRuleController::class, 'store']);
+        Route::get('/markup-rules/{id}', [MarkupRuleController::class, 'show']);
+        Route::put('/markup-rules/{id}', [MarkupRuleController::class, 'update']);
+        Route::delete('/markup-rules/{id}', [MarkupRuleController::class, 'destroy']);
 
-    Route::get('/catalog/warehouses', [WarehouseController::class, 'index']);
-    Route::post('/catalog/warehouses', [WarehouseController::class, 'store']);
-    Route::get('/catalog/warehouses/{id}', [WarehouseController::class, 'show']);
-    Route::put('/catalog/warehouses/{id}', [WarehouseController::class, 'update']);
-    Route::delete('/catalog/warehouses/{id}', [WarehouseController::class, 'destroy']);
+        Route::get('/delivery-schedules', [DeliveryScheduleController::class, 'index']);
+        Route::post('/delivery-schedules', [DeliveryScheduleController::class, 'store']);
+        Route::get('/delivery-schedules/{id}', [DeliveryScheduleController::class, 'show']);
+        Route::put('/delivery-schedules/{id}', [DeliveryScheduleController::class, 'update']);
+        Route::delete('/delivery-schedules/{id}', [DeliveryScheduleController::class, 'destroy']);
 
-    Route::get('/catalog/models', [ProductModelController::class, 'index']);
-    Route::post('/catalog/import/models', [ImportModelController::class, 'store']);
-    Route::post('/catalog/models', [ProductModelController::class, 'store']);
-    Route::get('/catalog/models/{id}', [ProductModelController::class, 'show']);
-    Route::put('/catalog/models/{id}', [ProductModelController::class, 'update']);
-    Route::delete('/catalog/models/{id}', [ProductModelController::class, 'destroy']);
+        Route::get('/promotions', [PromotionController::class, 'index']);
+        Route::post('/promotions', [PromotionController::class, 'store']);
+        Route::get('/promotions/{id}', [PromotionController::class, 'show']);
+        Route::put('/promotions/{id}', [PromotionController::class, 'update']);
+        Route::delete('/promotions/{id}', [PromotionController::class, 'destroy']);
 
-    Route::get('/catalog/countries', [CountryController::class, 'index']);
 
-    Route::get('/imports/{id}', [ImportController::class, 'show']);
 
-    Route::get('/references', GetReferencesController::class);
+
+        Route::get('/wheels/dimensions', GetWheelDimensionsController::class);
+        Route::get('/wheels', [WheelProductController::class, 'index']);
+
+        Route::post('/wheels', [WheelProductController::class, 'store']);
+        Route::get('/wheels/{id}', [WheelProductController::class, 'show']);
+        Route::put('/wheels/{id}', [WheelProductController::class, 'update']);
+        Route::delete('/wheels/{id}', [WheelProductController::class, 'destroy']);
+        Route::get('/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
+
+        Route::get('/geo/cities', [CityController::class, 'index']);
+        Route::get('/geo/city-price-rules', [CityPriceRuleController::class, 'index']);
+        Route::post('/geo/city-price-rules', [CityPriceRuleController::class, 'store']);
+        Route::get('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'show']);
+        Route::put('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'update']);
+        Route::delete('/geo/city-price-rules/{id}', [CityPriceRuleController::class, 'destroy']);
+
+        Route::get('/geo/delivery-points', [DeliveryPointController::class, 'index']);
+        Route::post('/geo/delivery-points', [DeliveryPointController::class, 'store']);
+        Route::get('/geo/delivery-points/{id}', [DeliveryPointController::class, 'show']);
+        Route::put('/geo/delivery-points/{id}', [DeliveryPointController::class, 'update']);
+        Route::delete('/geo/delivery-points/{id}', [DeliveryPointController::class, 'destroy']);
+
+        Route::get('/suppliers', [SupplierController::class, 'index']);
+        Route::post('/suppliers', [SupplierController::class, 'store']);
+        Route::get('/suppliers/{id}', [SupplierController::class, 'show']);
+        Route::put('/suppliers/{id}', [SupplierController::class, 'update']);
+        Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy']);
+
+        Route::get('/warehouses', [WarehouseController::class, 'index']);
+        Route::post('/warehouses', [WarehouseController::class, 'store']);
+        Route::get('/warehouses/{id}', [WarehouseController::class, 'show']);
+        Route::put('/warehouses/{id}', [WarehouseController::class, 'update']);
+        Route::delete('/warehouses/{id}', [WarehouseController::class, 'destroy']);
+
+        Route::get('/models', [ProductModelController::class, 'index']);
+
+        Route::post('/models', [ProductModelController::class, 'store']);
+        Route::get('/models/{id}', [ProductModelController::class, 'show']);
+        Route::put('/models/{id}', [ProductModelController::class, 'update']);
+        Route::delete('/models/{id}', [ProductModelController::class, 'destroy']);
+
+        Route::get('/countries', [CountryController::class, 'index']);
+
+
+        Route::get('/references', GetReferencesController::class);
+    });
+
+
 
     Route::post('/broadcasting/auth', function (Request $request) {
         return Broadcast::auth($request);
     });
+
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read']);

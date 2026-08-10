@@ -221,5 +221,5 @@ Controller
 | Эксплуатация | `documentations/operations.md` | env, очереди/импорты, ручные сценарии |
 | Схема БД | `documentations/db-schema.md` | таблицы и связи |
 | Архитектура | `documentations/architecture.md` | устройство системы |
-|
+| API | Scramble → `/docs/api` (UI) + `documentations/scramble/api.json` | контракты потребителей |
 | ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |
