@@ -23,7 +23,7 @@ final readonly class NotificationController
         }
 
         $notifications = $query
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->paginate($request->integer('per_page', 20));
 
         return response()->json([

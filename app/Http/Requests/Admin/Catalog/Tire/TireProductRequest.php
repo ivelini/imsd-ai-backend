@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Catalog\Tire;
 
 use App\Enums\Catalog\Season;
+use App\Models\Catalog\Tire\TireProduct;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,7 +33,7 @@ class TireProductRequest extends FormRequest
             /** EAN-код товара (уникальный в рамках каталога). */
             'ean' => [
                 'nullable', 'string', 'max:50',
-                Rule::unique('tire_products', 'ean')->ignore($tireId),
+                Rule::unique((new TireProduct)->getTable(), 'ean')->ignore($tireId),
             ],
             /** Сезонность: summer, winter, all-season. */
             'season' => ['required', Rule::in(array_column(Season::cases(), 'value'))],

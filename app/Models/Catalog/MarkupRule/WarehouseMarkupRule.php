@@ -4,6 +4,7 @@ namespace App\Models\Catalog\MarkupRule;
 
 use App\Models\Catalog\Warehouse\Warehouse;
 use Database\Factories\Catalog\MarkupRule\WarehouseMarkupRuleFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,7 +38,8 @@ class WarehouseMarkupRule extends Model
     }
 
     /** Фильтр по складу. */
-    public function scopeByWarehouse(Builder $query, int $warehouseId): void
+    #[Scope]
+    protected function byWarehouse(Builder $query, int $warehouseId): void
     {
         $query->where('warehouse_id', $warehouseId);
     }

@@ -5,6 +5,7 @@ namespace App\Models\Catalog\Warehouse;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Delivery\DeliverySchedule;
 use Database\Factories\Catalog\Warehouse\WarehouseFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,7 +41,8 @@ class Warehouse extends Model
     }
 
     /** Поиск по названию склада. */
-    public function scopeSearch(Builder $query, string $search): void
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
         $query->where('name', 'like', '%'.$search.'%');
     }

@@ -10,9 +10,13 @@ use App\Models\Catalog\Wheel\WheelProduct;
 use App\Observers\BrandObserver;
 use App\Observers\SupplierObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +38,12 @@ class AppServiceProvider extends ServiceProvider
             'wheel' => WheelProduct::class,
             'article' => Article::class,
         ]);
+
+        Model::preventLazyLoading(! app()->isProduction());
+
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
 
         Brand::observe(BrandObserver::class);
         Supplier::observe(SupplierObserver::class);

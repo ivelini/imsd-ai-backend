@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog\Promotion;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -39,32 +40,37 @@ class Promotion extends Model
     }
 
     /** Поиск по названию акции. */
-    public function scopeSearch(Builder $query, string $search): void
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
         $query->where('name', 'like', '%'.$search.'%');
     }
 
     /** Фильтр по типу акции. */
-    public function scopeByType(Builder $query, string $type): void
+    #[Scope]
+    protected function byType(Builder $query, string $type): void
     {
         $query->where('type', $type);
     }
 
     /** Фильтр по типу привязки (morph-тип). */
-    public function scopeByPromotableType(Builder $query, string $promotableType): void
+    #[Scope]
+    protected function byPromotableType(Builder $query, string $promotableType): void
     {
         $query->where('promotable_type', $promotableType);
     }
 
     /** Активные сейчас (starts_at <= now <= ends_at). */
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->where('starts_at', '<=', now())
             ->where('ends_at', '>=', now());
     }
 
     /** Неактивные сейчас (ещё не начались или уже закончились). */
-    public function scopeInactive(Builder $query): void
+    #[Scope]
+    protected function inactive(Builder $query): void
     {
         $query->where(function (Builder $q) {
             $q->where('starts_at', '>', now())->orWhere('ends_at', '<', now());

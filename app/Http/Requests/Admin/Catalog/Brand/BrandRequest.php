@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Catalog\Brand;
 
 use App\Enums\Catalog\BrandType;
+use App\Models\Catalog\Brand\Brand;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class BrandRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('brands', 'slug')->ignore($brandId),
+                Rule::unique((new Brand)->getTable(), 'slug')->ignore($brandId),
             ],
             'logo' => ['nullable', 'file', 'image', 'mimes:jpeg,png,webp', 'max:10240'],
             'description' => ['nullable', 'string'],

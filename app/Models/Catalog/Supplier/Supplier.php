@@ -5,6 +5,7 @@ namespace App\Models\Catalog\Supplier;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
 use Database\Factories\Catalog\Supplier\SupplierFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +33,8 @@ class Supplier extends Model
     }
 
     /** Поиск по названию или коду поставщика. */
-    public function scopeSearch(Builder $query, string $search): void
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
         $q = '%'.$search.'%';
         $query->where(function (Builder $qry) use ($q) {

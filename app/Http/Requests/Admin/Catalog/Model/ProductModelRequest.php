@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog\Model;
 
+use App\Models\Catalog\Model\ProductModel;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class ProductModelRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('product_models', 'slug')
+                Rule::unique((new ProductModel)->getTable(), 'slug')
                     ->where('brand_id', $this->input('brand_id'))
                     ->ignore($modelId),
             ],

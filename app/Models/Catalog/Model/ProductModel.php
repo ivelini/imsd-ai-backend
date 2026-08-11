@@ -6,6 +6,7 @@ use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
 use Database\Factories\Catalog\Model\ProductModelFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -43,7 +44,8 @@ class ProductModel extends Model
     }
 
     /** Фильтр по типу (tire, wheel). */
-    public function scopeByType(Builder $query, string $type): void
+    #[Scope]
+    protected function byType(Builder $query, string $type): void
     {
         $query->where('type', $type);
     }

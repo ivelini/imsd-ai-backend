@@ -16,13 +16,15 @@ final class CityResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
-        /** @var Region $region */
-        $region = $this->resource->region;
-
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'region' => $region->name,
+            'region' => $this->whenLoaded('region', function () {
+                /** @var Region $region */
+                $region = $this->resource->region;
+
+                return $region->name;
+            }),
         ];
     }
 }

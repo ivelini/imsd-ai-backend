@@ -15,12 +15,13 @@ use App\Http\Controllers\Admin\Catalog\Supplier\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\GetTireDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Tire\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
+use App\Http\Controllers\Admin\Catalog\Tire\TireWarehouseStockController;
 use App\Http\Controllers\Admin\Catalog\Vehicle\ImportVehicleController;
 use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseController;
-use App\Http\Controllers\Admin\Catalog\Warehouse\WarehouseStockController;
 use App\Http\Controllers\Admin\Catalog\Wheel\GetWheelDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Wheel\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Wheel\WheelProductController;
+use App\Http\Controllers\Admin\Catalog\Wheel\WheelWarehouseStockController;
 use App\Http\Controllers\Admin\Delivery\DeliveryScheduleController;
 use App\Http\Controllers\Admin\Geo\CityController;
 use App\Http\Controllers\Admin\Geo\CityPriceRuleController;
@@ -43,13 +44,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', LoginController::class);
+Route::post('/login', LoginController::class)->middleware('throttle:login');
 Route::post('/logout', LogoutController::class)->middleware('auth:sanctum');
 Route::get('/me', MeController::class)->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-
-
 
     Route::prefix('/catalog')->group(function () {
 
@@ -65,7 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/products', [CatalogProductController::class, 'index']);
         Route::apiResource('/brands', BrandController::class);
 
-
         Route::prefix('/tires')->group(function () {
             Route::get('/dimensions', GetTireDimensionsController::class);
             Route::get('', [TireProductController::class, 'index']);
@@ -73,11 +71,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [TireProductController::class, 'show']);
             Route::put('/{id}', [TireProductController::class, 'update']);
             Route::delete('/{id}', [TireProductController::class, 'destroy']);
-            Route::get('/{tireId}/warehouse-stock', WarehouseStockController::class);
+            Route::get('/{tire}/warehouse-stock', TireWarehouseStockController::class);
         });
-
-
-
 
         Route::get('/images', [ImageController::class, 'index']);
         Route::post('/images', [ImageController::class, 'store']);
@@ -103,9 +98,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/promotions/{id}', [PromotionController::class, 'update']);
         Route::delete('/promotions/{id}', [PromotionController::class, 'destroy']);
 
-
-
-
         Route::get('/wheels/dimensions', GetWheelDimensionsController::class);
         Route::get('/wheels', [WheelProductController::class, 'index']);
 
@@ -113,7 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/wheels/{id}', [WheelProductController::class, 'show']);
         Route::put('/wheels/{id}', [WheelProductController::class, 'update']);
         Route::delete('/wheels/{id}', [WheelProductController::class, 'destroy']);
-        Route::get('/wheels/{wheelId}/warehouse-stock', WarehouseStockController::class);
+        Route::get('/wheels/{wheel}/warehouse-stock', WheelWarehouseStockController::class);
 
         Route::get('/geo/cities', [CityController::class, 'index']);
         Route::get('/geo/city-price-rules', [CityPriceRuleController::class, 'index']);
@@ -149,16 +141,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/countries', [CountryController::class, 'index']);
 
-
         Route::get('/references', GetReferencesController::class);
     });
-
-
 
     Route::post('/broadcasting/auth', function (Request $request) {
         return Broadcast::auth($request);
     });
-
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read']);

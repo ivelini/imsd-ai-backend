@@ -11,7 +11,7 @@ final readonly class EnsureAdminIsActive
     public function ensure(Admin $admin): void
     {
         if (! $admin->is_active) {
-            throw new DomainException('Аккаунт заблокирован.');
+            throw new DomainException('Неверный email или пароль.');
         }
     }
 }

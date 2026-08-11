@@ -27,6 +27,8 @@ class Stock extends Model
     {
         return [
             'quantity' => 'integer',
+            'purchase_price' => 'decimal:2',
+            'price' => 'decimal:2',
         ];
     }
 

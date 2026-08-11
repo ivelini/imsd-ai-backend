@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Catalog\Wheel;
 
 use App\Enums\Catalog\WheelType;
+use App\Models\Catalog\Wheel\WheelProduct;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,7 @@ class WheelProductRequest extends FormRequest
             'country_id' => ['nullable', 'integer', 'exists:countries,id'],
             'ean' => [
                 'nullable', 'string', 'max:50',
-                Rule::unique('wheel_products', 'ean')->ignore($wheelId),
+                Rule::unique((new WheelProduct)->getTable(), 'ean')->ignore($wheelId),
             ],
             'type' => ['nullable', Rule::in(array_column(WheelType::cases(), 'value'))],
             'color' => ['nullable', 'string', 'max:50'],

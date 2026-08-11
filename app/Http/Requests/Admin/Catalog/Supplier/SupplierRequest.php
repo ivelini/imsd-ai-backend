@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog\Supplier;
 
+use App\Models\Catalog\Supplier\Supplier;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -18,7 +19,7 @@ class SupplierRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:50',
-                Rule::unique('suppliers', 'code')->ignore($supplierId),
+                Rule::unique((new Supplier)->getTable(), 'code')->ignore($supplierId),
             ],
         ];
     }

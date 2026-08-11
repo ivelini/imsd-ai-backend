@@ -8,6 +8,7 @@ use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
 use Database\Factories\Catalog\Brand\BrandFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,13 +64,15 @@ class Brand extends Model
     }
 
     /** Поиск по названию бренда. */
-    public function scopeSearch(Builder $query, string $search): void
+    #[Scope]
+    protected function search(Builder $query, string $search): void
     {
         $query->where('name', 'like', '%'.$search.'%');
     }
 
     /** Фильтр по типу бренда (tire, wheel, both). */
-    public function scopeByType(Builder $query, string $type): void
+    #[Scope]
+    protected function byType(Builder $query, string $type): void
     {
         $query->where('type', $type);
     }

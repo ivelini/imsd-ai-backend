@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#3 \$schedulesByWarehouse of method App\\Services\\Catalog\\DeliveryTimeCalculator\:\:calculateAll\(\) expects Illuminate\\Support\\Collection\<int\|string, iterable\<App\\Models\\Delivery\\DeliverySchedule\>\>, Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Delivery\\DeliverySchedule\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Warehouse/GetWarehouseStock.php

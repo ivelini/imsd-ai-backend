@@ -15,6 +15,15 @@ class CityPriceRule extends Model
         'markup',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'price_from' => 'decimal:2',
+            'price_to' => 'decimal:2',
+            'markup' => 'decimal:2',
+        ];
+    }
+
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);

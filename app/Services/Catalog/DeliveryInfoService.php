@@ -9,7 +9,6 @@ use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
 /** Расчёт блока delivery для карточки товара (срок отгрузки + наценка города). */
 final class DeliveryInfoService
@@ -28,6 +27,7 @@ final class DeliveryInfoService
         }
 
         $stocks = $product->getRelation('stocks');
+        $stocks->loadMissing('warehouse.deliverySchedules');
 
         // Всегда считаем дни до отгрузки для каждого склада (не зависит от города)
         foreach ($stocks as $stock) {
@@ -120,7 +120,7 @@ final class DeliveryInfoService
             return null;
         }
 
-        $now = Carbon::now();
+        $now = now();
         $todayDow = (int) $now->dayOfWeekIso - 1; // 0=Mon … 6=Sun
         $todayTime = $now->format('H:i');
 

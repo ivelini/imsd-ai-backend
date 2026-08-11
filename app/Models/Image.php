@@ -28,9 +28,4 @@ class Image extends Model
     {
         return $this->morphTo();
     }
-
-    public function scopeMain($query)
-    {
-        return $query->where('is_main', true);
-    }
 }
