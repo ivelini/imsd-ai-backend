@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog\Promotion;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -15,12 +16,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string|null $description
  * @property string $type
  * @property string|null $value
- * @property \Carbon\Carbon $starts_at
- * @property \Carbon\Carbon $ends_at
+ * @property Carbon $starts_at
+ * @property Carbon $ends_at
  * @property string|null $promotable_type
  * @property int|null $promotable_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Promotion extends Model
 {

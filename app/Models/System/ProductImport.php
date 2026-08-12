@@ -4,6 +4,7 @@ namespace App\Models\System;
 
 use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,10 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $failed_rows
  * @property string|null $error_message
  * @property array|null $errors
- * @property \Carbon\Carbon|null $started_at
- * @property \Carbon\Carbon|null $finished_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon|null $started_at
+ * @property Carbon|null $finished_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ProductImport extends Model
 {
