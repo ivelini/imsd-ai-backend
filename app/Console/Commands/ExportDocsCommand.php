@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 /** Экспорт всех OpenAPI-документов (фронт + админка). */
 final class ExportDocsCommand extends Command
 {
-    protected $signature = 'api:export-docs';
+    protected $signature = 'scramble:export-docs';
 
     protected $description = 'Экспорт OpenAPI для фронта и админки';
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Geo;
+namespace App\Http\Controllers\Admin\Catalog\Import;
 
 use App\Actions\Import\StartProductImport;
 use App\DTOs\Import\StartImportInput;

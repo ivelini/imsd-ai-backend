@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Catalog\Import;
 
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
 use App\Models\System\ProductImport;

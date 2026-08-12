@@ -84,9 +84,10 @@ final class VehicleImportMasterJob implements ShouldQueue
             // Обрезаем до ожидаемого количества (на случай лишних колонок)
             $cols = array_slice($cols, 0, $expectedColumns);
 
-            $chunk[] = array_map(function (string $v): string {
-                return mb_convert_encoding(trim($v), 'UTF-8', 'Windows-1251');
-            }, $cols);
+            $chunk[] = array_map(
+                fn (string $v): string => $this->ensureUtf8(trim($v)),
+                $cols,
+            );
 
             if (count($chunk) >= $this->input->chunkSize) {
                 $chunkIndex++;
@@ -118,6 +119,16 @@ final class VehicleImportMasterJob implements ShouldQueue
         );
 
         return $path;
+    }
+
+    /** Приводит строку к UTF-8 — CSV часто приходит в Windows-1251. */
+    private function ensureUtf8(string $value): string
+    {
+        if (mb_check_encoding($value, 'UTF-8')) {
+            return $value;
+        }
+
+        return mb_convert_encoding($value, 'UTF-8', 'Windows-1251');
     }
 
     private function countRows(): int

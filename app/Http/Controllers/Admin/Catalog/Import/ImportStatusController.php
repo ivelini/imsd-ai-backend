@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Catalog;
+namespace App\Http\Controllers\Admin\Catalog\Import;
 
 use App\Models\System\ProductImport;
 use Dedoc\Scramble\Attributes\Group;
@@ -19,8 +19,10 @@ final readonly class ImportStatusController
             ->pluck('id');
 
         $rows = ProductImport::whereIn('id', $latestIds)
-            ->get(['type', 'processed_rows', 'error_message', 'errors', 'finished_at'])
+            ->get(['id', 'type', 'status', 'processed_rows', 'error_message', 'errors', 'finished_at'])
             ->map(fn (ProductImport $i): array => [
+                'product_import_id' => $i->id,
+                'status' => $i->status,
                 'type' => $i->type,
                 'processed_rows' => $i->processed_rows,
                 'error_message' => $i->error_message,
