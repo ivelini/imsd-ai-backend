@@ -9,11 +9,13 @@ use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
 use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта шин.
  *
  */
+#[Group('Каталог / импорт')]
 final readonly class ImportTireController
 {
     public function __construct(

@@ -19,7 +19,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  *
  * Управление товарами шин: список с фильтрацией, создание, просмотр, обновление, удаление.
  */
-#[Group('Каталог — шины')]
+#[Group('Каталог / шины')]
 final readonly class TireProductController
 {
     public function __construct(

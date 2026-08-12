@@ -10,10 +10,12 @@ use App\Http\Resources\Admin\Catalog\Wheel\WheelProductResource;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\DeliveryInfoService;
 use App\Services\Catalog\DisplayNameResolver;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD дисков. */
+#[Group('Каталог / диски')]
 final readonly class WheelProductController
 {
     public function __construct(

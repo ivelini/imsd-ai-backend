@@ -16,7 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             Route::middleware('api')
                 ->prefix('api/admin')
-                ->group(__DIR__.'/../routes/admin.php');
+                ->group(__DIR__.'/../routes/admin/admin.php');
+            Route::middleware(['api', 'auth:sanctum'])
+                ->prefix('api/admin/catalog')
+                ->group(__DIR__.'/../routes/admin/catalog.php');
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
