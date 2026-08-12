@@ -6,6 +6,7 @@ use App\Enums\Import\ImportType;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
+use App\Services\Import\ColumnDetector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
@@ -89,7 +90,7 @@ class PointImportTest extends TestCase
             config('point_import.boolean_true'),
         );
 
-        $priceCols = PointImportJob::detectColumnsFromHeaders([
+        $priceCols = ColumnDetector::detectPriceColumns([
             'code', 'region_name', 'city_name', '0-5000', '5001-8500',
         ]);
 

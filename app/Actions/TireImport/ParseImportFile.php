@@ -4,12 +4,17 @@ namespace App\Actions\TireImport;
 
 use App\DTOs\TireImport\ParsedImportFileResult;
 use App\DTOs\TireImport\ParseImportFileInput;
+use App\Services\Import\RowAssembler;
 use OpenSpout\Reader\XLSX\Reader;
 use OpenSpout\Reader\XLSX\Sheet;
 
 /** Чтение XLSX, валидация колонок, нарезка на JSON-чанки. */
 final readonly class ParseImportFile
 {
+    public function __construct(
+        private RowAssembler $rowAssembler = new RowAssembler,
+    ) {}
+
     public function execute(ParseImportFileInput $input): ParsedImportFileResult
     {
         $reader = new Reader;
@@ -31,13 +36,13 @@ final readonly class ParseImportFile
                 foreach ($row->getCells() as $cell) {
                     $headerColumns[] = trim((string) $cell->getValue());
                 }
-                $this->ensureRequiredColumns($headerColumns, $requiredColumns);
+                $this->rowAssembler->ensureRequiredColumns($headerColumns, $requiredColumns);
                 $headerRead = true;
 
                 continue;
             }
 
-            $data = $this->rowToAssoc($headerColumns, $row, $columnMap);
+            $data = $this->rowAssembler->toAssoc($headerColumns, $row, $columnMap);
             $buffer[] = $data;
             $totalRows++;
 
@@ -72,48 +77,6 @@ final readonly class ParseImportFile
         }
 
         throw new \RuntimeException('XLSX не содержит листов.');
-    }
-
-    /**
-     * @param  string[]  $columns
-     * @param  string[]  $required
-     */
-    private function ensureRequiredColumns(array $columns, array $required): void
-    {
-        $missing = array_diff($required, $columns);
-        if (! empty($missing)) {
-            throw new \RuntimeException(
-                'Отсутствуют обязательные колонки: '.implode(', ', $missing)
-            );
-        }
-    }
-
-    /**
-     * @param  string[]  $columns
-     * @param  array<string, string>  $columnMap
-     * @return array<string, string|null>
-     */
-    private function rowToAssoc(array $columns, object $row, array $columnMap): array
-    {
-        $result = [];
-        $cellIndex = 0;
-
-        foreach ($columns as $colName) {
-            $value = null;
-            foreach ($row->getCells() as $i => $cell) {
-                if ($i === $cellIndex) {
-                    $v = $cell->getValue();
-                    $value = $v !== null ? (string) $v : null;
-                    break;
-                }
-            }
-
-            $mappedName = $columnMap[$colName] ?? $colName;
-            $result[$mappedName] = $value;
-            $cellIndex++;
-        }
-
-        return $result;
     }
 
     /**

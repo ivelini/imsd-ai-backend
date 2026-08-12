@@ -9,7 +9,9 @@ use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliveryPoint;
 use App\Models\Delivery\Region;
+use App\Services\Import\ColumnDetector;
 use App\Services\Import\ImportStatusUpdater;
+use App\Services\Import\RowAssembler;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -41,24 +43,8 @@ final class PointImportJob implements ShouldQueue
         private readonly array $columnMap,
         private readonly array $requiredColumns,
         private readonly array $booleanTrue,
+        private readonly RowAssembler $rowAssembler = new RowAssembler,
     ) {}
-
-    /**
-     * @param  string[]  $headers
-     * @return string[]
-     */
-    public static function detectColumnsFromHeaders(array $headers): array
-    {
-        $price = [];
-
-        foreach ($headers as $header) {
-            if (preg_match('/^(\d+)-(\d+)$/u', $header)) {
-                $price[] = $header;
-            }
-        }
-
-        return $price;
-    }
 
     public function handle(ImportStatusUpdater $statusUpdater): void
     {
@@ -119,15 +105,15 @@ final class PointImportJob implements ShouldQueue
 
         foreach ($sheet->getRowIterator() as $rowIndex => $row) {
             if ($rowIndex === 1) {
-                $headerColumns = $this->extractHeaders($row);
-                $this->ensureRequiredColumns($headerColumns);
-                $this->detectDynamicColumns($headerColumns);
+                $headerColumns = $this->rowAssembler->extractHeaders($row);
+                $this->rowAssembler->ensureRequiredColumns($headerColumns, $this->requiredColumns);
+                $this->priceColumns = ColumnDetector::detectPriceColumns($headerColumns);
 
                 continue;
             }
 
             try {
-                $data = $this->rowToAssoc($headerColumns, $row);
+                $data = $this->rowAssembler->toAssoc($headerColumns, $row, $this->columnMap);
                 $this->importRow($data);
                 $total++;
             } catch (\Throwable $e) {
@@ -140,27 +126,6 @@ final class PointImportJob implements ShouldQueue
         }
 
         return [$total, $errors];
-    }
-
-    /**
-     * @return string[]
-     */
-    private function extractHeaders($row): array
-    {
-        $headers = [];
-        foreach ($row->getCells() as $cell) {
-            $headers[] = trim((string) $cell->getValue());
-        }
-
-        return $headers;
-    }
-
-    /**
-     * @param  string[]  $headers
-     */
-    private function detectDynamicColumns(array $headers): void
-    {
-        $this->priceColumns = self::detectColumnsFromHeaders($headers);
     }
 
     private function importRow(array $data): void
@@ -247,36 +212,5 @@ final class PointImportJob implements ShouldQueue
         }
 
         return in_array(mb_strtolower(trim($value)), $this->booleanTrue, true);
-    }
-
-    /**
-     * @param  string[]  $columns
-     */
-    private function ensureRequiredColumns(array $columns): void
-    {
-        $missing = array_diff($this->requiredColumns, $columns);
-
-        if (! empty($missing)) {
-            throw new \RuntimeException(
-                'Отсутствуют обязательные колонки: '.implode(', ', $missing)
-            );
-        }
-    }
-
-    /**
-     * @param  string[]  $columns
-     * @return array<string, mixed>
-     */
-    private function rowToAssoc(array $columns, object $row): array
-    {
-        $result = [];
-        foreach ($columns as $i => $colName) {
-            $cells = $row->getCells();
-            $v = $cells[$i]?->getValue();
-            $mapped = $this->columnMap[$colName] ?? $colName;
-            $result[$mapped] = $v !== null ? (string) $v : null;
-        }
-
-        return $result;
     }
 }

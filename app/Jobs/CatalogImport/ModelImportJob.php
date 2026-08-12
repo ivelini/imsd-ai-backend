@@ -3,6 +3,7 @@
 namespace App\Jobs\CatalogImport;
 
 use App\Services\Import\ImportStatusUpdater;
+use App\Services\Import\RowAssembler;
 use App\Services\TireImport\ReferenceResolver;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,11 +22,8 @@ final class ModelImportJob implements ShouldQueue
 
     public array $backoff = [10];
 
-    /** @var array<string, string> */
-    private array $columnMap;
-
     /** @var string[] */
-    private array $requiredColumns;
+    private readonly array $requiredColumns;
 
     /**
      * @param  array<string, string>  $columnMap
@@ -34,10 +32,10 @@ final class ModelImportJob implements ShouldQueue
     public function __construct(
         public readonly int $importId,
         public readonly string $filePath,
-        array $columnMap,
+        private readonly array $columnMap,
         array $requiredColumns,
+        private readonly RowAssembler $rowAssembler = new RowAssembler,
     ) {
-        $this->columnMap = $columnMap;
         $this->requiredColumns = $requiredColumns;
     }
 
@@ -79,14 +77,14 @@ final class ModelImportJob implements ShouldQueue
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
                 if ($rowIndex === 1) {
-                    $headerColumns = $this->extractHeaders($row);
-                    $this->ensureRequiredColumns($headerColumns);
+                    $headerColumns = $this->rowAssembler->extractHeaders($row);
+                    $this->rowAssembler->ensureRequiredColumns($headerColumns, $this->requiredColumns);
 
                     continue;
                 }
 
                 try {
-                    $data = $this->rowToAssoc($headerColumns, $row);
+                    $data = $this->rowAssembler->toAssoc($headerColumns, $row, $this->columnMap);
 
                     $brand = $resolver->resolveBrand($data['brand_name'] ?? '');
                     $modelName = $data['name'] ?? '';
@@ -131,49 +129,5 @@ final class ModelImportJob implements ShouldQueue
         $reader->close();
 
         return [$total, $created, $updated, $errors];
-    }
-
-    /**
-     * @return string[]
-     */
-    private function extractHeaders($row): array
-    {
-        $headers = [];
-        foreach ($row->getCells() as $cell) {
-            $headers[] = trim((string) $cell->getValue());
-        }
-
-        return $headers;
-    }
-
-    /**
-     * @param  string[]  $columns
-     */
-    private function ensureRequiredColumns(array $columns): void
-    {
-        $missing = array_diff($this->requiredColumns, $columns);
-
-        if (! empty($missing)) {
-            throw new \RuntimeException(
-                'Отсутствуют обязательные колонки: '.implode(', ', $missing)
-            );
-        }
-    }
-
-    /**
-     * @param  string[]  $columns
-     * @return array<string, mixed>
-     */
-    private function rowToAssoc(array $columns, $row): array
-    {
-        $result = [];
-        foreach ($columns as $i => $colName) {
-            $cells = $row->getCells();
-            $v = $cells[$i]?->getValue();
-            $mapped = $this->columnMap[$colName] ?? $colName;
-            $result[$mapped] = $v !== null ? (string) $v : null;
-        }
-
-        return $result;
     }
 }
