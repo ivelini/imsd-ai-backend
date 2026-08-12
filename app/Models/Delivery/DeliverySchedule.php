@@ -3,10 +3,23 @@
 namespace App\Models\Delivery;
 
 use App\Models\Catalog\Warehouse\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/** График отгрузки со склада: день недели, время отсечки, сроки. */
+/**
+ * График отгрузки со склада: день недели, время отсечки, сроки.
+ *
+ * @property int $id
+ * @property int $warehouse_id
+ * @property int $day_of_week
+ * @property string $cutoff_time
+ * @property int $days_before
+ * @property int $days_after
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read Warehouse $warehouse
+ */
 class DeliverySchedule extends Model
 {
     protected $fillable = [

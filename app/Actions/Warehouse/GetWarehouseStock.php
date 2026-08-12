@@ -61,7 +61,9 @@ final readonly class GetWarehouseStock
             $stock = $stocksByWarehouseId->get($warehouse->id);
 
             $quantity = $stock !== null ? $stock->quantity : 0;
-            $purchasePrice = $stock?->purchase_price;
+            $purchasePrice = $stock?->purchase_price !== null
+                ? (float) $stock->purchase_price
+                : null;
 
             $finalPrice = $stock !== null
                 ? $catalogPricesByStockId->get($stock->id)?->price

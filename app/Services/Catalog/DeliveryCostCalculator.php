@@ -22,6 +22,6 @@ final readonly class DeliveryCostCalculator
             ->where('price_to', '>=', $finalPrice)
             ->first();
 
-        return $rule?->markup;
+        return $rule !== null ? (float) $rule->markup : null;
     }
 }

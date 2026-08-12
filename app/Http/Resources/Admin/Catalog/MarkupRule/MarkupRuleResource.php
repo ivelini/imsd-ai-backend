@@ -7,7 +7,11 @@ use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс правила наценки. */
+/**
+ * Ресурс правила наценки.
+ *
+ * @mixin WarehouseMarkupRule
+ */
 final class MarkupRuleResource extends JsonResource
 {
     /** @var WarehouseMarkupRule */

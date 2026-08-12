@@ -6,7 +6,11 @@ use App\Models\Catalog\Brand\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс бренда. */
+/**
+ * Ресурс бренда.
+ *
+ * @mixin Brand
+ */
 final class BrandResource extends JsonResource
 {
     /** @var Brand */

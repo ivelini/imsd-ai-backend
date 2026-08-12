@@ -4,6 +4,7 @@ namespace App\Models\Catalog\Supplier;
 
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Carbon\Carbon;
 use Database\Factories\Catalog\Supplier\SupplierFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +12,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Завод-производитель (Cordiant, Nokian…). Внутренний справочник. */
+/**
+ * Завод-производитель (Cordiant, Nokian…). Внутренний справочник.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string|null $code
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class Supplier extends Model
 {
     /** @use HasFactory<SupplierFactory> */

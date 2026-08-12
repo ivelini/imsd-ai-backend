@@ -6,7 +6,11 @@ use App\Models\Auth\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс ответа при входе администратора. */
+/**
+ * Ресурс ответа при входе администратора.
+ *
+ * @mixin Admin
+ */
 final class LoginResource extends JsonResource
 {
     /** @var Admin */

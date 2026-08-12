@@ -7,7 +7,11 @@ use App\Models\Delivery\DeliverySchedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс графика отгрузки склада. */
+/**
+ * Ресурс графика отгрузки склада.
+ *
+ * @mixin DeliverySchedule
+ */
 final class DeliveryScheduleResource extends JsonResource
 {
     /** @var DeliverySchedule */

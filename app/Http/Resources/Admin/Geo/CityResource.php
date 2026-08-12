@@ -7,7 +7,11 @@ use App\Models\Delivery\Region;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс города. */
+/**
+ * Ресурс города.
+ *
+ * @mixin City
+ */
 final class CityResource extends JsonResource
 {
     /** @var City */

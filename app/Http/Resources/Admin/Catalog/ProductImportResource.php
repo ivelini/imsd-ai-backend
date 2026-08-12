@@ -6,7 +6,11 @@ use App\Models\System\ProductImport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс статуса импорта товаров. */
+/**
+ * Ресурс статуса импорта товаров.
+ *
+ * @mixin ProductImport
+ */
 final class ProductImportResource extends JsonResource
 {
     /** @var ProductImport */

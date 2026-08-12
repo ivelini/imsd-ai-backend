@@ -2,10 +2,22 @@
 
 namespace App\Models\Delivery;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/** Правило наценки по городу: диапазон цены → фиксированная наценка. */
+/**
+ * Правило наценки по городу: диапазон цены → фиксированная наценка.
+ *
+ * @property int $id
+ * @property int $city_id
+ * @property string $price_from
+ * @property string $price_to
+ * @property string $markup
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read City $city
+ */
 class CityPriceRule extends Model
 {
     protected $fillable = [

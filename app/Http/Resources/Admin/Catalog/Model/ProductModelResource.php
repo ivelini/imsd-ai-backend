@@ -7,7 +7,11 @@ use App\Models\Catalog\Model\ProductModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс модели товара. */
+/**
+ * Ресурс модели товара.
+ *
+ * @mixin ProductModel
+ */
 final class ProductModelResource extends JsonResource
 {
     /** @var ProductModel */

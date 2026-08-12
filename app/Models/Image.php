@@ -2,10 +2,22 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-/** Изображение товара (полиморф: шина/диск). */
+/**
+ * Изображение товара (полиморф: шина/диск).
+ *
+ * @property int $id
+ * @property string $imageable_type
+ * @property int $imageable_id
+ * @property string $path
+ * @property int $sort
+ * @property bool $is_main
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class Image extends Model
 {
     protected $fillable = [

@@ -4,6 +4,7 @@ namespace App\Models\Catalog\Warehouse;
 
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Delivery\DeliverySchedule;
+use Carbon\Carbon;
 use Database\Factories\Catalog\Warehouse\WarehouseFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,8 +13,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Склад — крупный продавец/дистрибьютор, у которого мы покупаем товар.
+/**
+ * Склад — крупный продавец/дистрибьютор, у которого мы покупаем товар.
  *
+ * @property int $id
+ * @property string $name
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Collection<int, DeliverySchedule> $deliverySchedules
  */
 class Warehouse extends Model

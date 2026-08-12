@@ -7,7 +7,11 @@ use App\Models\Delivery\DeliveryPoint;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс точки выдачи. */
+/**
+ * Ресурс точки выдачи.
+ *
+ * @mixin DeliveryPoint
+ */
 final class DeliveryPointResource extends JsonResource
 {
     /** @var DeliveryPoint */

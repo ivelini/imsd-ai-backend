@@ -3,11 +3,25 @@
 namespace App\Models\Order;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Заказ клиента. */
+/**
+ * Заказ клиента.
+ *
+ * @property int $id
+ * @property int|null $user_id
+ * @property string $status
+ * @property string $total
+ * @property string|null $delivery_type
+ * @property string|null $payment_method
+ * @property array|null $contact_info
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read User|null $user
+ */
 class Order extends Model
 {
     protected $fillable = [

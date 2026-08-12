@@ -2,12 +2,24 @@
 
 namespace App\Models\Auth;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-/** Администратор панели. */
+/**
+ * Администратор панели.
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property int $admin_role_id
+ * @property bool $is_active
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read AdminRole|null $role
+ */
 class Admin extends Authenticatable
 {
     use HasApiTokens, Notifiable;

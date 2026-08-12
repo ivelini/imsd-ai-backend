@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Notifications\DatabaseNotification;
 
-/** Уведомление для админ-панели. */
+/**
+ * Уведомление для админ-панели.
+ *
+ * @mixin DatabaseNotification
+ */
 final class NotificationResource extends JsonResource
 {
     /** @var DatabaseNotification */

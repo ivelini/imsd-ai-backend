@@ -6,7 +6,11 @@ use App\Models\Catalog\Promotion\Promotion;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс акции. */
+/**
+ * Ресурс акции.
+ *
+ * @mixin Promotion
+ */
 final class PromotionResource extends JsonResource
 {
     /** @var Promotion */

@@ -12,7 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-/** Ресурс диска — только форматирование, без логики. */
+/**
+ * Ресурс диска — только форматирование, без логики.
+ *
+ * @mixin WheelProduct
+ */
 final class WheelProductResource extends JsonResource
 {
     /** @var WheelProduct */

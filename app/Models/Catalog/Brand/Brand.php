@@ -7,6 +7,7 @@ use App\Enums\Catalog\ProductType;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Carbon\Carbon;
 use Database\Factories\Catalog\Brand\BrandFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,9 +15,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Бренд товара (Winter Drive…). Привязан к одному поставщику.
+/**
+ * Бренд товара (Winter Drive…).
  *
- * @property-read BrandType $type
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $logo
+ * @property string|null $description
+ * @property BrandType $type
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Brand extends Model
 {

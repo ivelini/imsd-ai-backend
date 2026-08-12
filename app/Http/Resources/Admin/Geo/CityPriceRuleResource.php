@@ -7,7 +7,11 @@ use App\Models\Delivery\CityPriceRule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Ресурс правила наценки города. */
+/**
+ * Ресурс правила наценки города.
+ *
+ * @mixin CityPriceRule
+ */
 final class CityPriceRuleResource extends JsonResource
 {
     /** @var CityPriceRule */

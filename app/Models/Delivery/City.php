@@ -2,11 +2,22 @@
 
 namespace App\Models\Delivery;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Город в регионе. */
+/**
+ * Город в регионе.
+ *
+ * @property int $id
+ * @property int $region_id
+ * @property string $name
+ * @property int $sort
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property-read Region $region
+ */
 class City extends Model
 {
     protected $fillable = [
