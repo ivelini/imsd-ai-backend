@@ -10,6 +10,7 @@ use App\Models\Catalog\Wheel\WheelProduct;
 use App\Observers\BrandObserver;
 use App\Observers\SupplierObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
+use Dedoc\Scramble\Scramble;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
@@ -47,5 +48,16 @@ class AppServiceProvider extends ServiceProvider
 
         Brand::observe(BrandObserver::class);
         Supplier::observe(SupplierObserver::class);
+
+        Scramble::registerApi('admin', [
+            'api_path' => 'api/admin',
+            'export_path' => 'documentations/scramble/admin-api.json',
+            'info' => [
+                'description' => 'API админ-панели: каталог, импорт, справочники, гео.',
+            ],
+            'ui' => [
+                'title' => 'IMS API — Админка',
+            ],
+        ]);
     }
 }

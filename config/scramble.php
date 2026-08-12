@@ -19,7 +19,10 @@ return [
      * Multiple includes or wildcards → server defaults to / and paths stay full (/api/users).
      * Override with `servers`, or use Scramble::registerApi() for separate bases.
      */
-    'api_path' => 'api',
+    'api_path' => [
+        'include' => 'api',
+        'exclude' => ['api/admin'],
+    ],
 
     /*
      * Your API domain. By default, app domain is used. This is also a part of the default API routes
@@ -30,7 +33,7 @@ return [
     /*
      * The path where your OpenAPI specification will be exported.
      */
-    'export_path' => 'documentations/scramble/api.json',
+    'export_path' => 'documentations/scramble/public-api.json',
 
     /*
      * Cache configuration for the generated OpenAPI document.
@@ -51,11 +54,11 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => '',
+        'description' => 'Публичное API для фронта (каталог, корзина, заказ).',
     ],
 
     'ui' => [
-        'title' => null,
+        'title' => 'IMS API — Фронт',
     ],
 
     'renderer' => 'elements',
