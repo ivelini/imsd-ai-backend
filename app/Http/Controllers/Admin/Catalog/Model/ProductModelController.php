@@ -10,12 +10,14 @@ use App\Models\Catalog\Model\ProductModel;
 use App\Preconditions\Catalog\EnsureModelHasNoProducts;
 use App\Services\Admin\FileService;
 use App\Services\Cache\Catalog\ReferencesCacheService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD моделей товаров.
  *
  */
+#[Group('Каталог / модели', weight: 25)]
 final readonly class ProductModelController
 {
     public function __construct(

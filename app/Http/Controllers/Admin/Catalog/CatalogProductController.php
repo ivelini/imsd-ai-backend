@@ -6,9 +6,11 @@ use App\Actions\Catalog\GetCatalogProducts;
 use App\DTOs\Catalog\GetCatalogProductsInput;
 use App\Http\Requests\Admin\Catalog\CatalogProductIndexRequest;
 use App\Http\Resources\Admin\Catalog\CatalogProductResource;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Список товаров каталога (шины + диски) с фильтрацией. */
+#[Group('Каталог / фильтр', weight: 20)]
 final readonly class CatalogProductController
 {
     public function __construct(

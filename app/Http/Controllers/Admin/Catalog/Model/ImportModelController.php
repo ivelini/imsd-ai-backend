@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Catalog;
+namespace App\Http\Controllers\Admin\Catalog\Model;
 
 use App\Actions\Import\StartProductImport;
 use App\DTOs\Import\StartImportInput;
 use App\Enums\Import\ImportType;
 use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Preconditions\Import\EnsureNoActiveImport;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта моделей товаров. */
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportModelController
 {
     public function __construct(

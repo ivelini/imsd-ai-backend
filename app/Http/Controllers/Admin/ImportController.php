@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
 use App\Models\System\ProductImport;
+use Dedoc\Scramble\Attributes\Group;
 
 /** Универсальный статус асинхронного импорта (шины, диски, точки выдачи). */
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportController
 {
     /**

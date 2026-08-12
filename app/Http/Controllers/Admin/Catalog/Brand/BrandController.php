@@ -9,12 +9,14 @@ use App\Http\Resources\Admin\Catalog\Brand\BrandResource;
 use App\Models\Catalog\Brand\Brand;
 use App\Preconditions\Catalog\EnsureBrandHasNoProducts;
 use App\Services\Admin\FileService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD брендов.
  *
  */
+#[Group('Каталог / бренды', weight: 25)]
 final readonly class BrandController
 {
     public function __construct(

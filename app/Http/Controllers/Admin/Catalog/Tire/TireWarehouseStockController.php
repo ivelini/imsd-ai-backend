@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Остатки шины на складах с ценами и доставкой. */
-#[Group('Каталог / шины')]
+#[Group('Каталог / шины', weight: 30)]
 final readonly class TireWarehouseStockController
 {
     public function __construct(

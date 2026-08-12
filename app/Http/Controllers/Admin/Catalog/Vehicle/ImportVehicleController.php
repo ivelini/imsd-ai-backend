@@ -7,9 +7,11 @@ use App\DTOs\Import\StartImportInput;
 use App\Enums\Import\ImportType;
 use App\Http\Requests\Admin\Vehicle\UploadCsvFileRequest;
 use App\Preconditions\Import\EnsureNoActiveImport;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта характеристик автомобилей. */
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportVehicleController
 {
     public function __construct(

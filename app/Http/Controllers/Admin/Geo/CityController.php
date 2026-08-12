@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Admin\Geo;
 use App\Actions\Geo\GetCityList;
 use App\Http\Requests\Admin\Geo\CityIndexRequest;
 use App\Http\Resources\Admin\Geo\CityResource;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Список городов.
  *
  */
+#[Group('Справочники', weight: 5)]
 final readonly class CityController
 {
     public function __construct(

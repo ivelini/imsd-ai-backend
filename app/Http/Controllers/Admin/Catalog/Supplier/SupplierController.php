@@ -8,12 +8,14 @@ use App\Http\Requests\Admin\Catalog\Supplier\SupplierRequest;
 use App\Http\Resources\Admin\Catalog\Supplier\SupplierResource;
 use App\Models\Catalog\Supplier\Supplier;
 use App\Preconditions\Catalog\EnsureSupplierHasNoProducts;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD поставщиков.
  *
  */
+#[Group('Каталог / поставщики', weight: 25)]
 final readonly class SupplierController
 {
     public function __construct(

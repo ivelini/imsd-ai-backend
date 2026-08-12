@@ -9,9 +9,11 @@ use App\Http\Requests\Admin\Catalog\UploadFileRequest;
 use App\Http\Resources\Admin\Catalog\ProductImportResource;
 use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
 /** Загрузка и запуск импорта дисков.*/
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportWheelController
 {
     public function __construct(

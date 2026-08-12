@@ -9,10 +9,12 @@ use App\Http\Requests\Admin\Catalog\Promotion\PromotionIndexRequest;
 use App\Http\Requests\Admin\Catalog\Promotion\PromotionRequest;
 use App\Http\Resources\Admin\Catalog\Promotion\PromotionResource;
 use App\Models\Catalog\Promotion\Promotion;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD акций. */
+#[Group('Каталог / акции', weight: 70)]
 final readonly class PromotionController
 {
     public function __construct(

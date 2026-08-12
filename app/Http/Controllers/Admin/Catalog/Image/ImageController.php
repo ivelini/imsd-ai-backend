@@ -12,9 +12,11 @@ use App\Http\Requests\Admin\Catalog\Image\ImageIndexRequest;
 use App\Http\Requests\Admin\Catalog\Image\ReorderImagesRequest;
 use App\Http\Requests\Admin\Catalog\Image\UploadImageRequest;
 use App\Models\Image;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
 /** Изображения товаров: загрузка, удаление, порядок, главное. */
+#[Group('Каталог / изображения', weight: 6)]
 final readonly class ImageController
 {
     public function __construct(

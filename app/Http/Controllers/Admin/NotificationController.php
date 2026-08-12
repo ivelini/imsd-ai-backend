@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\Admin\NotificationIndexRequest;
 use App\Http\Resources\Admin\NotificationResource;
 use App\Models\Auth\Admin;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** Уведомления для админ-панели (список, прочтение). */
+#[Group('Уведомления', weight: 5)]
 final readonly class NotificationController
 {
     /** Список уведомлений текущего админа. */

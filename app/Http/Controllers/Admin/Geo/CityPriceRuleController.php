@@ -7,10 +7,12 @@ use App\Http\Requests\Admin\Geo\CityPriceRuleIndexRequest;
 use App\Http\Requests\Admin\Geo\CityPriceRuleRequest;
 use App\Http\Resources\Admin\Geo\CityPriceRuleResource;
 use App\Models\Delivery\CityPriceRule;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD правил наценки по городам. */
+#[Group('Каталог / география / правила наценки по городам', weight: 60)]
 final readonly class CityPriceRuleController
 {
     public function __construct(

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** Профиль текущего администратора. */
+#[Group('Профиль', weight: 1)]
 final readonly class MeController
 {
     /**

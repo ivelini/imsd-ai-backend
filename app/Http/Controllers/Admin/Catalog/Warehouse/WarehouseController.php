@@ -7,12 +7,14 @@ use App\Http\Requests\Admin\Catalog\Warehouse\WarehouseIndexRequest;
 use App\Http\Requests\Admin\Catalog\Warehouse\WarehouseRequest;
 use App\Http\Resources\Admin\Catalog\Warehouse\WarehouseResource;
 use App\Models\Catalog\Warehouse\Warehouse;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD складов.
  *
  */
+#[Group('Каталог / склады', weight: 50)]
 final readonly class WarehouseController
 {
     public function __construct(

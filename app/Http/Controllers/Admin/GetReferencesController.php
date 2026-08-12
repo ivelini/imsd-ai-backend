@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Catalog\GetReferences;
 use App\Services\Cache\Catalog\ReferencesCacheService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 
-/** Все справочники и enum-значения для дропдаунов.
- *
- */
+#[Group('Справочники', weight: 5)]
 final readonly class GetReferencesController
 {
     public function __construct(
@@ -16,6 +15,9 @@ final readonly class GetReferencesController
         private GetReferences $getReferences,
     ) {}
 
+    /**
+     *Все справочники и enum-значения для дропдаунов.
+     */
     public function __invoke(): JsonResponse
     {
         return response()->json([

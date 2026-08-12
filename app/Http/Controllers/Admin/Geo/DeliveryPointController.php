@@ -7,10 +7,12 @@ use App\Http\Requests\Admin\Geo\DeliveryPointIndexRequest;
 use App\Http\Requests\Admin\Geo\DeliveryPointRequest;
 use App\Http\Resources\Admin\Geo\DeliveryPointResource;
 use App\Models\Delivery\DeliveryPoint;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD точек выдачи. */
+#[Group('Каталог / география / точки выдачи', weight: 60)]
 final readonly class DeliveryPointController
 {
     public function __construct(

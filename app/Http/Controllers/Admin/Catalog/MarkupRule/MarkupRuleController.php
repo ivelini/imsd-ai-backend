@@ -7,10 +7,12 @@ use App\Http\Requests\Admin\Catalog\MarkupRule\MarkupRuleIndexRequest;
 use App\Http\Requests\Admin\Catalog\MarkupRule\MarkupRuleRequest;
 use App\Http\Resources\Admin\Catalog\MarkupRule\MarkupRuleResource;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD правил наценки складов. */
+#[Group('Каталог / склады / наценка', weight: 50)]
 final readonly class MarkupRuleController
 {
     public function __construct(

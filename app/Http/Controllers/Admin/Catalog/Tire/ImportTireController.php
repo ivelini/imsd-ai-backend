@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 /** Загрузка и запуск импорта шин.
  *
  */
-#[Group('Каталог / импорт')]
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportTireController
 {
     public function __construct(

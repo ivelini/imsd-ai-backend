@@ -15,7 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD дисков. */
-#[Group('Каталог / диски')]
+#[Group('Каталог / диски', weight: 40)]
 final readonly class WheelProductController
 {
     public function __construct(

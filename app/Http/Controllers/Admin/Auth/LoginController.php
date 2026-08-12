@@ -8,8 +8,10 @@ use App\Http\Resources\Admin\Auth\LoginResource;
 use App\Preconditions\Auth\EnsureAdminExists;
 use App\Preconditions\Auth\EnsureAdminIsActive;
 use App\Preconditions\Auth\EnsurePasswordIsValid;
+use Dedoc\Scramble\Attributes\Group;
 
 /** Аутентификация администратора. */
+#[Group('Профиль', weight: 1)]
 final class LoginController
 {
     public function __construct(

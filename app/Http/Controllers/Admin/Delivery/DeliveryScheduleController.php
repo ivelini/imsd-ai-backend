@@ -7,10 +7,12 @@ use App\Http\Requests\Admin\Delivery\DeliveryScheduleIndexRequest;
 use App\Http\Requests\Admin\Delivery\DeliveryScheduleRequest;
 use App\Http\Resources\Admin\Delivery\DeliveryScheduleResource;
 use App\Models\Delivery\DeliverySchedule;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** CRUD графиков отгрузки складов. */
+#[Group('Каталог / склады / график отгрузки', weight: 50)]
 final readonly class DeliveryScheduleController
 {
     public function __construct(

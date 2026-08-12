@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Models\Auth\Admin;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** Выход администратора (удаление текущего токена). */
+#[Group('Профиль', weight: 1)]
 final readonly class LogoutController
 {
     /**
