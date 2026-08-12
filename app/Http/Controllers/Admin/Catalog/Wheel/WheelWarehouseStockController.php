@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin\Catalog\Wheel;
 
 use App\Actions\Warehouse\GetWarehouseStock;
 use App\DTOs\Catalog\GetWarehouseStockInput;
-use App\Http\Resources\Admin\Catalog\Warehouse\WarehouseStockResource;
+use App\Http\Resources\Admin\Catalog\Warehouse\WarehouseStockRowResource;
 use App\Models\Catalog\Wheel\WheelProduct;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Остатки диска на складах с ценами и доставкой. */
+#[Group('Каталог / диски')]
 final readonly class WheelWarehouseStockController
 {
     public function __construct(
@@ -16,17 +19,14 @@ final readonly class WheelWarehouseStockController
     ) {}
 
     /** Остатки диска на всех складах. */
-    public function __invoke(WheelProduct $wheel, Request $request): WarehouseStockResource
+    public function __invoke(WheelProduct $wheel, Request $request): AnonymousResourceCollection
     {
         $cityId = (int) $request->query('city_id', 0);
-        if ($cityId <= 0) {
-            abort(422, 'Параметр city_id обязателен.');
-        }
 
         $result = $this->getWarehouseStock->execute(
             new GetWarehouseStockInput('wheel', $wheel->id, $cityId),
         );
 
-        return new WarehouseStockResource($result);
+        return WarehouseStockRowResource::collection($result->rows);
     }
 }
