@@ -84,7 +84,9 @@ final class VehicleImportMasterJob implements ShouldQueue
             // Обрезаем до ожидаемого количества (на случай лишних колонок)
             $cols = array_slice($cols, 0, $expectedColumns);
 
-            $chunk[] = array_map('trim', $cols);
+            $chunk[] = array_map(function (string $v): string {
+                return mb_convert_encoding(trim($v), 'UTF-8', 'Windows-1251');
+            }, $cols);
 
             if (count($chunk) >= $this->input->chunkSize) {
                 $chunkIndex++;

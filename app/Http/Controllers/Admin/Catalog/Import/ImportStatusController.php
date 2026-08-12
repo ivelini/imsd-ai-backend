@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 /** Статус последних импортов каждого типа. */
-#[Group('Каталог / импорт', weight: 11)]
+#[Group('Каталог / импорт', weight: 10)]
 final readonly class ImportStatusController
 {
     /** Последний импорт каждого типа. */
