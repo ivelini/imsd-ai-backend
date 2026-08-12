@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Catalog\Brand\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
 use App\Http\Controllers\Admin\Catalog\Country\CountryController;
 use App\Http\Controllers\Admin\Catalog\Image\ImageController;
+use App\Http\Controllers\Admin\Catalog\ImportStatusController;
 use App\Http\Controllers\Admin\Catalog\MarkupRule\MarkupRuleController;
 use App\Http\Controllers\Admin\Catalog\Model\ImportModelController;
 use App\Http\Controllers\Admin\Catalog\Model\ProductModelController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Admin\ImportController;
 Route::get('/products', [CatalogProductController::class, 'index']);
 
 Route::prefix('/import')->group(function () {
+    Route::get('/status', ImportStatusController::class);
     Route::get('/import/{id}', [ImportController::class, 'show']);
     Route::post('/tires', [ImportTireController::class, 'store']);
     Route::post('/vehicle', [ImportVehicleController::class, 'store']);
