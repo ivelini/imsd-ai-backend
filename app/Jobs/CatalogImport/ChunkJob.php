@@ -9,6 +9,7 @@ use App\Services\Import\ImportStatusUpdater;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Connection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use RuntimeException;
@@ -33,6 +34,7 @@ final class ChunkJob implements ShouldQueue
 
     public function handle(
         ChunkRowProcessorFactory $factory,
+        Connection $connection,
     ): void {
         $data = $this->readChunkFile();
         $processor = $factory->create($this->importType);
@@ -41,13 +43,18 @@ final class ChunkJob implements ShouldQueue
         $updated = 0;
         $failed = 0;
         $errors = [];
+        $stockIds = [];
 
         foreach ($data['rows'] as $rowIndex => $rowData) {
             try {
-                if ($processor->process($rowData)) {
+                $result = $processor->process($rowData);
+                if ($result->created) {
                     $created++;
                 } else {
                     $updated++;
+                }
+                if ($result->stockId !== null) {
+                    $stockIds[] = $result->stockId;
                 }
             } catch (\Throwable $e) {
                 $failed++;
@@ -66,7 +73,32 @@ final class ChunkJob implements ShouldQueue
 
         $this->updateCounters($created, $updated, $failed);
         $this->appendErrors($errors);
+        $this->mergeStockIds($stockIds, $connection);
         $this->deleteChunkFile();
+    }
+
+    /**
+     * Накопить затронутые импортом остатки — их пересчитает PopulateCatalogPrices
+     * после завершения батча. Чанки идут параллельно, поэтому read-modify-write
+     * под блокировкой строки.
+     *
+     * @param  int[]  $stockIds
+     */
+    private function mergeStockIds(array $stockIds, Connection $connection): void
+    {
+        if ($stockIds === []) {
+            return;
+        }
+
+        $connection->transaction(function () use ($stockIds) {
+            $import = ProductImport::where('id', $this->importId)->lockForUpdate()->first();
+            if (! $import) {
+                return;
+            }
+
+            $merged = array_values(array_unique(array_merge($import->affected_stock_ids ?? [], $stockIds)));
+            $import->update(['affected_stock_ids' => $merged]);
+        });
     }
 
     /**

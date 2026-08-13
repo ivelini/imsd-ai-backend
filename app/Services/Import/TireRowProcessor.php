@@ -2,8 +2,9 @@
 
 namespace App\Services\Import;
 
-use App\Actions\TireImport\UpsertStock;
-use App\Actions\TireImport\UpsertTireProduct;
+use App\Actions\Import\Tire\UpsertStock;
+use App\Actions\Import\Tire\UpsertTireProduct;
+use App\DTOs\Import\RowProcessResult;
 use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\Models\Catalog\Tire\TireProduct;
@@ -18,7 +19,7 @@ final readonly class TireRowProcessor implements ChunkRowProcessor
         private EnsureEanNotEmpty $ensureEanNotEmpty,
     ) {}
 
-    public function process(array $rowData): bool
+    public function process(array $rowData): RowProcessResult
     {
         $row = ImportTireRow::fromArray($rowData);
 
@@ -26,17 +27,19 @@ final readonly class TireRowProcessor implements ChunkRowProcessor
 
         $result = $this->upsertTireProduct->execute($row);
 
+        $stockId = null;
         if ($row->warehouse_name !== null) {
             $tire = TireProduct::where('ean', $row->ean)->firstOrFail();
-            $this->upsertStock->execute(new UpsertStockInput(
+            $stock = $this->upsertStock->execute(new UpsertStockInput(
                 stockableType: $tire->getMorphClass(),
                 stockableId: $tire->id,
                 warehouseName: $row->warehouse_name,
                 quantity: $row->quantity,
                 purchasePrice: $row->purchase_price,
             ));
+            $stockId = $stock->id;
         }
 
-        return $result->created;
+        return new RowProcessResult(created: $result->created, stockId: $stockId);
     }
 }

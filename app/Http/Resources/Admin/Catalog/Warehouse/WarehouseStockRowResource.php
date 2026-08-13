@@ -23,7 +23,6 @@ final class WarehouseStockRowResource extends JsonResource
             'purchase_price' => $this->resource->purchasePrice,
             'final_price' => $this->resource->finalPrice,
             'delivery_days' => $this->resource->deliveryDays,
-            'delivery_cost' => $this->resource->deliveryCost,
         ];
     }
 }

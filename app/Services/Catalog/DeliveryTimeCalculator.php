@@ -54,4 +54,24 @@ final readonly class DeliveryTimeCalculator
 
         return $result;
     }
+
+    /**
+     * Стабильный диапазон доставки по расписанию, не зависящий от текущего дня:
+     * min = минимальный days_before, max = максимальный days_after по всем дням недели.
+     * Используется для предрасчитанной таблицы catalog_prices.
+     *
+     * @param  Collection<int, DeliverySchedule>|null  $schedules
+     * @return array{min: int, max: int}|null
+     */
+    public static function deliveryRange(?Collection $schedules): ?array
+    {
+        if ($schedules === null || $schedules->isEmpty()) {
+            return null;
+        }
+
+        return [
+            'min' => (int) $schedules->min('days_before'),
+            'max' => (int) $schedules->max('days_after'),
+        ];
+    }
 }

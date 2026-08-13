@@ -8,8 +8,8 @@ use App\Models\Delivery\CityPriceRule;
 final readonly class DeliveryCostCalculator
 {
     /**
-     * Ищем CityPriceRule где price_from <= finalPrice <= price_to.
-     * Нет правила или finalPrice=null → null.
+     * Наценка города (city_price_rules) для финальной цены — единый матчер
+     * с пересчётом catalog_prices (MarkupRuleMatcher). Нет правила → null.
      */
     public function calculate(int $cityId, ?float $finalPrice): ?float
     {
@@ -17,11 +17,17 @@ final readonly class DeliveryCostCalculator
             return null;
         }
 
-        $rule = CityPriceRule::where('city_id', $cityId)
-            ->where('price_from', '<=', $finalPrice)
-            ->where('price_to', '>=', $finalPrice)
-            ->first();
+        $rules = CityPriceRule::where('city_id', $cityId)
+            ->get()
+            ->map(fn (CityPriceRule $rule) => [
+                'price_from' => (float) $rule->price_from,
+                'price_to' => (float) $rule->price_to,
+                'markup' => (float) $rule->markup,
+            ])
+            ->all();
 
-        return $rule !== null ? (float) $rule->markup : null;
+        $rule = MarkupRuleMatcher::match($finalPrice, $rules);
+
+        return $rule !== null ? (float) $rule['markup'] : null;
     }
 }

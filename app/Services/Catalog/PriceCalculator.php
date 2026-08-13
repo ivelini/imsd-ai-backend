@@ -8,24 +8,23 @@ use Illuminate\Support\Collection;
 /** Расчёт финальной цены товара: purchase_price × коэффициент наценки склада. */
 final readonly class PriceCalculator
 {
-    /** Правило наценки для цены и склада (SQL, единичные вызовы — импорт). */
-    public function findRule(float $purchasePrice, int $warehouseId): ?WarehouseMarkupRule
+    /** Правило наценки склада, покрывающее цену (единичные вызовы — импорт). */
+    public function findRule(float $purchasePrice, int $warehouseId): ?array
     {
-        return WarehouseMarkupRule::query()
-            ->where('warehouse_id', $warehouseId)
-            ->where('price_from', '<=', $purchasePrice)
-            ->where('price_to', '>=', $purchasePrice)
-            ->orderBy('price_from')
-            ->orderBy('price_to')
-            ->first();
+        $rules = WarehouseMarkupRule::where('warehouse_id', $warehouseId)
+            ->get()
+            ->map(fn (WarehouseMarkupRule $rule) => $rule->only(['price_from', 'price_to', 'coefficient']))
+            ->all();
+
+        return MarkupRuleMatcher::match($purchasePrice, $rules);
     }
 
     /** Финальная цена по правилу; без правила — закупочная цена. */
-    public function applyRule(float $purchasePrice, ?WarehouseMarkupRule $rule): float
+    public function applyRule(float $purchasePrice, ?array $rule): float
     {
         return $rule === null
             ? $purchasePrice
-            : round($purchasePrice * $rule->coefficient, 2);
+            : round($purchasePrice * $rule['coefficient'], 2);
     }
 
     /**
@@ -35,14 +34,8 @@ final readonly class PriceCalculator
      */
     public function calculateFinalPrice(float $purchasePrice, int $warehouseId, Collection $allRules): float
     {
-        $rule = $allRules->get($warehouseId, collect())
-            ->sortBy([['price_from', 'asc'], ['price_to', 'asc']])
-            ->first(
-                fn (array $r) => $purchasePrice >= $r['price_from'] && $purchasePrice <= $r['price_to']
-            );
+        $rule = MarkupRuleMatcher::match($purchasePrice, $allRules->get($warehouseId, collect())->all());
 
-        return $rule === null
-            ? $purchasePrice
-            : round($purchasePrice * $rule['coefficient'], 2);
+        return $this->applyRule($purchasePrice, $rule);
     }
 }

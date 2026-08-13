@@ -16,7 +16,7 @@ final class DeliveryInfoService
     /** @var array<int, int> */
     private array $cityDeliveryDays = [];
 
-    /** @var array<int, Collection<int, CityPriceRule>> */
+    /** @var array<int, array<int, array<string, string|int|float>>> */
     private array $cityPriceRules = [];
 
     /** Прикрепить delivery к одному товару. */
@@ -103,14 +103,19 @@ final class DeliveryInfoService
     private function findCityMarkup(int $cityId, float $price): ?float
     {
         if (! isset($this->cityPriceRules[$cityId])) {
-            $this->cityPriceRules[$cityId] = CityPriceRule::where('city_id', $cityId)->get();
+            $this->cityPriceRules[$cityId] = CityPriceRule::where('city_id', $cityId)
+                ->get()
+                ->map(fn (CityPriceRule $rule) => [
+                    'price_from' => (float) $rule->price_from,
+                    'price_to' => (float) $rule->price_to,
+                    'markup' => (float) $rule->markup,
+                ])
+                ->all();
         }
 
-        $rule = $this->cityPriceRules[$cityId]->first(
-            fn (CityPriceRule $r) => $price >= $r->price_from && $price <= $r->price_to
-        );
+        $rule = MarkupRuleMatcher::match($price, $this->cityPriceRules[$cityId]);
 
-        return $rule?->markup !== null ? (float) $rule->markup : null;
+        return $rule !== null ? (float) $rule['markup'] : null;
     }
 
     /** Расчёт ближайшего срока отгрузки со склада от текущего момента (без города). */

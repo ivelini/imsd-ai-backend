@@ -2,8 +2,9 @@
 
 namespace App\Services\Import;
 
-use App\Actions\TireImport\UpsertStock;
-use App\Actions\WheelImport\UpsertWheelProduct;
+use App\Actions\Import\Tire\UpsertStock;
+use App\Actions\Import\Wheel\UpsertWheelProduct;
+use App\DTOs\Import\RowProcessResult;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Models\Catalog\Wheel\WheelProduct;
@@ -18,7 +19,7 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
         private EnsureEanNotEmpty $ensureEanNotEmpty,
     ) {}
 
-    public function process(array $rowData): bool
+    public function process(array $rowData): RowProcessResult
     {
         $ean = $rowData['ean'] ?? '';
         $this->ensureEanNotEmpty->ensure($ean);
@@ -42,17 +43,19 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
             description: $rowData['description_vendor'] ?? null,
         ));
 
+        $stockId = null;
         if (! empty($rowData['warehouse_name'])) {
             $wheel = WheelProduct::where('ean', $ean)->firstOrFail();
-            $this->upsertStock->execute(new UpsertStockInput(
+            $stock = $this->upsertStock->execute(new UpsertStockInput(
                 stockableType: $wheel->getMorphClass(),
                 stockableId: $wheel->id,
                 warehouseName: $rowData['warehouse_name'],
                 quantity: isset($rowData['quantity']) ? (int) $rowData['quantity'] : null,
                 purchasePrice: isset($rowData['purchase_price']) ? (float) $rowData['purchase_price'] : null,
             ));
+            $stockId = $stock->id;
         }
 
-        return ! $exists;
+        return new RowProcessResult(created: ! $exists, stockId: $stockId);
     }
 }

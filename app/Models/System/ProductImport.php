@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $failed_rows
  * @property string|null $error_message
  * @property array|null $errors
+ * @property array|null $affected_stock_ids
  * @property Carbon|null $started_at
  * @property Carbon|null $finished_at
  * @property Carbon $created_at
@@ -41,6 +42,7 @@ class ProductImport extends Model
         'failed_rows',
         'error_message',
         'errors',
+        'affected_stock_ids',
         'started_at',
         'finished_at',
     ];
@@ -56,6 +58,7 @@ class ProductImport extends Model
             'updated_rows' => 'integer',
             'failed_rows' => 'integer',
             'errors' => 'array',
+            'affected_stock_ids' => 'array',
             'started_at' => 'datetime',
             'finished_at' => 'datetime',
         ];

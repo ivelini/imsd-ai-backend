@@ -8,10 +8,8 @@ use App\DTOs\Catalog\WarehouseStockRow;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CatalogPrice;
-use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;
 use App\Services\Catalog\DeliveryTimeCalculator;
-use Illuminate\Support\Collection;
 
 /** Получить остатки товара на всех складах с ценами и доставкой до города. */
 final readonly class GetWarehouseStock
@@ -53,9 +51,6 @@ final readonly class GetWarehouseStock
             $schedulesByWarehouseId,
         );
 
-        // Batch 5: все правила стоимости доставки для города (in-memory фильтр)
-        $priceRules = CityPriceRule::where('city_id', $input->cityId)->get();
-
         $rows = [];
         foreach ($warehouses as $warehouse) {
             $stock = $stocksByWarehouseId->get($warehouse->id);
@@ -65,12 +60,10 @@ final readonly class GetWarehouseStock
                 ? (float) $stock->purchase_price
                 : null;
 
+            // final_price уже включает наценку города (catalog_prices пересчитан)
             $finalPrice = $stock !== null
                 ? $catalogPricesByStockId->get($stock->id)?->price
                 : null;
-
-            $deliveryDays = $deliveryDaysByWarehouseId[$warehouse->id] ?? null;
-            $deliveryCostValue = $this->calculateDeliveryCost($priceRules, $finalPrice);
 
             $rows[] = new WarehouseStockRow(
                 warehouseId: $warehouse->id,
@@ -78,25 +71,10 @@ final readonly class GetWarehouseStock
                 quantity: $quantity,
                 purchasePrice: $purchasePrice,
                 finalPrice: $finalPrice,
-                deliveryDays: $deliveryDays,
-                deliveryCost: $deliveryCostValue,
+                deliveryDays: $deliveryDaysByWarehouseId[$warehouse->id] ?? null,
             );
         }
 
         return new GetWarehouseStockResult($rows);
-    }
-
-    /** Ищет правило стоимости доставки в памяти без запросов к БД. */
-    private function calculateDeliveryCost(Collection $rules, ?float $finalPrice): ?float
-    {
-        if ($finalPrice === null) {
-            return null;
-        }
-
-        $rule = $rules->first(
-            fn (CityPriceRule $r) => $r->price_from <= $finalPrice && $r->price_to >= $finalPrice,
-        );
-
-        return $rule?->markup;
     }
 }

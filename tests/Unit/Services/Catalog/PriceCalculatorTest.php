@@ -63,6 +63,20 @@ class PriceCalculatorTest extends TestCase
         $this->assertSame(100.0, $result);
     }
 
+    public function test_apply_rule_uses_coefficient_from_array_rule(): void
+    {
+        $rule = ['price_from' => 0, 'price_to' => 500, 'coefficient' => 1.5];
+
+        $result = $this->calculator->applyRule(100.0, $rule);
+
+        $this->assertSame(150.0, $result);
+    }
+
+    public function test_apply_rule_returns_purchase_price_when_no_rule(): void
+    {
+        $this->assertSame(100.0, $this->calculator->applyRule(100.0, null));
+    }
+
     /** @param  array<int, array<string, int|float>>  $rules */
     private function rules(array ...$rules): Collection
     {

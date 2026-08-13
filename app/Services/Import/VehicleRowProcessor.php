@@ -2,6 +2,7 @@
 
 namespace App\Services\Import;
 
+use App\DTOs\Import\RowProcessResult;
 use App\DTOs\VehicleImport\ParsedTireSize;
 use App\DTOs\VehicleImport\ParsedWheelSpec;
 use App\Models\Vehicle\VehicleMake;
@@ -19,7 +20,7 @@ final readonly class VehicleRowProcessor implements ChunkRowProcessor
         private VehicleRowParser $parser,
     ) {}
 
-    public function process(array $rowData): bool
+    public function process(array $rowData): RowProcessResult
     {
         /** @var array<int, string> $cols */
         $cols = $rowData;
@@ -86,7 +87,7 @@ final readonly class VehicleRowProcessor implements ChunkRowProcessor
             }
         }
 
-        return $created;
+        return new RowProcessResult(created: $created, stockId: null);
     }
 
     private function upsertTireSize(int $modificationId, ParsedTireSize $size): VehicleTireSize

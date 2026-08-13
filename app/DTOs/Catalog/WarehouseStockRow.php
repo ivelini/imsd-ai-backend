@@ -12,6 +12,5 @@ final readonly class WarehouseStockRow
         public ?float $purchasePrice,
         public ?float $finalPrice,
         public ?int $deliveryDays,
-        public ?float $deliveryCost,
     ) {}
 }
