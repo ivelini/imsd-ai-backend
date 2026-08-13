@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property int $region_id
  * @property string $name
+ * @property string|null $slug
  * @property int $sort
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -23,6 +24,7 @@ class City extends Model
     protected $fillable = [
         'region_id',
         'name',
+        'slug',
         'sort',
     ];
 

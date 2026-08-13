@@ -6,6 +6,8 @@ use App\Enums\Import\ImportType;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
+use App\Models\Delivery\City;
+use App\Models\Delivery\Region;
 use App\Services\Import\ColumnDetector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -34,7 +36,7 @@ class PointImportTest extends TestCase
 
     public function test_requires_auth(): void
     {
-        $this->postJson('/api/admin/geo/import/points')->assertUnauthorized();
+        $this->postJson('/api/admin/catalog/import/geo-points')->assertUnauthorized();
     }
 
     public function test_upload_returns_202(): void
@@ -45,7 +47,7 @@ class PointImportTest extends TestCase
         $file = UploadedFile::fake()->create('points.xlsx', 100);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/import/points', ['file' => $file])
+            ->postJson('/api/admin/catalog/import/geo-points', ['file' => $file])
             ->assertStatus(202)
             ->assertJsonStructure(['data' => ['import_id']]);
 
@@ -112,8 +114,41 @@ class PointImportTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('regions', ['code' => '99']);
-        $this->assertDatabaseHas('cities', ['name' => 'Тестовый город']);
+        $this->assertDatabaseHas('cities', ['name' => 'Тестовый город', 'slug' => 'testovyi-gorod']);
         $this->assertDatabaseHas('city_price_rules', ['price_from' => 0, 'price_to' => 5000, 'markup' => 100]);
         $this->assertDatabaseHas('delivery_points', ['address' => 'ул. Тестовая, 1']);
+    }
+
+    public function test_import_row_backfills_slug_for_existing_city(): void
+    {
+        $region = Region::create(['code' => '99', 'name' => 'Тестовый регион']);
+        $city = City::create(['region_id' => $region->id, 'name' => 'Тестовый город']);
+
+        $job = new PointImportJob(
+            0,
+            base_path('documentations/import/points.xlsx'),
+            config('point_import.column_map'),
+            config('point_import.required_columns'),
+            config('point_import.boolean_true'),
+        );
+
+        $ref = new \ReflectionMethod($job, 'importRow');
+        $ref->invoke($job, [
+            'region_code' => '99',
+            'region_name' => 'Тестовый регион',
+            'city_name' => 'Тестовый город',
+            'delivery_days' => '3',
+            'address' => 'ул. Тестовая, 1',
+            'phone' => '+7 (999) 999-99-99',
+            'pickup_from_truck_raw' => 'Да',
+            '0-5000' => '100',
+            '5001-8500' => '200',
+        ]);
+
+        $this->assertDatabaseHas('cities', [
+            'id' => $city->id,
+            'name' => 'Тестовый город',
+            'slug' => 'testovyi-gorod',
+        ]);
     }
 }

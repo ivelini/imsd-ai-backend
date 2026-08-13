@@ -9,6 +9,7 @@ use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliveryPoint;
 use App\Models\Delivery\Region;
+use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use App\Services\Import\ColumnDetector;
 use App\Services\Import\ImportStatusUpdater;
 use App\Services\Import\RowAssembler;
@@ -16,6 +17,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 use OpenSpout\Reader\XLSX\Reader;
 
 /** Импорт точек выдачи, регионов, городов, наценок и доставки из XLSX. */
@@ -61,6 +63,8 @@ final class PointImportJob implements ShouldQueue
             ]);
 
             app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
+            // upsert() в catalog_prices не триггерит Eloquent-события — инвалидация вручную
+            app(TireFilterValuesCacheService::class)->forget();
         } catch (\Throwable $e) {
             $statusUpdater->markFailed($this->importId, $e);
             throw $e;
@@ -140,8 +144,16 @@ final class PointImportJob implements ShouldQueue
                 'region_id' => $region->id,
                 'name' => $data['city_name'],
             ],
-            ['name' => $data['city_name']],
+            [
+                'name' => $data['city_name'],
+                'slug' => Str::slug($data['city_name']),
+            ],
         );
+
+        // Города, созданные до появления slug, заполняем при следующем импорте
+        if ($city->slug === null) {
+            $city->update(['slug' => Str::slug($city->name)]);
+        }
 
         $this->importPriceRules($city, $data);
         $this->importDeliveryTime($city, $data);
