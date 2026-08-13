@@ -13,14 +13,14 @@ use App\Models\Delivery\City;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;
-use App\Models\Delivery\Region;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesCity;
 use Tests\TestCase;
 
 /** Массовый пересчёт catalog_prices с учётом наценок складов. */
 class PopulateCatalogPricesTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesCity, RefreshDatabase;
 
     public function test_execute_populates_prices_with_markup(): void
     {
@@ -217,12 +217,5 @@ class PopulateCatalogPricesTest extends TestCase
     private function priceOf(Stock $stock, City $city): ?float
     {
         return CatalogPrice::where('stock_id', $stock->id)->where('city_id', $city->id)->value('price');
-    }
-
-    private function createCity(): City
-    {
-        $region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
-
-        return City::create(['region_id' => $region->id, 'name' => 'Челябинск', 'sort' => 1]);
     }
 }

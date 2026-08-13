@@ -3,19 +3,18 @@
 namespace Tests\Feature\Catalog;
 
 use App\Models\Catalog\Warehouse\Warehouse;
-use App\Models\Delivery\City;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\DeliverySchedule;
-use App\Models\Delivery\Region;
 use App\Services\Catalog\DeliveryTimeCalculator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Tests\Concerns\CreatesCity;
 use Tests\TestCase;
 
 /** Расчёт срока доставки со склада до города. */
 class DeliveryTimeCalculatorTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesCity, RefreshDatabase;
 
     private DeliveryTimeCalculator $calculator;
 
@@ -113,23 +112,5 @@ class DeliveryTimeCalculatorTest extends TestCase
         ]);
 
         $this->assertSame(['min' => 2, 'max' => 3], DeliveryTimeCalculator::deliveryRange($schedules));
-    }
-
-    private function createCity(): City
-    {
-        $region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
-
-        return City::create(['region_id' => $region->id, 'name' => 'Челябинск', 'sort' => 1]);
-    }
-
-    private function createScheduleForToday(Warehouse $warehouse): void
-    {
-        DeliverySchedule::create([
-            'warehouse_id' => $warehouse->id,
-            'day_of_week' => now()->dayOfWeekIso - 1,
-            'cutoff_time' => '18:00',
-            'days_before' => 2,
-            'days_after' => 5,
-        ]);
     }
 }

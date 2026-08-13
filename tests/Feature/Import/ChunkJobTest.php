@@ -12,16 +12,15 @@ use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CatalogPrice;
-use App\Models\Delivery\City;
-use App\Models\Delivery\Region;
 use App\Models\System\ProductImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesCity;
 use Tests\TestCase;
 
 /** Накопление затронутых остатков в product_imports и пересчёт после импорта. */
 class ChunkJobTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesCity, RefreshDatabase;
 
     protected function tearDown(): void
     {
@@ -142,12 +141,5 @@ class ChunkJobTest extends TestCase
         file_put_contents($path, json_encode(['batch_id' => 'test', 'rows' => $rows], JSON_UNESCAPED_UNICODE));
 
         return $path;
-    }
-
-    private function createCity(): City
-    {
-        $region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
-
-        return City::create(['region_id' => $region->id, 'name' => 'Челябинск', 'sort' => 1]);
     }
 }
