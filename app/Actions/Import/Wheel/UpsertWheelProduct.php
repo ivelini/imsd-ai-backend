@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\WheelImport;
+namespace App\Actions\Import\Wheel;
 
 use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
@@ -28,7 +28,7 @@ final readonly class UpsertWheelProduct
 
     public function execute(UpsertWheelProductInput $input): void
     {
-        $brand = $this->referenceResolver->resolveBrand($input->brandName);
+        $brand = $this->referenceResolver->resolveBrand($input->brandName, 'wheel');
         $modelName = ReferenceResolver::parseWheelModelName($input->name);
         $model = $this->referenceResolver->resolveModel($brand, $modelName, 'wheel');
 

@@ -82,7 +82,7 @@ class TireImportTest extends TestCase
         ]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson("/api/admin/imports/{$import->id}")
+            ->getJson("/api/admin/catalog/import/status/{$import->id}")
             ->assertOk()
             ->assertJsonPath('data.status', 'completed')
             ->assertJsonPath('data.total_rows', 100);
@@ -91,7 +91,7 @@ class TireImportTest extends TestCase
     public function test_status_returns_404_for_unknown(): void
     {
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/imports/999')
+            ->getJson('/api/admin/catalog/import/status/999')
             ->assertNotFound();
     }
 }

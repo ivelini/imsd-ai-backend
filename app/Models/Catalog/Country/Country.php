@@ -12,16 +12,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Страна производства товара (ISO-3166).
  *
  * @property int $id
- * @property string $code
  * @property string $name
+ * @property string|null $slug
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
 class Country extends Model
 {
     protected $fillable = [
-        'code',
         'name',
+        'slug',
     ];
 
     public function tireProducts(): HasMany

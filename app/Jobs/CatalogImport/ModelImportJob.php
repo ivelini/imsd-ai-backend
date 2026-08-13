@@ -86,9 +86,10 @@ final class ModelImportJob implements ShouldQueue
                 try {
                     $data = $this->rowAssembler->toAssoc($headerColumns, $row, $this->columnMap);
 
-                    $brand = $resolver->resolveBrand($data['brand_name'] ?? '');
-                    $modelName = $data['name'] ?? '';
                     $type = $data['type'] ?? 'tire';
+                    $modelName = $data['name'] ?? '';
+
+                    $brand = $resolver->resolveBrand($data['brand_name'] ?? '', $type);
 
                     // Для дисков — парсим чистое имя модели из полного названия
                     if ($type === 'wheel') {

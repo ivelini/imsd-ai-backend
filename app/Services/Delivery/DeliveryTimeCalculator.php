@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Catalog;
+namespace App\Services\Delivery;
 
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\DeliverySchedule;

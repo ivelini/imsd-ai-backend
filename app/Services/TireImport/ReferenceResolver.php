@@ -2,6 +2,7 @@
 
 namespace App\Services\TireImport;
 
+use App\Enums\Catalog\BrandType;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
@@ -12,14 +13,21 @@ use Illuminate\Support\Str;
 /** Поиск или создание справочных сущностей (Brand, Supplier, Country, Warehouse, ProductModel). */
 final class ReferenceResolver
 {
-    public function resolveBrand(string $name): Brand
+    public function resolveBrand(string $name, string $productType = 'tire'): Brand
     {
-        $slug = SlugGenerator::fromName($name);
+        $slug = Str::slug($name);
 
-        return Brand::firstOrCreate(
+        $brand = Brand::firstOrCreate(
             ['slug' => $slug],
-            ['name' => $name, 'slug' => $slug, 'type' => 'tire'],
+            ['name' => $name, 'slug' => $slug, 'type' => $productType],
         );
+
+        // При импорте другого типа продукта — повышаем бренд до «both»
+        if ($brand->type->value !== $productType && $brand->type !== BrandType::Both) {
+            $brand->update(['type' => BrandType::Both->value]);
+        }
+
+        return $brand;
     }
 
     public function resolveSupplier(string $name): Supplier
@@ -37,10 +45,12 @@ final class ReferenceResolver
             return null;
         }
 
-        return Country::firstOrCreate(
+        $country = Country::firstOrCreate(
             ['name' => $name],
-            ['name' => $name, 'code' => SlugGenerator::fromName($name, 2)],
+            ['name' => $name, 'slug' => Str::slug($name)],
         );
+
+        return $country;
     }
 
     public function resolveWarehouse(string $name): Warehouse

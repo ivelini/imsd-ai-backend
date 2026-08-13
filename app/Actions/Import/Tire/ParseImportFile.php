@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\TireImport;
+namespace App\Actions\Import\Tire;
 
 use App\DTOs\TireImport\ParsedImportFileResult;
 use App\DTOs\TireImport\ParseImportFileInput;

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Catalog\GetTireFilterValuesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function (Request $request) {
     return response()->json(['message' => 'Unauthenticated.'], 401);
 })->name('login');
+
+// Фасетные значения фильтра каталога шин
+Route::get('/reference/filter/tire', GetTireFilterValuesController::class);

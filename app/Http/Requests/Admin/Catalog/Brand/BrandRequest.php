@@ -12,7 +12,7 @@ class BrandRequest extends FormRequest
 {
     public function rules(): array
     {
-        $brandId = $this->route('id');
+        $brandId = $this->route('brand');
 
         return [
             'name' => ['required', 'string', 'max:255'],

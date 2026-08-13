@@ -2,14 +2,27 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Catalog\GetTireFilterValuesController;
 use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Tire\TireProduct;
+use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Wheel\WheelProduct;
+use App\Models\Delivery\CityDeliveryTime;
+use App\Models\Delivery\CityPriceRule;
+use App\Models\Delivery\DeliverySchedule;
 use App\Observers\BrandObserver;
+use App\Observers\CityDeliveryTimeObserver;
+use App\Observers\CityPriceRuleObserver;
+use App\Observers\DeliveryScheduleObserver;
+use App\Observers\StockObserver;
 use App\Observers\SupplierObserver;
+use App\Observers\TireProductObserver;
+use App\Observers\WarehouseMarkupRuleObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
+use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -25,6 +38,18 @@ class CatalogServiceProvider extends ServiceProvider
                 (int) config('cache_ttl.references'),
             );
         });
+
+        $this->app->bind(TireFilterValuesCacheService::class, function (Application $app): TireFilterValuesCacheService {
+            return new TireFilterValuesCacheService(
+                $app->make(Repository::class),
+                (int) config('cache_ttl.tire_filter'),
+                (string) config('shop.default_city'),
+            );
+        });
+
+        $this->app->when(GetTireFilterValuesController::class)
+            ->needs('$defaultCityName')
+            ->giveConfig('shop.default_city');
     }
 
     public function boot(): void
@@ -37,5 +62,12 @@ class CatalogServiceProvider extends ServiceProvider
 
         Brand::observe(BrandObserver::class);
         Supplier::observe(SupplierObserver::class);
+
+        TireProduct::observe(TireProductObserver::class);
+        Stock::observe(StockObserver::class);
+        DeliverySchedule::observe(DeliveryScheduleObserver::class);
+        CityDeliveryTime::observe(CityDeliveryTimeObserver::class);
+        CityPriceRule::observe(CityPriceRuleObserver::class);
+        WarehouseMarkupRule::observe(WarehouseMarkupRuleObserver::class);
     }
 }

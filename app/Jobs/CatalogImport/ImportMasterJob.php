@@ -3,11 +3,12 @@
 namespace App\Jobs\CatalogImport;
 
 use App\Actions\Catalog\PopulateCatalogPrices;
-use App\Actions\TireImport\ParseImportFile;
+use App\Actions\Import\Tire\ParseImportFile;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\Import\ImportMasterJobInput;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\Models\System\ProductImport;
+use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use App\Services\Import\ImportStatusUpdater;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -85,7 +86,13 @@ final class ImportMasterJob implements ShouldQueue
             ->finally(static function () use ($importId, $statusUpdater) {
                 $statusUpdater->completeIfProcessing($importId);
 
-                app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
+                // Пересчитываем только остатки, затронутые этим импортом
+                $stockIds = ProductImport::find($importId)->affected_stock_ids ?? [];
+                if ($stockIds !== []) {
+                    app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput(stockIds: $stockIds));
+                    // upsert() в catalog_prices не триггерит Eloquent-события — инвалидация вручную
+                    app(TireFilterValuesCacheService::class)->forget();
+                }
             })
             ->dispatch();
     }

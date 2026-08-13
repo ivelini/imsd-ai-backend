@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\Catalog;
+namespace Tests\Feature\Delivery;
 
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\DeliverySchedule;
-use App\Services\Catalog\DeliveryTimeCalculator;
+use App\Services\Delivery\DeliveryTimeCalculator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\Concerns\CreatesCity;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\TireImport;
+namespace App\Actions\Import\Tire;
 
 use App\DTOs\TireImport\UpsertStockInput;
 use App\Models\Catalog\Warehouse\Stock;
@@ -15,7 +15,7 @@ final readonly class UpsertStock
         private PriceCalculator $priceCalculator,
     ) {}
 
-    public function execute(UpsertStockInput $input): void
+    public function execute(UpsertStockInput $input): Stock
     {
         $warehouse = $this->referenceResolver->resolveWarehouse($input->warehouseName);
 
@@ -26,7 +26,7 @@ final readonly class UpsertStock
             )
             : null;
 
-        Stock::updateOrCreate(
+        return Stock::updateOrCreate(
             [
                 'stockable_type' => $input->stockableType,
                 'stockable_id' => $input->stockableId,

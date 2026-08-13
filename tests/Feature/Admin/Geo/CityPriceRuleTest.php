@@ -39,7 +39,7 @@ class CityPriceRuleTest extends TestCase
         CityPriceRule::create(['city_id' => $this->city->id, 'price_from' => 5001, 'price_to' => 10000, 'markup' => 500]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/geo/city-price-rules')
+            ->getJson('/api/admin/catalog/geo/city-price-rules')
             ->assertOk()
             ->assertJsonStructure([
                 'data' => [['id', 'city_id', 'price_from', 'price_to', 'markup']],
@@ -56,7 +56,7 @@ class CityPriceRuleTest extends TestCase
         CityPriceRule::create(['city_id' => $city2->id, 'price_from' => 0, 'price_to' => 5000, 'markup' => 200]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/geo/city-price-rules?city_id='.$city2->id)
+            ->getJson('/api/admin/catalog/geo/city-price-rules?city_id='.$city2->id)
             ->assertOk()
             ->assertJsonCount(1, 'data');
     }
@@ -64,7 +64,7 @@ class CityPriceRuleTest extends TestCase
     public function test_store_creates_rule(): void
     {
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/city-price-rules', [
+            ->postJson('/api/admin/catalog/geo/city-price-rules', [
                 'city_id' => $this->city->id,
                 'price_from' => 0,
                 'price_to' => 5000,
@@ -79,7 +79,7 @@ class CityPriceRuleTest extends TestCase
     public function test_store_validates_required_fields(): void
     {
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/city-price-rules', [])
+            ->postJson('/api/admin/catalog/geo/city-price-rules', [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['city_id', 'price_from', 'price_to', 'markup']);
     }
@@ -89,7 +89,7 @@ class CityPriceRuleTest extends TestCase
         $rule = CityPriceRule::create(['city_id' => $this->city->id, 'price_from' => 0, 'price_to' => 5000, 'markup' => 300]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson("/api/admin/geo/city-price-rules/{$rule->id}")
+            ->getJson("/api/admin/catalog/geo/city-price-rules/{$rule->id}")
             ->assertOk()
             ->assertJsonPath('data.markup', 300);
     }
@@ -99,7 +99,7 @@ class CityPriceRuleTest extends TestCase
         $rule = CityPriceRule::create(['city_id' => $this->city->id, 'price_from' => 0, 'price_to' => 5000, 'markup' => 300]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->putJson("/api/admin/geo/city-price-rules/{$rule->id}", [
+            ->putJson("/api/admin/catalog/geo/city-price-rules/{$rule->id}", [
                 'city_id' => $this->city->id,
                 'price_from' => 0,
                 'price_to' => 5000,
@@ -114,7 +114,7 @@ class CityPriceRuleTest extends TestCase
         $rule = CityPriceRule::create(['city_id' => $this->city->id, 'price_from' => 0, 'price_to' => 5000, 'markup' => 300]);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->deleteJson("/api/admin/geo/city-price-rules/{$rule->id}")
+            ->deleteJson("/api/admin/catalog/geo/city-price-rules/{$rule->id}")
             ->assertNoContent();
 
         $this->assertDatabaseMissing('city_price_rules', ['id' => $rule->id]);

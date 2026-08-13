@@ -39,7 +39,7 @@ class DeliveryPointTest extends TestCase
         DeliveryPoint::create(['city_id' => $this->city->id, 'address' => 'ул. Воровского, 2']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/geo/delivery-points')
+            ->getJson('/api/admin/catalog/geo/delivery-points')
             ->assertOk()
             ->assertJsonStructure([
                 'data' => [['id', 'city_id', 'address']],
@@ -56,7 +56,7 @@ class DeliveryPointTest extends TestCase
         DeliveryPoint::create(['city_id' => $city2->id, 'address' => 'ул. Пушкина, 5']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/geo/delivery-points?city_id='.$city2->id)
+            ->getJson('/api/admin/catalog/geo/delivery-points?city_id='.$city2->id)
             ->assertOk()
             ->assertJsonCount(1, 'data');
     }
@@ -67,7 +67,7 @@ class DeliveryPointTest extends TestCase
         DeliveryPoint::create(['city_id' => $this->city->id, 'address' => 'ул. Пушкина, 5']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson('/api/admin/geo/delivery-points?search=Ленина')
+            ->getJson('/api/admin/catalog/geo/delivery-points?search=Ленина')
             ->assertOk()
             ->assertJsonCount(1, 'data');
     }
@@ -75,7 +75,7 @@ class DeliveryPointTest extends TestCase
     public function test_store_creates_point(): void
     {
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/delivery-points', [
+            ->postJson('/api/admin/catalog/geo/delivery-points', [
                 'city_id' => $this->city->id,
                 'address' => 'ул. Тестовая, 10',
                 'phone' => '+7 (351) 000-00-00',
@@ -90,7 +90,7 @@ class DeliveryPointTest extends TestCase
     public function test_store_validates_required_fields(): void
     {
         $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/geo/delivery-points', [])
+            ->postJson('/api/admin/catalog/geo/delivery-points', [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['city_id', 'address']);
     }
@@ -100,7 +100,7 @@ class DeliveryPointTest extends TestCase
         $point = DeliveryPoint::create(['city_id' => $this->city->id, 'address' => 'ул. Ленина, 1']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->getJson("/api/admin/geo/delivery-points/{$point->id}")
+            ->getJson("/api/admin/catalog/geo/delivery-points/{$point->id}")
             ->assertOk()
             ->assertJsonPath('data.address', 'ул. Ленина, 1');
     }
@@ -110,7 +110,7 @@ class DeliveryPointTest extends TestCase
         $point = DeliveryPoint::create(['city_id' => $this->city->id, 'address' => 'Старый адрес']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->putJson("/api/admin/geo/delivery-points/{$point->id}", [
+            ->putJson("/api/admin/catalog/geo/delivery-points/{$point->id}", [
                 'city_id' => $this->city->id,
                 'address' => 'Новый адрес',
                 'phone' => '+7 (351) 111-11-11',
@@ -124,7 +124,7 @@ class DeliveryPointTest extends TestCase
         $point = DeliveryPoint::create(['city_id' => $this->city->id, 'address' => 'ул. Ленина, 1']);
 
         $this->actingAs($this->admin, 'sanctum')
-            ->deleteJson("/api/admin/geo/delivery-points/{$point->id}")
+            ->deleteJson("/api/admin/catalog/geo/delivery-points/{$point->id}")
             ->assertNoContent();
 
         $this->assertDatabaseMissing('delivery_points', ['id' => $point->id]);

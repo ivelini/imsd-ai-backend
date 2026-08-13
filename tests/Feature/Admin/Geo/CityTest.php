@@ -14,7 +14,7 @@ class CityTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const string BASE_URL = '/api/admin/geo/cities';
+    private const string BASE_URL = '/api/admin/catalog/geo/cities';
 
     private Admin $admin;
 

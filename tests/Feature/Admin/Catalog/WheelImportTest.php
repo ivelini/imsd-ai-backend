@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Actions\TireImport\ParseImportFile;
-use App\Actions\TireImport\UpsertStock;
-use App\Actions\WheelImport\UpsertWheelProduct;
+use App\Actions\Import\Tire\ParseImportFile;
+use App\Actions\Import\Tire\UpsertStock;
+use App\Actions\Import\Wheel\UpsertWheelProduct;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\WheelImport\UpsertWheelProductInput;

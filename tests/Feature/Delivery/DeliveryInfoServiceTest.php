@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Catalog;
+namespace Tests\Feature\Delivery;
 
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CityPriceRule;
-use App\Services\Catalog\DeliveryInfoService;
+use App\Services\Delivery\DeliveryInfoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;

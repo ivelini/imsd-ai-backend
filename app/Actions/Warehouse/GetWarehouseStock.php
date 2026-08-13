@@ -9,7 +9,7 @@ use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\DeliverySchedule;
-use App\Services\Catalog\DeliveryTimeCalculator;
+use App\Services\Delivery\DeliveryTimeCalculator;
 
 /** Получить остатки товара на всех складах с ценами и доставкой до города. */
 final readonly class GetWarehouseStock
