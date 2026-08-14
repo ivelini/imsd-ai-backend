@@ -17,7 +17,7 @@ final readonly class TireFilterValues
     /** @var list<array{label: string, value: string}> */
     public array $season;
 
-    /** @var list<array{label: string, value: bool}> */
+    /** @var list<array{label: string, value: string}> */
     public array $studded;
 
     /** @var list<array{label: string, value: string|null}> */
@@ -60,7 +60,7 @@ final readonly class TireFilterValues
      *     profile: list<array{label: int, value: int}>,
      *     diameter: list<array{label: string, value: string}>,
      *     season: list<array{label: string, value: string}>,
-     *     studded: list<array{label: string, value: bool}>,
+     *     studded: list<array{label: string, value: string}>,
      *     brand: list<array{label: string, value: string|null}>,
      *     country: list<array{label: string, value: string|null}>,
      *     delivery: list<array{label: string, value: string}>,

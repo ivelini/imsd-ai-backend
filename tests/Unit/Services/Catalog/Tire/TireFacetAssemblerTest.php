@@ -37,8 +37,8 @@ class TireFacetAssemblerTest extends TestCase
     public function test_studded_maps_labels_with_studded_first(): void
     {
         $this->assertSame([
-            ['label' => 'Шипованная', 'value' => true],
-            ['label' => 'Не шипованная', 'value' => false],
+            ['label' => 'Шипованная', 'value' => 'studded'],
+            ['label' => 'Не шипованная', 'value' => 'not_studded'],
         ], TireFacetAssembler::studded([false, true, true]));
     }
 

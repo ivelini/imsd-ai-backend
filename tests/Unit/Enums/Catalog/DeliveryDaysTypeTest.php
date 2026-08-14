@@ -22,4 +22,20 @@ class DeliveryDaysTypeTest extends TestCase
         $this->assertSame(DeliveryDaysType::After5days, DeliveryDaysType::fromDays(6));
         $this->assertSame(DeliveryDaysType::After5days, DeliveryDaysType::fromDays(100));
     }
+
+    public function test_min_days_maps_bucket_boundaries(): void
+    {
+        $this->assertSame(0, DeliveryDaysType::ToDay->minDays());
+        $this->assertSame(1, DeliveryDaysType::Between1and3days->minDays());
+        $this->assertSame(4, DeliveryDaysType::Between3and5days->minDays());
+        $this->assertSame(6, DeliveryDaysType::After5days->minDays());
+    }
+
+    public function test_max_days_maps_bucket_boundaries(): void
+    {
+        $this->assertSame(0, DeliveryDaysType::ToDay->maxDays());
+        $this->assertSame(3, DeliveryDaysType::Between1and3days->maxDays());
+        $this->assertSame(5, DeliveryDaysType::Between3and5days->maxDays());
+        $this->assertNull(DeliveryDaysType::After5days->maxDays());
+    }
 }

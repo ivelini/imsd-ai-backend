@@ -37,4 +37,26 @@ enum DeliveryDaysType: string
             self::After5days => 'После 5 дней',
         };
     }
+
+    /** Нижняя граница бакета в днях. */
+    public function minDays(): int
+    {
+        return match ($this) {
+            self::ToDay => 0,
+            self::Between1and3days => 1,
+            self::Between3and5days => 4,
+            self::After5days => 6,
+        };
+    }
+
+    /** Верхняя граница бакета в днях; null — без верхней границы. */
+    public function maxDays(): ?int
+    {
+        return match ($this) {
+            self::ToDay => 0,
+            self::Between1and3days => 3,
+            self::Between3and5days => 5,
+            self::After5days => null,
+        };
+    }
 }

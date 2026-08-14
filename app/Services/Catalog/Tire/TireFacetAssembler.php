@@ -48,7 +48,7 @@ final class TireFacetAssembler
         return array_map(
             fn (bool $studded): array => [
                 'label' => $studded ? 'Шипованная' : 'Не шипованная',
-                'value' => $studded,
+                'value' => $studded ? 'studded' : 'not_studded',
             ],
             $values,
         );

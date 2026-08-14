@@ -22,10 +22,15 @@ final readonly class TireFilterValuesCacheService
         $this->key = "tire-filter:{$defaultCityName}";
     }
 
-    public function remember(callable $query): array
+    /**
+     * @param  array<string, mixed>  $filters  Активные фильтры — входят в ключ кеша
+     */
+    public function remember(callable $query, array $filters = []): array
     {
+        ksort($filters);
+
         /** @var array $data */
-        $data = $this->cache->remember($this->key, $this->ttl, $query);
+        $data = $this->cache->remember($this->key.':'.md5(serialize($filters)), $this->ttl, $query);
 
         return $data;
     }

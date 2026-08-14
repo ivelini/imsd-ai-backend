@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
@@ -167,6 +168,90 @@ class GetTireFilterValuesTest extends TestCase
         $data = $this->getJson(self::PATH)->json('data');
 
         $this->assertSame([['label' => 'От 1 до 3 дней', 'value' => 'between1and3days']], $data['delivery']);
+    }
+
+    public function test_width_filter_narrows_facets(): void
+    {
+        $narrow = TireProduct::factory()->create(['width' => 205]);
+        $this->createCatalogPrice($this->createStock($narrow), $this->defaultCity, price: 1000, deliveryMin: 1);
+
+        $other = TireProduct::factory()->create(['width' => 215]);
+        $this->createCatalogPrice($this->createStock($other), $this->defaultCity, price: 3000, deliveryMin: 1);
+
+        $data = $this->getJson(self::PATH.'?width[]=205')->json('data');
+
+        $this->assertSame([['label' => 205, 'value' => 205]], $data['width']);
+        $this->assertEquals(['min' => 1000.0, 'max' => 1000.0], $data['price']);
+    }
+
+    public function test_brand_slug_filter_narrows_facets(): void
+    {
+        $nokian = Brand::factory()->create(['name' => 'Nokian', 'slug' => 'nokian']);
+        $kama = Brand::factory()->create(['name' => 'Kama', 'slug' => 'kama']);
+
+        $tireA = TireProduct::factory()->create(['brand_id' => $nokian->id, 'width' => 205]);
+        $this->createCatalogPrice($this->createStock($tireA), $this->defaultCity);
+
+        $tireB = TireProduct::factory()->create(['brand_id' => $kama->id, 'width' => 215]);
+        $this->createCatalogPrice($this->createStock($tireB), $this->defaultCity);
+
+        $data = $this->getJson(self::PATH.'?brand=nokian')->assertOk()->json('data');
+
+        $this->assertSame([['label' => 'Nokian', 'value' => 'nokian']], $data['brand']);
+        $this->assertSame([['label' => 205, 'value' => 205]], $data['width']);
+    }
+
+    public function test_delivery_bucket_filter_narrows_facets(): void
+    {
+        $fast = TireProduct::factory()->create(['width' => 205]);
+        $this->createCatalogPrice($this->createStock($fast), $this->defaultCity, deliveryMin: 1);
+
+        $slow = TireProduct::factory()->create(['width' => 215]);
+        $this->createCatalogPrice($this->createStock($slow), $this->defaultCity, deliveryMin: 6);
+
+        $data = $this->getJson(self::PATH.'?delivery=after5days')->json('data');
+
+        $this->assertSame([['label' => 'После 5 дней', 'value' => 'after5days']], $data['delivery']);
+        $this->assertSame([['label' => 215, 'value' => 215]], $data['width']);
+    }
+
+    public function test_price_filter_narrows_facets(): void
+    {
+        $cheap = TireProduct::factory()->create(['width' => 205]);
+        $this->createCatalogPrice($this->createStock($cheap), $this->defaultCity, price: 1000);
+
+        $expensive = TireProduct::factory()->create(['width' => 215]);
+        $this->createCatalogPrice($this->createStock($expensive), $this->defaultCity, price: 3500);
+
+        $data = $this->getJson(self::PATH.'?price_min=3000&price_max=4000')->json('data');
+
+        $this->assertEquals(['min' => 3500.0, 'max' => 3500.0], $data['price']);
+        $this->assertSame([['label' => 215, 'value' => 215]], $data['width']);
+    }
+
+    public function test_invalid_filters_rejected(): void
+    {
+        $this->getJson(self::PATH.'?season=bogus')->assertStatus(422);
+        $this->getJson(self::PATH.'?delivery=bogus')->assertStatus(422);
+        $this->getJson(self::PATH.'?width[]=abc')->assertStatus(422);
+    }
+
+    public function test_cache_key_includes_filters(): void
+    {
+        $narrow = TireProduct::factory()->create(['width' => 205]);
+        $this->createCatalogPrice($this->createStock($narrow), $this->defaultCity);
+
+        $other = TireProduct::factory()->create(['width' => 215]);
+        $this->createCatalogPrice($this->createStock($other), $this->defaultCity);
+
+        $narrowData = $this->getJson(self::PATH.'?width[]=205')->json('data');
+        $this->assertSame([['label' => 205, 'value' => 205]], $narrowData['width']);
+
+        $fullData = $this->getJson(self::PATH)->json('data');
+        $this->assertSame([
+            ['label' => 205, 'value' => 205],
+            ['label' => 215, 'value' => 215],
+        ], $fullData['width']);
     }
 
     private function createCity(string $name): City
