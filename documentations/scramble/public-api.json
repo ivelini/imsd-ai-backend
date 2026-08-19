@@ -1,0 +1,461 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "IMS API \u2014 \u0424\u0440\u043e\u043d\u0442",
+        "version": "0.0.1",
+        "description": "\u041f\u0443\u0431\u043b\u0438\u0447\u043d\u043e\u0435 API \u0434\u043b\u044f \u0444\u0440\u043e\u043d\u0442\u0430 (\u043a\u0430\u0442\u0430\u043b\u043e\u0433, \u043a\u043e\u0440\u0437\u0438\u043d\u0430, \u0437\u0430\u043a\u0430\u0437)."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081/api"
+        }
+    ],
+    "paths": {
+        "/login": {
+            "get": {
+                "operationId": "login",
+                "responses": {
+                    "401": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "const": "Unauthenticated."
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/reference/filter/tire": {
+            "get": {
+                "operationId": "catalog.getTireFilterValues",
+                "summary": "\u0412\u0441\u0435 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u0444\u0438\u043b\u044c\u0442\u0440\u0430 \u0448\u0438\u043d \u0434\u043b\u044f \u0433\u043e\u0440\u043e\u0434\u0430 \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e",
+                "tags": [
+                    "GetTireFilterValues"
+                ],
+                "parameters": [
+                    {
+                        "name": "width[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 500
+                            }
+                        }
+                    },
+                    {
+                        "name": "profile[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 150
+                            }
+                        }
+                    },
+                    {
+                        "name": "diameter[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 10
+                            }
+                        }
+                    },
+                    {
+                        "name": "season",
+                        "in": "query",
+                        "description": "\u0421\u0435\u0437\u043e\u043d\u043d\u043e\u0441\u0442\u044c: summer, winter, all-season.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "winter",
+                                "summer",
+                                "all-season",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "studded",
+                        "in": "query",
+                        "description": "\u0428\u0438\u043f\u043e\u0432\u0430\u043d\u043d\u043e\u0441\u0442\u044c.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "studded",
+                                "not_studded",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "\u0411\u0440\u0435\u043d\u0434 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "\u0421\u0442\u0440\u0430\u043d\u0430 \u0431\u0440\u0435\u043d\u0434\u0430 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "delivery",
+                        "in": "query",
+                        "description": "\u0411\u0430\u043a\u0435\u0442 \u0441\u0440\u043e\u043a\u0430 \u0434\u043e\u0441\u0442\u0430\u0432\u043a\u0438.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "today",
+                                "between1and3days",
+                                "between3and5days",
+                                "after5days",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "price_min",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u043e\u0442.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "price_max",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u0434\u043e.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`TireFilterValuesResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "width": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "integer"
+                                                            },
+                                                            "value": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "profile": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "integer"
+                                                            },
+                                                            "value": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "diameter": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "season": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "studded": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "brand": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "country": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "delivery": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "price": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "min": {
+                                                            "type": "number"
+                                                        },
+                                                        "max": {
+                                                            "type": "number"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "min",
+                                                        "max"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "width",
+                                                "profile",
+                                                "diameter",
+                                                "season",
+                                                "studded",
+                                                "brand",
+                                                "country",
+                                                "delivery",
+                                                "price"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TireFilterValuesResource": {
+                "type": "object",
+                "properties": {
+                    "width": {
+                        "type": "string"
+                    },
+                    "profile": {
+                        "type": "string"
+                    },
+                    "diameter": {
+                        "type": "string"
+                    },
+                    "season": {
+                        "type": "string"
+                    },
+                    "studded": {
+                        "type": "string"
+                    },
+                    "brand": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "delivery": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "width",
+                    "profile",
+                    "diameter",
+                    "season",
+                    "studded",
+                    "brand",
+                    "country",
+                    "delivery",
+                    "price"
+                ],
+                "title": "TireFilterValuesResource"
+            }
+        },
+        "responses": {
+            "ValidationException": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "description": "Errors overview."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "description": "A detailed description of each field that failed validation.",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "message",
+                                "errors"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

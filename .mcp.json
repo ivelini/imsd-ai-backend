@@ -1,18 +1,26 @@
 {
-    "mcpServers": {
-        "laravel-boost": {
-            "command": "docker",
-            "args": [
-                "compose",
-                "-f",
-                "../docker-compose.yml",
-                "exec",
-                "-T",
-                "backend-app",
-                "php",
-                "artisan",
-                "boost:mcp"
-            ]
-        }
+  "mcpServers": {
+    "codegraph": {
+      "type": "stdio",
+      "command": "codegraph",
+      "args": [
+        "serve",
+        "--mcp"
+      ]
+    },
+    "laravel-boost": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "-f",
+        "../docker-compose.yml",
+        "exec",
+        "-T",
+        "backend-app",
+        "php",
+        "artisan",
+        "boost:mcp"
+      ]
     }
+  }
 }

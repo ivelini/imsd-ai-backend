@@ -224,3 +224,11 @@ Controller
 | Архитектура | `documentations/architecture.md` | устройство системы |
 | API | Scramble → `/docs/api` (фронт, UI) + `/docs/admin` (админка, UI) + `documentations/scramble/public-api.json` + `admin-api.json` | контракты потребителей |
 | ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |
+
+<!-- setup-llm-wiki:start -->
+## LLM Wiki
+- Индекс знаний проекта: .llm-wiki/wiki/index.md
+- Wiki обновляется только через скил .claude/skills/llm-wiki/SKILL.md (Ingest workflow)
+- Правила синхронизации: .claude/rules/wiki-sync.md, базовые правила: .claude/rules/base.md
+- Команды: /ship-wiki — коммит с обязательным обновлением wiki; /ship — без wiki
+<!-- setup-llm-wiki:end -->
