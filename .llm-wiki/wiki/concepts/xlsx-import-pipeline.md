@@ -11,12 +11,12 @@
 
 ```
 POST /api/admin/tires/import (auth:sanctum, xlsx ≤50MB)
-  → Controller: файл на диск → dispatch MasterJob → 202
-MasterJob (тонкий оркестратор)
+  → Controller: файл на диск → dispatch ImportMasterJob → 202
+CatalogImport\ImportMasterJob (тонкий оркестратор)
   → Preconditions: FileExists, FileColumnsValid
   → Action ParseImportFile: чтение XLSX, валидация колонок, JSON-чанки на диск (config: chunk_size 500)
-  → TireImport::create (аудит-трейл) → Batch dispatch ChunkJob'ов (tries=3, backoff=[1,5,15])
-ChunkJob → UpsertTires / UpsertEntityStock (updateOrCreate по ключам)
+  → ProductImport::create (аудит-трейл) + ImportStatusUpdater → Batch dispatch ChunkJob'ов (tries=3, backoff=[1,5,15])
+CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreate по ключам)
 ```
 
 Чанки пишутся как JSON на диск, а не в очередь — для дебаггабильности и экономии места в jobs table.

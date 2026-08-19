@@ -42,7 +42,33 @@ HTTP → Middleware → FormRequest → Controller → Cache Service? → Precon
 
 Морф-мапа (AppServiceProvider): `tire → TireProduct`, `wheel → WheelProduct`, `article → Article`.
 
-API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиентские. Rate limit: 60 req/min публичные, 120 авторизованные.
+API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиентские.
+
+## Аутентификация и доступ
+
+- Клиенты: Sanctum-токены (email + password).
+- Администраторы: Sanctum-токены (email + password).
+- Гости: `device_id` в заголовке (генерируется на фронте — для корзины/избранного/сравнения).
+- Rate limit: 60 req/min публичные, 120 — авторизованные.
+- API без версионирования (`/api`, не `/api/v1`) — обратная совместимость при изменениях.
+
+## Корзина
+
+Гостевая: не требует регистрации — привязка по `device_id` клиента. Сознательное упрощение первой версии: нет промокодов, бонусов, отзывов.
+
+## Enums (Backed Enum, `app/Enums/`)
+
+| Enum | Значения |
+|------|----------|
+| `ProductType` | tire, wheel |
+| `WheelType` | alloy, steel, forged |
+| `SpecType` | oem, replacement, tuning |
+| `Season` | winter, summer, all-season |
+| `PromotionType` | percent, fixed, gift, special |
+| `DiscountType` | — |
+| `OrderState` | pending, paid, processing, shipped, delivered, cancelled, refunded |
+| `WeekDay` | 0–6 |
+| `ImportType` | Tire, Wheel, Point, Model |
 
 ## Response — что выбрать
 
@@ -61,6 +87,8 @@ Resource — только маппинг полей: никаких вычисл
 
 ## See Also
 
+- [Бизнес-модель](business-model.md)
+- [Заказ: жизненный цикл](order-lifecycle.md)
 - [Каталог: ценообразование](catalog-pricing.md)
 - [Сроки доставки](delivery-times.md)
 - [Публичный API каталога](public-catalog-filter-api.md)

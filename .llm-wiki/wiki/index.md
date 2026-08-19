@@ -6,11 +6,14 @@
 
 | Article | Summary | Updated |
 |---------|---------|---------|
-| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа | 2026-08-19 |
+| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа, аутентификация, enums, корзина | 2026-08-19 |
+| [Бизнес-модель: цепочка движения товара](concepts/business-model.md) | Завод → склад → компания → точка выдачи/курьер; сущности и их видимость клиенту | 2026-08-19 |
+| [Заказ: жизненный цикл](concepts/order-lifecycle.md) | Статусная машина заказа (pending → paid → … → delivered), отмена и возврат, кто меняет статусы | 2026-08-19 |
 | [Каталог: ценообразование](concepts/catalog-pricing.md) | Полная цена города: цепочка наценок, MarkupRuleMatcher, акции, пересчёт catalog_prices, округление | 2026-08-19 |
 | [Сроки доставки](concepts/delivery-times.md) | Графики отгрузки, delivery_min/max, расчёт срока на лету, фильтрация по бакетам | 2026-08-19 |
 | [Публичный API каталога](concepts/public-catalog-filter-api.md) | GET /api/reference/filter/tire: фасеты, query-суживание, соглашения контракта, кеш | 2026-08-19 |
-| [Импорт каталога из XLSX](concepts/xlsx-import-pipeline.md) | Пайплайн upload → MasterJob → чанки → ChunkJob, маппинг XLSX → БД, инвалидация | 2026-08-19 |
+| [Импорт каталога из XLSX](concepts/xlsx-import-pipeline.md) | Пайплайн upload → ImportMasterJob → чанки → ChunkJob, маппинг XLSX → БД, инвалидация | 2026-08-19 |
+| [Эксплуатация](concepts/operations.md) | Команды Makefile, окружение, очередь и импорты (фактические Job'ы), runbooks | 2026-08-19 |
 | [Кеширование](concepts/caching.md) | Cache Service до Action, Observer-инвалидация, TTL, особый случай upsert-таблиц | 2026-08-19 |
 
 ## entities
