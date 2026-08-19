@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md)
 
 ## Overview
 
@@ -11,7 +11,7 @@
 
 | Группа | Поля |
 |--------|------|
-| Идентификация | `id`, `brand_id` (FK, денормализовано), `model_id` (FK → product_models), `name` (отображаемое), `ean` (артикул) |
+| Идентификация | `id`, `brand_id` (FK, денормализовано), `model_id` (FK → product_models), `name` (отображаемое), `slug` (уникальный, URL карточки), `ean` (артикул) |
 | Происхождение | `country_id` (FK → countries). `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
 | Размеры | `width`, `profile`, `diameter` (diameter — string: может быть «16C», «R16») |
 | Индексы | `load_index`, `speed_index` (из «86T» → 86, T) |
@@ -19,6 +19,8 @@
 | Прочее | `description` (HTML), `image` |
 
 `is_xl` и `year` при импорте не заполняются (нет в XLSX) — вручную в админке.
+
+`slug` = `{brand-slug}-{name}-{width}-{profile}-{diameter}[-studded][-runflat]` (флаги только при true, null-размеры опускаются; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 
 ## Связи
 

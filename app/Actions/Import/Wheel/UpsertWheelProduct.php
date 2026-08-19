@@ -5,6 +5,7 @@ namespace App\Actions\Import\Wheel;
 use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Models\Catalog\Wheel\WheelProduct;
+use App\Services\Catalog\ProductSlugService;
 use App\Services\TireImport\ReferenceResolver;
 
 /** Создание или обновление товара (диска) по EAN. */
@@ -24,6 +25,7 @@ final readonly class UpsertWheelProduct
 
     public function __construct(
         private ReferenceResolver $referenceResolver,
+        private ProductSlugService $slugService,
     ) {}
 
     public function execute(UpsertWheelProductInput $input): void
@@ -39,12 +41,24 @@ final readonly class UpsertWheelProduct
         $pcd = $this->buildPcd($input->pcd1, $input->pcd2);
         $wheelType = $this->resolveWheelType($input->wheelTypeRaw);
 
+        $existing = WheelProduct::where('ean', $input->ean)->first();
+
         WheelProduct::updateOrCreate(
             ['ean' => $input->ean],
             [
                 'brand_id' => $brand->id,
                 'model_id' => $model->id,
                 'name' => $input->name,
+                'slug' => $this->slugService->wheel(
+                    brandId: $brand->id,
+                    name: $input->name,
+                    width: $input->width,
+                    diameter: $input->diameter,
+                    et: $input->et,
+                    pcd: $pcd,
+                    hubDiameter: $input->hubDiameter,
+                    ignoreId: $existing?->id,
+                ),
                 'country_id' => $country?->id,
                 'type' => $wheelType,
                 'color' => $input->color,

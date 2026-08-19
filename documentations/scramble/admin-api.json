@@ -7890,6 +7890,12 @@
                     "name": {
                         "type": "string"
                     },
+                    "slug": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "country_id": {
                         "type": [
                             "integer",
@@ -7991,6 +7997,7 @@
                     "id",
                     "brand_id",
                     "name",
+                    "slug",
                     "country_id",
                     "ean",
                     "season",
@@ -8287,6 +8294,12 @@
                     "name": {
                         "type": "string"
                     },
+                    "slug": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "country_id": {
                         "type": [
                             "integer",
@@ -8379,6 +8392,7 @@
                     "id",
                     "brand_id",
                     "name",
+                    "slug",
                     "country_id",
                     "ean",
                     "type",

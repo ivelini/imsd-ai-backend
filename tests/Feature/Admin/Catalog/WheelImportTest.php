@@ -13,6 +13,7 @@ use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Wheel\WheelProduct;
+use App\Services\Catalog\ProductSlugService;
 use App\Services\TireImport\ReferenceResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -88,7 +89,7 @@ class WheelImportTest extends TestCase
     public function test_upsert_wheel_creates_product(): void
     {
         $resolver = app(ReferenceResolver::class);
-        $upsert = new UpsertWheelProduct($resolver);
+        $upsert = new UpsertWheelProduct($resolver, app(ProductSlugService::class));
 
         $upsert->execute(new UpsertWheelProductInput(
             ean: 'TEST-WHEEL-001',
@@ -117,7 +118,7 @@ class WheelImportTest extends TestCase
     public function test_upsert_wheel_with_stock(): void
     {
         $resolver = app(ReferenceResolver::class);
-        $upsertWheel = new UpsertWheelProduct($resolver);
+        $upsertWheel = new UpsertWheelProduct($resolver, app(ProductSlugService::class));
         $upsertStock = app(UpsertStock::class);
 
         $upsertWheel->execute(new UpsertWheelProductInput(

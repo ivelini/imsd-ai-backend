@@ -31,3 +31,7 @@
 - Updated: Диск (WheelProduct) — поле supplier_id удалено
 - Updated: Бизнес-модель — сущность «поставщик» удалена
 - Updated: Импорт каталога из XLSX — колонка supplier убрана из маппинга
+
+## [2026-08-19] ingest | Slug у товаров (tire_products, wheel_products)
+- Updated: Шина (TireProduct) — поле slug, формула
+- Updated: Диск (WheelProduct) — поле slug, формула

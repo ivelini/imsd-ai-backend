@@ -5,6 +5,7 @@ namespace App\Actions\Import\Tire;
 use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertResult;
 use App\Models\Catalog\Tire\TireProduct;
+use App\Services\Catalog\ProductSlugService;
 use App\Services\TireImport\DescriptionBuilder;
 use App\Services\TireImport\ReferenceResolver;
 use App\Services\TireImport\RowMapper;
@@ -16,6 +17,7 @@ final readonly class UpsertTireProduct
         private ReferenceResolver $referenceResolver,
         private RowMapper $rowMapper,
         private DescriptionBuilder $descriptionBuilder,
+        private ProductSlugService $slugService,
     ) {}
 
     public function execute(ImportTireRow $row): UpsertResult
@@ -34,7 +36,10 @@ final readonly class UpsertTireProduct
             JSON_UNESCAPED_UNICODE,
         );
 
-        $exists = TireProduct::where('ean', $row->ean)->exists();
+        $isStudded = $this->rowMapper->toBool($row->is_studded_raw);
+        $isRunflat = $this->rowMapper->toBool($row->is_runflat_raw);
+
+        $existing = TireProduct::where('ean', $row->ean)->first();
 
         TireProduct::updateOrCreate(
             ['ean' => $row->ean],
@@ -42,6 +47,16 @@ final readonly class UpsertTireProduct
                 'brand_id' => $brand->id,
                 'model_id' => $model->id,
                 'name' => $row->name,
+                'slug' => $this->slugService->tire(
+                    brandId: $brand->id,
+                    name: $row->name,
+                    width: $row->width,
+                    profile: $row->profile,
+                    diameter: $row->diameter,
+                    isStudded: $isStudded,
+                    isRunflat: $isRunflat,
+                    ignoreId: $existing?->id,
+                ),
                 'country_id' => $country?->id,
                 'season' => $season,
                 'width' => $row->width,
@@ -49,12 +64,12 @@ final readonly class UpsertTireProduct
                 'diameter' => $row->diameter,
                 'load_index' => $loadIndexResult['load'],
                 'speed_index' => $loadIndexResult['speed'],
-                'is_studded' => $this->rowMapper->toBool($row->is_studded_raw),
-                'is_runflat' => $this->rowMapper->toBool($row->is_runflat_raw),
+                'is_studded' => $isStudded,
+                'is_runflat' => $isRunflat,
                 'description' => $description,
             ],
         );
 
-        return new UpsertResult(created: ! $exists);
+        return new UpsertResult(created: $existing === null);
     }
 }

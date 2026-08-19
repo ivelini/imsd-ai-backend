@@ -31,6 +31,7 @@ final class WheelProductResource extends JsonResource
             'brand' => $this->whenLoaded('brand', fn () => new BrandBriefResource($wheel->brand)),
             'model' => $this->whenLoaded('model', fn () => new ProductModelBriefResource($wheel->model)),
             'name' => $wheel->name,
+            'slug' => $wheel->slug,
             'country_id' => $wheel->country_id,
             'ean' => $wheel->ean,
             'type' => $wheel->type?->value,

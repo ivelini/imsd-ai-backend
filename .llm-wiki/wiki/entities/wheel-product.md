@@ -1,7 +1,7 @@
 # Диск (WheelProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md)
 
 ## Overview
 
@@ -11,11 +11,13 @@
 
 | Группа | Поля |
 |--------|------|
-| Идентификация | `id`, `brand_id`, `model_id` (FK → product_models), `name`, `ean` |
+| Идентификация | `id`, `brand_id`, `model_id` (FK → product_models), `name`, `slug` (уникальный, URL карточки), `ean` |
 | Происхождение | `country_id`. `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
 | Тип | `type` (alloy/steel/forged — литой/штампованный/кованый), `color` |
 | Геометрия | `width`, `diameter`, `et` (вылет), `pcd` (напр. «5*114.3»), `hub_diameter` (DIA), `bolts` |
 | Прочее | `description`, `image` |
+
+`slug` = `{brand-slug}-{name}-{width}-{diameter}-{et}-{pcd}-{hub_diameter}` (`4*98` → `4x98`, точка в hub_diameter сохраняется; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 
 ## Парсинг при импорте
 

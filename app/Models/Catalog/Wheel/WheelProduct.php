@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $brand_id
  * @property int|null $model_id
  * @property string $name
+ * @property string|null $slug URL-часть из характеристик (brand-name-width-diameter-et-pcd-hub_diameter)
  * @property int|null $country_id
  * @property string|null $ean
  * @property WheelType|null $type
@@ -53,6 +54,7 @@ class WheelProduct extends Model
         'brand_id',
         'model_id',
         'name',
+        'slug',
         'country_id',
         'ean',
         'type',

@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $brand_id
  * @property int|null $model_id
  * @property string $name
+ * @property string|null $slug URL-часть из характеристик (brand-name-width-profile-diameter)
  * @property int|null $country_id
  * @property string|null $ean
  * @property Season|null $season
@@ -59,6 +60,7 @@ class TireProduct extends Model
         'brand_id',
         'model_id',
         'name',
+        'slug',
         'country_id',
         'ean',
         'season',
