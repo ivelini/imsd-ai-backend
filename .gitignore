@@ -26,3 +26,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 *.Identifier
+.claude/plans/*
+.claude/skills/deploying-laravel-cloud
+.claude/skills/infer-conventions
+.claude/skills/laravel-best-practices
+.claude/skills/tailwindcss-development
