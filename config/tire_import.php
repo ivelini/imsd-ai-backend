@@ -32,7 +32,6 @@ return [
         'load_speed_index' => 'load_speed_index',
         'is_runflat' => 'is_runflat_raw',
         'is_spike' => 'is_studded_raw',
-        'supplier' => 'supplier_name',
         'stock' => 'warehouse_name',
         'count' => 'quantity',
         'price' => 'purchase_price',

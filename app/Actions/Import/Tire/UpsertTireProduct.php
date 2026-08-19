@@ -23,10 +23,6 @@ final readonly class UpsertTireProduct
         $brand = $this->referenceResolver->resolveBrand($row->brand_name);
         $model = $this->referenceResolver->resolveModel($brand, $row->name, 'tire');
 
-        $supplier = $row->supplier_name !== null
-            ? $this->referenceResolver->resolveSupplier($row->supplier_name)
-            : null;
-
         $country = $row->country_name !== null
             ? $this->referenceResolver->resolveCountry($row->country_name)
             : null;
@@ -46,7 +42,6 @@ final readonly class UpsertTireProduct
                 'brand_id' => $brand->id,
                 'model_id' => $model->id,
                 'name' => $row->name,
-                'supplier_id' => $supplier?->id,
                 'country_id' => $country?->id,
                 'season' => $season,
                 'width' => $row->width,

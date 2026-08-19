@@ -10,7 +10,6 @@ use App\Enums\Promotion\PromotionType;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
-use App\Models\Catalog\Supplier\Supplier;
 
 /** Все справочники и enum-значения для дропдаунов. */
 final readonly class GetReferences
@@ -59,12 +58,6 @@ final readonly class GetReferences
                         'brand_name' => $brand?->name,
                     ];
                 })
-                ->values()
-                ->all(),
-
-            'suppliers' => Supplier::orderBy('name')
-                ->get(['id', 'name'])
-                ->map(fn (Supplier $supplier) => ['value' => $supplier->id, 'label' => $supplier->name])
                 ->values()
                 ->all(),
 

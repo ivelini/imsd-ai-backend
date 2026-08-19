@@ -7,7 +7,6 @@ use App\Http\Controllers\Catalog\GetTireListController;
 use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
-use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Wheel\WheelProduct;
@@ -19,7 +18,6 @@ use App\Observers\CityDeliveryTimeObserver;
 use App\Observers\CityPriceRuleObserver;
 use App\Observers\DeliveryScheduleObserver;
 use App\Observers\StockObserver;
-use App\Observers\SupplierObserver;
 use App\Observers\TireProductObserver;
 use App\Observers\WarehouseMarkupRuleObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
@@ -73,7 +71,6 @@ class CatalogServiceProvider extends ServiceProvider
         ]);
 
         Brand::observe(BrandObserver::class);
-        Supplier::observe(SupplierObserver::class);
 
         TireProduct::observe(TireProductObserver::class);
         Stock::observe(StockObserver::class);

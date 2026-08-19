@@ -103,7 +103,6 @@ class WheelImportTest extends TestCase
             hubDiameter: '58.6',
             et: '28',
             wheelTypeRaw: 'Литые',
-            supplierName: 'Test Sup',
             description: 'Test description',
         ));
 
@@ -134,7 +133,6 @@ class WheelImportTest extends TestCase
             hubDiameter: null,
             et: null,
             wheelTypeRaw: null,
-            supplierName: null,
             description: null,
         ));
 

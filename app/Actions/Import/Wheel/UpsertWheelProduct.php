@@ -32,9 +32,6 @@ final readonly class UpsertWheelProduct
         $modelName = ReferenceResolver::parseWheelModelName($input->name);
         $model = $this->referenceResolver->resolveModel($brand, $modelName, 'wheel');
 
-        $supplier = $input->supplierName !== null
-            ? $this->referenceResolver->resolveSupplier($input->supplierName)
-            : null;
         $country = $input->countryName !== null
             ? $this->referenceResolver->resolveCountry($input->countryName)
             : null;
@@ -48,7 +45,6 @@ final readonly class UpsertWheelProduct
                 'brand_id' => $brand->id,
                 'model_id' => $model->id,
                 'name' => $input->name,
-                'supplier_id' => $supplier?->id,
                 'country_id' => $country?->id,
                 'type' => $wheelType,
                 'color' => $input->color,

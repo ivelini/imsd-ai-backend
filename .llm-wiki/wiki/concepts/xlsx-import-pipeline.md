@@ -30,7 +30,7 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 - `load_speed_index` → split: `86T` → load=86, speed=T.
 - Булевы: «Да»/«Нет» → true/false (`config: boolean_true`).
 - Сезоны: «зимняя» → winter, «летняя» → summer, «всесезон» → all-season; тип диска «Литые» → alloy.
-- `supplier` → поставщик (завод-изготовитель); `stock` → склад (у кого купили). Разные сущности.
+- `stock` → склад (у кого купили). Колонка `supplier` (завод-изготовитель) удалена из маппинга 2026-08-19 вместе со справочником.
 - `price` → `stocks.purchase_price`; наценка склада применяется при импорте → `stocks.price`; далее `catalog_prices` (см. [Каталог: ценообразование](catalog-pricing.md)).
 - `image` — URL, скачивается и кладётся в `images` (`is_main=true`).
 - `description` — HTML из `vendor_description` / `description_default`.

@@ -18,7 +18,6 @@ return [
         'dia' => 'hub_diameter',
         'et' => 'et',
         'type' => 'wheel_type_raw',
-        'supplier' => 'supplier_name',
         'stock' => 'warehouse_name',
         'count' => 'quantity',
         'price' => 'purchase_price',

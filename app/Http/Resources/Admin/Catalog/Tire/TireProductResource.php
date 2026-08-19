@@ -31,7 +31,6 @@ final class TireProductResource extends JsonResource
             'brand' => $this->whenLoaded('brand', fn () => new BrandBriefResource($tire->brand)),
             'model' => $this->whenLoaded('model', fn () => new ProductModelBriefResource($tire->model)),
             'name' => $tire->name,
-            'supplier_id' => $tire->supplier_id,
             'country_id' => $tire->country_id,
             'ean' => $tire->ean,
             'season' => $tire->season?->value,

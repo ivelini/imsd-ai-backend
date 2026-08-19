@@ -21,7 +21,6 @@ class WheelProductRequest extends FormRequest
                 Rule::exists('product_models', 'id')->where('type', 'wheel'),
             ],
             'name' => ['nullable', 'string', 'max:255'],
-            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'country_id' => ['nullable', 'integer', 'exists:countries,id'],
             'ean' => [
                 'nullable', 'string', 'max:50',

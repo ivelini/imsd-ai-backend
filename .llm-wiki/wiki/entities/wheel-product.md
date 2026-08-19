@@ -1,7 +1,7 @@
 # Диск (WheelProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md)
 
 ## Overview
 
@@ -12,7 +12,7 @@
 | Группа | Поля |
 |--------|------|
 | Идентификация | `id`, `brand_id`, `model_id` (FK → product_models), `name`, `ean` |
-| Происхождение | `supplier_id`, `country_id` |
+| Происхождение | `country_id`. `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
 | Тип | `type` (alloy/steel/forged — литой/штампованный/кованый), `color` |
 | Геометрия | `width`, `diameter`, `et` (вылет), `pcd` (напр. «5*114.3»), `hub_diameter` (DIA), `bolts` |
 | Прочее | `description`, `image` |

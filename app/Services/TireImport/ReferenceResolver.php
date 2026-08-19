@@ -6,11 +6,10 @@ use App\Enums\Catalog\BrandType;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
-use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Support\Str;
 
-/** Поиск или создание справочных сущностей (Brand, Supplier, Country, Warehouse, ProductModel). */
+/** Поиск или создание справочных сущностей (Brand, Country, Warehouse, ProductModel). */
 final class ReferenceResolver
 {
     public function resolveBrand(string $name, string $productType = 'tire'): Brand
@@ -28,14 +27,6 @@ final class ReferenceResolver
         }
 
         return $brand;
-    }
-
-    public function resolveSupplier(string $name): Supplier
-    {
-        return Supplier::firstOrCreate(
-            ['name' => $name],
-            ['name' => $name],
-        );
     }
 
     public function resolveCountry(string $name): ?Country

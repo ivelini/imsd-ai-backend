@@ -68,7 +68,6 @@ final class RowMapper
             load_speed_index: $this->nullableString($data['load_speed_index'] ?? null),
             is_runflat_raw: $this->nullableString($data['is_runflat_raw'] ?? $data['is_runflat'] ?? null),
             is_studded_raw: $this->nullableString($data['is_studded_raw'] ?? $data['is_spike'] ?? null),
-            supplier_name: $this->nullableString($data['supplier_name'] ?? $data['supplier'] ?? null),
             warehouse_name: $this->nullableString($data['warehouse_name'] ?? $data['stock'] ?? null),
             quantity: $this->nullableInt($data['quantity'] ?? $data['count'] ?? null),
             purchase_price: $this->nullableFloat($data['purchase_price'] ?? $data['price'] ?? null),

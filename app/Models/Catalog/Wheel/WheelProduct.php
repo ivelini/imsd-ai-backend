@@ -9,7 +9,6 @@ use App\Models\Catalog\Builders\WheelProductBuilder;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Promotion\Promotion;
-use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Image;
 use Carbon\Carbon;
@@ -26,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $brand_id
  * @property int|null $model_id
  * @property string $name
- * @property int|null $supplier_id
  * @property int|null $country_id
  * @property string|null $ean
  * @property WheelType|null $type
@@ -44,7 +42,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property Carbon $updated_at
  * @property-read Brand $brand
  * @property-read ProductModel|null $model
- * @property-read Supplier|null $supplier
  * @property-read Country|null $country
  */
 class WheelProduct extends Model
@@ -56,7 +53,6 @@ class WheelProduct extends Model
         'brand_id',
         'model_id',
         'name',
-        'supplier_id',
         'country_id',
         'ean',
         'type',
@@ -90,11 +86,6 @@ class WheelProduct extends Model
     public function model(): BelongsTo
     {
         return $this->belongsTo(ProductModel::class, 'model_id');
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
     }
 
     public function country(): BelongsTo

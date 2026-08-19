@@ -25,3 +25,9 @@
 
 ## [2026-08-19] ingest | Публичный API каталога: листинг шин + JSON-roundtrip кеша (ADR 0004)
 - Updated: Кеширование (сериализация payload, версия ключа)
+
+## [2026-08-19] ingest | Удаление supplier_id и справочника Supplier
+- Updated: Шина (TireProduct) — поле supplier_id удалено
+- Updated: Диск (WheelProduct) — поле supplier_id удалено
+- Updated: Бизнес-модель — сущность «поставщик» удалена
+- Updated: Импорт каталога из XLSX — колонка supplier убрана из маппинга

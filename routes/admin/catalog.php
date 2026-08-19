@@ -14,7 +14,6 @@ use App\Http\Controllers\Admin\Catalog\Import\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\MarkupRule\MarkupRuleController;
 use App\Http\Controllers\Admin\Catalog\Model\ProductModelController;
 use App\Http\Controllers\Admin\Catalog\Promotion\PromotionController;
-use App\Http\Controllers\Admin\Catalog\Supplier\SupplierController;
 use App\Http\Controllers\Admin\Catalog\Tire\GetTireDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireWarehouseStockController;
@@ -97,12 +96,6 @@ Route::post('/geo/delivery-points', [DeliveryPointController::class, 'store']);
 Route::get('/geo/delivery-points/{id}', [DeliveryPointController::class, 'show']);
 Route::put('/geo/delivery-points/{id}', [DeliveryPointController::class, 'update']);
 Route::delete('/geo/delivery-points/{id}', [DeliveryPointController::class, 'destroy']);
-
-Route::get('/suppliers', [SupplierController::class, 'index']);
-Route::post('/suppliers', [SupplierController::class, 'store']);
-Route::get('/suppliers/{id}', [SupplierController::class, 'show']);
-Route::put('/suppliers/{id}', [SupplierController::class, 'update']);
-Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy']);
 
 Route::get('/warehouses', [WarehouseController::class, 'index']);
 Route::post('/warehouses', [WarehouseController::class, 'store']);

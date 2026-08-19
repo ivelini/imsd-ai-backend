@@ -39,7 +39,6 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
             hubDiameter: $rowData['hub_diameter'] ?? null,
             et: $rowData['et'] ?? null,
             wheelTypeRaw: $rowData['wheel_type_raw'] ?? null,
-            supplierName: $rowData['supplier_name'] ?? null,
             description: $rowData['description_vendor'] ?? null,
         ));
 

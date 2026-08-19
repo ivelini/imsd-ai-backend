@@ -9,7 +9,6 @@ use App\Models\Catalog\Builders\TireProductBuilder;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Promotion\Promotion;
-use App\Models\Catalog\Supplier\Supplier;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Image;
 use Carbon\Carbon;
@@ -26,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $brand_id
  * @property int|null $model_id
  * @property string $name
- * @property int|null $supplier_id
  * @property int|null $country_id
  * @property string|null $ean
  * @property Season|null $season
@@ -47,7 +45,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property Carbon $updated_at
  * @property-read Brand $brand
  * @property-read ProductModel|null $model
- * @property-read Supplier|null $supplier
  * @property-read Country|null $country
  * @property float|null $city_price Цена города из catalog_prices (transient, ставит GetTireList)
  * @property int|null $city_delivery_min Срок доставки города (transient, ставит GetTireList)
@@ -62,7 +59,6 @@ class TireProduct extends Model
         'brand_id',
         'model_id',
         'name',
-        'supplier_id',
         'country_id',
         'ean',
         'season',
@@ -111,11 +107,6 @@ class TireProduct extends Model
     public function model(): BelongsTo
     {
         return $this->belongsTo(ProductModel::class, 'model_id');
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
     }
 
     public function country(): BelongsTo

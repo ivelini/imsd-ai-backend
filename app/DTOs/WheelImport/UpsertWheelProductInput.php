@@ -18,7 +18,6 @@ final readonly class UpsertWheelProductInput
         public ?string $hubDiameter,
         public ?string $et,
         public ?string $wheelTypeRaw,
-        public ?string $supplierName,
         public ?string $description,
     ) {}
 }

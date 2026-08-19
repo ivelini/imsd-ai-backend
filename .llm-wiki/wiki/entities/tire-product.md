@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md)
 
 ## Overview
 
@@ -12,7 +12,7 @@
 | Группа | Поля |
 |--------|------|
 | Идентификация | `id`, `brand_id` (FK, денормализовано), `model_id` (FK → product_models), `name` (отображаемое), `ean` (артикул) |
-| Происхождение | `supplier_id` (завод-изготовитель), `country_id` (FK → countries) |
+| Происхождение | `country_id` (FK → countries). `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
 | Размеры | `width`, `profile`, `diameter` (diameter — string: может быть «16C», «R16») |
 | Индексы | `load_index`, `speed_index` (из «86T» → 86, T) |
 | Характеристики | `season` (winter/summer/all-season), `is_studded`, `is_runflat`, `is_xl`, `year` |

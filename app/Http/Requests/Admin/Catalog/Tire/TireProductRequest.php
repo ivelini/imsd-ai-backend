@@ -26,8 +26,6 @@ class TireProductRequest extends FormRequest
             ],
             /** Отображаемое название (если не указано — берётся из модели). */
             'name' => ['nullable', 'string', 'max:255'],
-            /** ID поставщика. */
-            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             /** ID страны производителя. */
             'country_id' => ['nullable', 'integer', 'exists:countries,id'],
             /** EAN-код товара (уникальный в рамках каталога). */
