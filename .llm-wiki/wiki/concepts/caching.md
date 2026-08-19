@@ -23,7 +23,7 @@
 
 ## Ключ
 
-Кеш фильтра `TireFilterValuesCacheService` включает hash query-фильтров — с разными фильтрами разные записи.
+Кеш фильтра `TireFilterValuesCacheService` — ключ `tire-filter:{cityId|null→'default'}:{md5(фильтров)}`: город и фильтры в ключе. Так как вариантов много (город × набор фильтров), `forget()` сбрасывает все варианты по индексу ключей `tire-filter:index` (при `remember()` ключ регистрируется в индексе). Драйвер — database, теги недоступны.
 
 ## See Also
 

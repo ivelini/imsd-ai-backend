@@ -12,31 +12,55 @@ use Illuminate\Contracts\Cache\Repository;
  */
 final readonly class TireFilterValuesCacheService
 {
-    private string $key;
+    /** Индекс ключей вариантов фильтра — forget() сбрасывает все, а не один. */
+    private const INDEX_KEY = 'tire-filter:index';
 
     public function __construct(
         private Repository $cache,
         private int $ttl,
-        string $defaultCityName,
-    ) {
-        $this->key = "tire-filter:{$defaultCityName}";
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $filters  Активные фильтры — входят в ключ кеша
      */
-    public function remember(callable $query, array $filters = []): array
+    public function remember(callable $query, ?int $cityId = null, array $filters = []): array
     {
         ksort($filters);
 
+        // null — город по умолчанию из конфига, резолвится в замыкании по имени
+        $key = 'tire-filter:'.($cityId ?? 'default').':'.md5(serialize($filters));
+
         /** @var array $data */
-        $data = $this->cache->remember($this->key.':'.md5(serialize($filters)), $this->ttl, $query);
+        $data = $this->cache->remember($key, $this->ttl, $query);
+
+        $this->track($key);
 
         return $data;
     }
 
     public function forget(): void
     {
-        $this->cache->forget($this->key);
+        /** @var list<string> $keys */
+        $keys = $this->cache->get(self::INDEX_KEY, []);
+
+        foreach ($keys as $key) {
+            $this->cache->forget($key);
+        }
+
+        $this->cache->forget(self::INDEX_KEY);
+    }
+
+    /** Регистрация ключа в индексе (гонка теряет ключ — вариант устареет по TTL, приемлемо). */
+    private function track(string $key): void
+    {
+        /** @var list<string> $keys */
+        $keys = $this->cache->get(self::INDEX_KEY, []);
+
+        if (in_array($key, $keys, true)) {
+            return;
+        }
+
+        $keys[] = $key;
+        $this->cache->put(self::INDEX_KEY, $keys, $this->ttl);
     }
 }

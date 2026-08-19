@@ -36,6 +36,8 @@ class TireFilterValuesRequest extends FormRequest
             'price_min' => ['nullable', 'numeric', 'min:0'],
             /** Цена до. */
             'price_max' => ['nullable', 'numeric', 'min:0'],
+            /** ID города для расчёта цены и доставки (по умолчанию — из config/shop.php). */
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
         ];
     }
 }

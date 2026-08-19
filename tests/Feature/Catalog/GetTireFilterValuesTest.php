@@ -10,6 +10,7 @@ use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
 use App\Models\Delivery\Region;
+use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -252,6 +253,66 @@ class GetTireFilterValuesTest extends TestCase
             ['label' => 205, 'value' => 205],
             ['label' => 215, 'value' => 215],
         ], $fullData['width']);
+    }
+
+    public function test_price_range_uses_requested_city(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $stock = $this->createStock($tire);
+        $this->createCatalogPrice($stock, $this->defaultCity, price: 5000);
+        $this->createCatalogPrice($stock, $this->otherCity, price: 1000);
+
+        $data = $this->getJson(self::PATH.'?city_id='.$this->otherCity->id)->json('data');
+
+        $this->assertEquals(['min' => 1000.0, 'max' => 1000.0], $data['price']);
+    }
+
+    public function test_delivery_bucket_uses_requested_city(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $stock = $this->createStock($tire);
+        $this->createCatalogPrice($stock, $this->defaultCity, deliveryMin: 2);
+        $this->createCatalogPrice($stock, $this->otherCity, deliveryMin: 6);
+
+        $data = $this->getJson(self::PATH.'?city_id='.$this->otherCity->id)->json('data');
+
+        $this->assertSame([['label' => 'После 5 дней', 'value' => 'after5days']], $data['delivery']);
+    }
+
+    public function test_invalid_city_id_rejected(): void
+    {
+        $this->getJson(self::PATH.'?city_id=999999')->assertStatus(422);
+    }
+
+    public function test_cache_key_includes_city(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $stock = $this->createStock($tire);
+        $this->createCatalogPrice($stock, $this->defaultCity, price: 1000);
+        $this->createCatalogPrice($stock, $this->otherCity, price: 5000);
+
+        $defaultData = $this->getJson(self::PATH.'?city_id='.$this->defaultCity->id)->json('data');
+        $otherData = $this->getJson(self::PATH.'?city_id='.$this->otherCity->id)->json('data');
+
+        $this->assertEquals(['min' => 1000.0, 'max' => 1000.0], $defaultData['price']);
+        $this->assertEquals(['min' => 5000.0, 'max' => 5000.0], $otherData['price']);
+    }
+
+    public function test_forget_invalidates_all_variants(): void
+    {
+        $tire = TireProduct::factory()->create(['width' => 205]);
+        $stock = $this->createStock($tire);
+        $price = $this->createCatalogPrice($stock, $this->defaultCity, price: 1000);
+
+        $this->getJson(self::PATH.'?width[]=205')->assertOk();
+
+        $price->update(['price' => 9999]);
+
+        app(TireFilterValuesCacheService::class)->forget();
+
+        $data = $this->getJson(self::PATH.'?width[]=205')->json('data');
+
+        $this->assertEquals(['min' => 9999.0, 'max' => 9999.0], $data['price']);
     }
 
     private function createCity(string $name): City

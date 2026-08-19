@@ -43,7 +43,6 @@ class CatalogServiceProvider extends ServiceProvider
             return new TireFilterValuesCacheService(
                 $app->make(Repository::class),
                 (int) config('cache_ttl.tire_filter'),
-                (string) config('shop.default_city'),
             );
         });
 

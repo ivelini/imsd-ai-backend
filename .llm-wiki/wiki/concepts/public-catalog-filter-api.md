@@ -1,7 +1,7 @@
 # Публичный API каталога: фасетный фильтр шин
 
-> Sources: Memory-заметка, 2026-08-14; Scramble public-api.json, 2026-08
-> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md)
+> Sources: Memory-заметка, 2026-08-14; реализация 2026-08-19 (city_id + инвалидация); Scramble public-api.json, 2026-08
+> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md); [2026-08-19-tire-filter-city-id.md](../../raw/project/2026-08-19-tire-filter-city-id.md)
 
 ## Overview
 
@@ -9,7 +9,7 @@
 
 ## Соглашения контракта
 
-- **Город по умолчанию** — `config/shop.php` (`default_city` = Челябинск); тонкие настройки магазина кладутся туда.
+- **Город** — `city_id` (`nullable`, `integer`, `exists:cities,id`); фасеты delivery/price считаются по `catalog_prices` выбранного города. Без `city_id` — город по умолчанию `config/shop.php` (`default_city` = Челябинск).
 - **Цена и сроки** — из `catalog_prices` (ADR 0002), без пересчёта на лету.
 - **Бакеты доставки** — enum `DeliveryDaysType`: 0 / 1–3 / 4–5 / 6+.
 - **`brand` / `country`** — value = slug (не id, не имя).
@@ -18,7 +18,7 @@
 
 ## Кеш и инвалидация
 
-`TireFilterValuesCacheService`; ключ включает hash фильтров. `catalog_prices` пишется `upsert()` без Eloquent-событий — инвалидация кеша только явным `forget()` в ImportMasterJob / PointImportJob + Observers. См. [Кеширование](caching.md).
+`TireFilterValuesCacheService`: ключ `tire-filter:{cityId|null→'default'}:{md5(filters)}` — город и фильтры в ключе. `catalog_prices` пишется `upsert()` без Eloquent-событий — инвалидация кеша только явным `forget()` в ImportMasterJob / PointImportJob + Observers. `forget()` сбрасывает все варианты фильтров по индексу ключей `tire-filter:index` (драйвер database — теги недоступны). См. [Кеширование](caching.md).
 
 ## Слои
 
