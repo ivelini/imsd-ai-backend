@@ -7,4 +7,7 @@ return [
 
     /** Фасеты фильтра шин (публичный каталог). */
     'tire_filter' => (int) env('CACHE_TTL_TIRE_FILTER', 3600),
+
+    /** Листинг шин (публичный каталог). */
+    'tire_list' => (int) env('CACHE_TTL_TIRE_LIST', 3600),
 ];

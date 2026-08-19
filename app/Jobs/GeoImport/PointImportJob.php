@@ -10,6 +10,7 @@ use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliveryPoint;
 use App\Models\Delivery\Region;
 use App\Services\Cache\Catalog\TireFilterValuesCacheService;
+use App\Services\Cache\Catalog\TireListCacheService;
 use App\Services\Import\ColumnDetector;
 use App\Services\Import\ImportStatusUpdater;
 use App\Services\Import\RowAssembler;
@@ -65,6 +66,7 @@ final class PointImportJob implements ShouldQueue
             app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
             // upsert() в catalog_prices не триггерит Eloquent-события — инвалидация вручную
             app(TireFilterValuesCacheService::class)->forget();
+            app(TireListCacheService::class)->forget();
         } catch (\Throwable $e) {
             $statusUpdater->markFailed($this->importId, $e);
             throw $e;

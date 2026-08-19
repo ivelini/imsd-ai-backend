@@ -2,15 +2,13 @@
 
 namespace App\Http\Resources\Admin\Catalog\Wheel;
 
-use App\Models\Catalog\Brand\Brand;
-use App\Models\Catalog\Model\ProductModel;
-use App\Models\Catalog\Warehouse\Stock;
-use App\Models\Catalog\Warehouse\Warehouse;
+use App\Http\Resources\Admin\Catalog\Brand\BrandBriefResource;
+use App\Http\Resources\Admin\Catalog\Image\ImageResource;
+use App\Http\Resources\Admin\Catalog\Model\ProductModelBriefResource;
+use App\Http\Resources\Admin\Catalog\Warehouse\StockResource;
 use App\Models\Catalog\Wheel\WheelProduct;
-use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Ресурс диска — только форматирование, без логики.
@@ -30,23 +28,8 @@ final class WheelProductResource extends JsonResource
         return [
             'id' => $wheel->id,
             'brand_id' => $wheel->brand_id,
-            'brand' => $this->whenLoaded('brand', function () use ($wheel) {
-                /** @var Brand $brand */
-                $brand = $wheel->brand;
-
-                return ['id' => $brand->id, 'name' => $brand->name];
-            }),
-            'model' => $this->whenLoaded('model', function () use ($wheel) {
-                /** @var ProductModel $model */
-                $model = $wheel->model;
-
-                return [
-                    'id' => $model->id,
-                    'name' => $model->name,
-                    'slug' => $model->slug,
-                    'image' => $model->image,
-                ];
-            }),
+            'brand' => $this->whenLoaded('brand', fn () => new BrandBriefResource($wheel->brand)),
+            'model' => $this->whenLoaded('model', fn () => new ProductModelBriefResource($wheel->model)),
             'name' => $wheel->name,
             'supplier_id' => $wheel->supplier_id,
             'country_id' => $wheel->country_id,
@@ -62,37 +45,9 @@ final class WheelProductResource extends JsonResource
             'is_published' => $wheel->is_published,
             'is_bestseller' => $wheel->is_bestseller,
             'is_new' => $wheel->is_new,
-            'stocks' => $this->whenLoaded('stocks', function () use ($wheel) {
-                $result = [];
-                foreach ($wheel->stocks as $s) {
-                    /** @var Stock $s */
-                    /** @var Warehouse|null $wh */
-                    $wh = $s->warehouse;
-                    $result[] = [
-                        'warehouse_id' => $s->warehouse_id,
-                        'warehouse' => $wh?->name,
-                        'quantity' => $s->quantity,
-                        'purchase_price' => $s->purchase_price,
-                        'price' => $s->price,
-                        'delivery_days' => $s->deliveryDays,
-                    ];
-                }
-
-                return $result;
-            }),
+            'stocks' => $this->whenLoaded('stocks', fn () => StockResource::collection($wheel->stocks)),
             'delivery' => $this->whenLoaded('delivery'),
-            'images' => $this->whenLoaded('images', function () use ($wheel) {
-                return $wheel->images->map(function ($img) {
-                    /** @var Image $img */
-                    return [
-                        'id' => $img->id,
-                        'path' => $img->path,
-                        'url' => Storage::url($img->path),
-                        'sort' => $img->sort,
-                        'is_main' => $img->is_main,
-                    ];
-                })->values()->all();
-            }),
+            'images' => $this->whenLoaded('images', fn () => ImageResource::collection($wheel->images)),
             'created_at' => $wheel->created_at->toIso8601String(),
         ];
     }

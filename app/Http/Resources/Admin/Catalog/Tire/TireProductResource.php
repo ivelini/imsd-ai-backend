@@ -2,15 +2,13 @@
 
 namespace App\Http\Resources\Admin\Catalog\Tire;
 
-use App\Models\Catalog\Brand\Brand;
-use App\Models\Catalog\Model\ProductModel;
+use App\Http\Resources\Admin\Catalog\Brand\BrandBriefResource;
+use App\Http\Resources\Admin\Catalog\Image\ImageResource;
+use App\Http\Resources\Admin\Catalog\Model\ProductModelBriefResource;
+use App\Http\Resources\Admin\Catalog\Warehouse\StockResource;
 use App\Models\Catalog\Tire\TireProduct;
-use App\Models\Catalog\Warehouse\Stock;
-use App\Models\Catalog\Warehouse\Warehouse;
-use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * Ресурс шины — только форматирование, без логики.
@@ -30,23 +28,8 @@ final class TireProductResource extends JsonResource
         return [
             'id' => $tire->id,
             'brand_id' => $tire->brand_id,
-            'brand' => $this->whenLoaded('brand', function () use ($tire) {
-                /** @var Brand $brand */
-                $brand = $tire->brand;
-
-                return ['id' => $brand->id, 'name' => $brand->name];
-            }),
-            'model' => $this->whenLoaded('model', function () use ($tire) {
-                /** @var ProductModel $model */
-                $model = $tire->model;
-
-                return [
-                    'id' => $model->id,
-                    'name' => $model->name,
-                    'slug' => $model->slug,
-                    'image' => $model->image,
-                ];
-            }),
+            'brand' => $this->whenLoaded('brand', fn () => new BrandBriefResource($tire->brand)),
+            'model' => $this->whenLoaded('model', fn () => new ProductModelBriefResource($tire->model)),
             'name' => $tire->name,
             'supplier_id' => $tire->supplier_id,
             'country_id' => $tire->country_id,
@@ -65,37 +48,9 @@ final class TireProductResource extends JsonResource
             'is_published' => $tire->is_published,
             'is_bestseller' => $tire->is_bestseller,
             'is_new' => $tire->is_new,
-            'stocks' => $this->whenLoaded('stocks', function () use ($tire) {
-                $result = [];
-                foreach ($tire->stocks as $s) {
-                    /** @var Stock $s */
-                    /** @var Warehouse|null $wh */
-                    $wh = $s->warehouse;
-                    $result[] = [
-                        'warehouse_id' => $s->warehouse_id,
-                        'warehouse' => $wh?->name,
-                        'quantity' => $s->quantity,
-                        'purchase_price' => $s->purchase_price,
-                        'price' => $s->price,
-                        'delivery_days' => $s->deliveryDays,
-                    ];
-                }
-
-                return $result;
-            }),
+            'stocks' => $this->whenLoaded('stocks', fn () => StockResource::collection($tire->stocks)),
             'delivery' => $this->whenLoaded('delivery'),
-            'images' => $this->whenLoaded('images', function () use ($tire) {
-                return $tire->images->map(function ($img) {
-                    /** @var Image $img */
-                    return [
-                        'id' => $img->id,
-                        'path' => $img->path,
-                        'url' => Storage::url($img->path),
-                        'sort' => $img->sort,
-                        'is_main' => $img->is_main,
-                    ];
-                })->values()->all();
-            }),
+            'images' => $this->whenLoaded('images', fn () => ImageResource::collection($tire->images)),
             'created_at' => $tire->created_at->toIso8601String(),
         ];
     }

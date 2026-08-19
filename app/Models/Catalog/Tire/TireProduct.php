@@ -49,6 +49,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read ProductModel|null $model
  * @property-read Supplier|null $supplier
  * @property-read Country|null $country
+ * @property float|null $city_price Цена города из catalog_prices (transient, ставит GetTireList)
+ * @property int|null $city_delivery_min Срок доставки города (transient, ставит GetTireList)
+ * @property int|null $city_delivery_max Срок доставки города (transient, ставит GetTireList)
  */
 class TireProduct extends Model
 {
@@ -97,6 +100,12 @@ class TireProduct extends Model
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    /** Русское название сезона («Зимняя» и т.п.) — для вывода в API-ответах. */
+    public function getSeasonLabelAttribute(): ?string
+    {
+        return $this->season?->label();
     }
 
     public function model(): BelongsTo

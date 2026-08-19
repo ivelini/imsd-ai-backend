@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Controllers\Catalog\GetTireFilterValuesController;
+use App\Http\Controllers\Catalog\GetTireListController;
 use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
@@ -23,6 +24,7 @@ use App\Observers\TireProductObserver;
 use App\Observers\WarehouseMarkupRuleObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 use App\Services\Cache\Catalog\TireFilterValuesCacheService;
+use App\Services\Cache\Catalog\TireListCacheService;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -46,7 +48,18 @@ class CatalogServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->bind(TireListCacheService::class, function (Application $app): TireListCacheService {
+            return new TireListCacheService(
+                $app->make(Repository::class),
+                (int) config('cache_ttl.tire_list'),
+            );
+        });
+
         $this->app->when(GetTireFilterValuesController::class)
+            ->needs('$defaultCityName')
+            ->giveConfig('shop.default_city');
+
+        $this->app->when(GetTireListController::class)
             ->needs('$defaultCityName')
             ->giveConfig('shop.default_city');
     }

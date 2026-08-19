@@ -23,7 +23,11 @@
 
 ## Ключ
 
-Кеш фильтра `TireFilterValuesCacheService` — ключ `tire-filter:{cityId|null→'default'}:{md5(фильтров)}`: город и фильтры в ключе. Так как вариантов много (город × набор фильтров), `forget()` сбрасывает все варианты по индексу ключей `tire-filter:index` (при `remember()` ключ регистрируется в индексе). Драйвер — database, теги недоступны.
+Кеш фильтра `TireFilterValuesCacheService` — ключ `tire-filter:{cityId|null→'default'}:{md5(фильтров)}`: город и фильтры в ключе. Так как вариантов много (город × набор фильтров), `forget()` сбрасывает все варианты по индексу ключей (при `remember()` ключ регистрируется в индексе). Драйвер — database, теги недоступны.
+
+## Сериализация payload (ADR 0004)
+
+В кеш — только чистый массив: `json_decode($resource->toJson(), true)` (JSON-roundtrip). `resolve()`/`toArray()` не рекурсивны — вложенные Resource (brand, images) остаются объектами и при `unserialize` оживают как `__PHP_Incomplete_Class` (баг листинга 2026-08-19). Схема ключа версионируется (`tire-list:v2:...`) — смена формата payload инвалидирует старые ключи.
 
 ## See Also
 

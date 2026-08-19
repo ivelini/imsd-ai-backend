@@ -9,6 +9,7 @@ use App\DTOs\Import\ImportMasterJobInput;
 use App\DTOs\TireImport\ParseImportFileInput;
 use App\Models\System\ProductImport;
 use App\Services\Cache\Catalog\TireFilterValuesCacheService;
+use App\Services\Cache\Catalog\TireListCacheService;
 use App\Services\Import\ImportStatusUpdater;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -92,6 +93,7 @@ final class ImportMasterJob implements ShouldQueue
                     app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput(stockIds: $stockIds));
                     // upsert() в catalog_prices не триггерит Eloquent-события — инвалидация вручную
                     app(TireFilterValuesCacheService::class)->forget();
+                    app(TireListCacheService::class)->forget();
                 }
             })
             ->dispatch();
