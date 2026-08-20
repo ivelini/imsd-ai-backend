@@ -4,6 +4,7 @@ namespace Tests\Feature\Catalog;
 
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
+use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
@@ -52,10 +53,33 @@ class GetTireListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'brand', 'width', 'profile', 'diameter', 'season', 'is_studded', 'price', 'delivery_min', 'delivery_max', 'images'],
+            ['id', 'name', 'slug', 'brand', 'model', 'width', 'profile', 'diameter', 'season', 'is_studded', 'price', 'delivery_min', 'delivery_max', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($tire->id, $response->json('data.0.id'));
+    }
+
+    public function test_returns_model_reference(): void
+    {
+        $brand = Brand::factory()->create();
+        $model = ProductModel::factory()->create(['brand_id' => $brand->id]);
+        $tire = TireProduct::factory()->create(['brand_id' => $brand->id, 'model_id' => $model->id]);
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $modelData = $this->getJson(self::PATH)->json('data.0.model');
+
+        $this->assertSame(
+            ['id' => $model->id, 'name' => $model->name, 'slug' => $model->slug],
+            $modelData,
+        );
+    }
+
+    public function test_model_null_when_no_model(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $this->assertNull($this->getJson(self::PATH)->json('data.0.model'));
     }
 
     public function test_default_per_page_is_48(): void
@@ -340,7 +364,9 @@ class GetTireListTest extends TestCase
 
     public function test_response_is_cached(): void
     {
-        $tire = TireProduct::factory()->create(['name' => 'Кеш-шина']);
+        $brand = Brand::factory()->create();
+        $model = ProductModel::factory()->create(['brand_id' => $brand->id]);
+        $tire = TireProduct::factory()->create(['name' => 'Кеш-шина', 'brand_id' => $brand->id, 'model_id' => $model->id]);
         $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
 
         DB::enableQueryLog();
@@ -356,6 +382,7 @@ class GetTireListTest extends TestCase
         $response->assertOk()
             ->assertJsonPath('data.0.name', 'Кеш-шина')
             ->assertJsonPath('data.0.brand.id', $tire->brand->id)
+            ->assertJsonPath('data.0.model.id', $model->id)
             ->assertJsonPath('data.0.season', 'Летняя');
     }
 

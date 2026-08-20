@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Catalog\GetCityReferenceController;
 use App\Http\Controllers\Catalog\GetTireFilterValuesController;
 use App\Http\Controllers\Catalog\GetTireListController;
 use Illuminate\Http\Request;
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', function (Request $request) {
     return response()->json(['message' => 'Unauthenticated.'], 401);
 })->name('login');
+
+// Справочник городов для дропдаунов
+Route::get('/reference/city', GetCityReferenceController::class);
 
 // Фасетные значения фильтра каталога шин
 Route::get('/reference/filter/tire', GetTireFilterValuesController::class);

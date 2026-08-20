@@ -35,3 +35,9 @@
 ## [2026-08-19] ingest | Slug у товаров (tire_products, wheel_products)
 - Updated: Шина (TireProduct) — поле slug, формула
 - Updated: Диск (WheelProduct) — поле slug, формула
+
+## [2026-08-20] ingest | Публичный API каталога: справочник городов /api/reference/city
+- Updated: Город и география (geo-city.md) — поле slug, публичный вывод города
+
+## [2026-08-20] ingest | Публичный API каталога: model в элементе листинга /api/catalog/tires
+- Updated: Кеширование (версия ключа tire-list v3)

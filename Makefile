@@ -11,6 +11,9 @@ up:
 stop:
 	$(MAKE) -C .. stop
 
+ps:
+	$(MAKE) -C .. ps
+
 down:
 	$(MAKE) -C .. down
 

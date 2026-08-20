@@ -18,7 +18,9 @@ final class TireListItemResource extends JsonResource
         return [
             'id' => $tire->id,
             'name' => $tire->name,
+            'slug' => $tire->slug,
             'brand' => $this->whenLoaded('brand', fn () => new BrandResource($tire->brand)),
+            'model' => $this->whenLoaded('model', fn () => new ProductModelReferenceResource($tire->model)),
             'width' => $tire->width,
             'profile' => $tire->profile,
             'diameter' => $tire->diameter,

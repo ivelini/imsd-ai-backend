@@ -12,7 +12,10 @@
     ],
     "tags": [
         {
-            "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 / \u0444\u0438\u043b\u044c\u0442\u0440"
+            "name": "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a"
+        },
+        {
+            "name": "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a / \u0444\u0438\u043b\u044c\u0442\u0440"
         },
         {
             "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433"
@@ -264,6 +267,28 @@
                                                             "name"
                                                         ]
                                                     },
+                                                    "model": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "slug"
+                                                        ]
+                                                    },
                                                     "width": {
                                                         "type": [
                                                             "integer",
@@ -332,6 +357,7 @@
                                                     "id",
                                                     "name",
                                                     "brand",
+                                                    "model",
                                                     "width",
                                                     "profile",
                                                     "diameter",
@@ -382,12 +408,63 @@
                 }
             }
         },
+        "/reference/city": {
+            "get": {
+                "operationId": "catalog.getCityReference",
+                "summary": "\u0412\u0441\u0435 \u0433\u043e\u0440\u043e\u0434\u0430: {label: name, value: id, slug}, \u043e\u0442\u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u044b \u043f\u043e \u0438\u043c\u0435\u043d\u0438",
+                "tags": [
+                    "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `CityReferenceResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "label": {
+                                                        "type": "string"
+                                                    },
+                                                    "value": {
+                                                        "type": "integer"
+                                                    },
+                                                    "slug": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "label",
+                                                    "value",
+                                                    "slug"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/reference/filter/tire": {
             "get": {
                 "operationId": "catalog.getTireFilterValues",
                 "summary": "\u0412\u0441\u0435 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u044f \u0444\u0438\u043b\u044c\u0442\u0440\u0430 \u0448\u0438\u043d \u0434\u043b\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0433\u043e \u0433\u043e\u0440\u043e\u0434\u0430\n(\u0431\u0435\u0437 city_id \u2014 \u0434\u043b\u044f \u0433\u043e\u0440\u043e\u0434\u0430 \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u0438\u0437 config/shop.php)",
                 "tags": [
-                    "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 / \u0444\u0438\u043b\u044c\u0442\u0440"
+                    "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a / \u0444\u0438\u043b\u044c\u0442\u0440"
                 ],
                 "parameters": [
                     {
@@ -762,6 +839,29 @@
     },
     "components": {
         "schemas": {
+            "CityReferenceResource": {
+                "type": "object",
+                "properties": {
+                    "label": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "integer"
+                    },
+                    "slug": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "required": [
+                    "label",
+                    "value",
+                    "slug"
+                ],
+                "title": "CityReferenceResource"
+            },
             "TireFilterValuesResource": {
                 "type": "object",
                 "properties": {

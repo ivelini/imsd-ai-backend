@@ -1,7 +1,7 @@
 # Город и география: регионы, города, точки выдачи
 
-> Sources: Проект (db-schema.md), 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [architecture.md](../../raw/project/architecture.md)
+> Sources: Проект (db-schema.md), 2026-08-19; реализация 2026-08-20 (slug, публичный справочник городов)
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [architecture.md](../../raw/project/architecture.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md)
 
 ## Overview
 
@@ -12,7 +12,11 @@
 | Таблица | Поля | Назначение |
 |---------|------|------------|
 | `regions` | `code` (уникальный), `name` | Регион (из XLSX точек выдачи) |
-| `cities` | `region_id`, `name`, `sort` | Города; `default_city` в `config/shop.php` (Челябинск) |
+| `cities` | `region_id`, `name`, `slug`, `sort` | Города; `default_city` в `config/shop.php` (Челябинск) |
+
+## Публичный вывод
+
+`GET /api/reference/city` — справочник всех городов для дропдаунов: `{label: name, value: id, slug}`, сортировка по имени, без кеша. Slug города нужен для URL карточек — см. [Публичный API каталога](../concepts/public-catalog-filter-api.md).
 | `delivery_points` | `city_id`, `address`, `phone`, `email`, `work_hours`, `info`, `pickup_from_truck` | Точки выдачи |
 | `city_price_rules` | `city_id`, `price_from`, `price_to`, `markup` | Наценка города: фиксированные ₽ по диапазону нашей цены |
 | `city_delivery_times` | `city_id`, `delivery_days`, `priority` | Срок из Челябинска до города (рабочих дней) |

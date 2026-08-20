@@ -26,6 +26,7 @@ final readonly class GetTireList
             ->whereHas('stocks', fn (Builder $q) => $q->where('quantity', '>', 0))
             ->with([
                 'brand',
+                'model',
                 'images' => fn ($q) => $q->orderBy('is_main', 'desc')->orderBy('sort')->orderBy('id'),
             ])
             // requireCityPrice: товар без цены города в листинг не попадает
