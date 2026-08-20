@@ -1,7 +1,7 @@
 # Публичный API каталога: фасетный фильтр и листинг шин
 
-> Sources: Memory-заметка, 2026-08-14; реализация 2026-08-19 (city_id + инвалидация); реализация 2026-08-19 (листинг, ADR 0004); реализация 2026-08-20 (справочник городов); реализация 2026-08-20 (model в листинге); Scramble public-api.json, 2026-08
-> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md); [2026-08-19-tire-filter-city-id.md](../../raw/project/2026-08-19-tire-filter-city-id.md); [2026-08-19-public-tire-list.md](../../raw/project/2026-08-19-public-tire-list.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md); [2026-08-20-tire-list-model.md](../../raw/project/2026-08-20-tire-list-model.md)
+> Sources: Memory-заметка, 2026-08-14; реализация 2026-08-19 (city_id + инвалидация); реализация 2026-08-19 (листинг, ADR 0004); реализация 2026-08-20 (справочник городов); реализация 2026-08-20 (model в листинге); реализация 2026-08-20 (season-объект, meta.default, slug из характеристик); реализация 2026-08-20 (region в справочнике городов); Scramble public-api.json, 2026-08
+> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md); [2026-08-19-tire-filter-city-id.md](../../raw/project/2026-08-19-tire-filter-city-id.md); [2026-08-19-public-tire-list.md](../../raw/project/2026-08-19-public-tire-list.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md); [2026-08-20-tire-list-model.md](../../raw/project/2026-08-20-tire-list-model.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-20-city-reference-region.md](../../raw/project/2026-08-20-city-reference-region.md)
 
 ## Overview
 
@@ -13,7 +13,7 @@
 
 ## Справочник городов (GET /api/reference/city)
 
-Без query-параметров. Ответ: `{data: list<{label: string, value: int, slug: string|null}>}` — label = name, value = id, slug для URL карточек. Сортировка — по имени города.
+Без query-параметров. Ответ: `{data: list<{label: string, value: int, slug: string|null, region: {id: int, name: string}}>, meta: {default: {label, value}|null}}` — label = name, value = id, slug для URL карточек, region — регион города (вложенный `RegionReferenceResource`, whenLoaded). Сортировка — по имени города. `meta.default` — город по умолчанию из `config/shop.php` (`default_city`), `null` — города нет в БД.
 
 - Реализация: `GetCityReference` (Action, `City::orderBy('name')`) → `CityReferenceResource::collection()` — формат «фасетных» элементов справочников, как brand/country в фильтре.
 - Кеш не используется: один select без вычислений (правило «не добавлять кеш молча»).
@@ -35,12 +35,12 @@ Query-параметры = контракт фильтров + `page` (дефо�
 - **Отбор:** `is_published=true`, есть stock `quantity>0`, **есть цена города** — `byCatalogFilters(..., requireCityPrice: true)` превращает пустой price-диапазон в «есть цена города», товары без цены в листинг не попадают.
 - **Цена/сроки элемента:** по стокам товара в городе `price=MIN(price)`, `delivery_min=MIN`, `delivery_max=MAX` — одним батч-запросом по стокам страницы (join stocks→catalog_prices, groupBy stockable_id), transient-атрибуты на моделях.
 - **Сортировка по цене** — скалярный коррелированный подзапрос `CAST(MIN(cp.price) AS NUMERIC)` по стокам города (CAST обязателен для sqlite); без `sort_by` — `id desc` без join.
-- **Структура элемента:** id, name, slug, brand {id, name} (вложенный Resource, whenLoaded), model {id, name, slug} (вложенный Resource `ProductModelReferenceResource`, whenLoaded; null, если `model_id` не задан), width, profile, diameter, season (русское название через аксессор `season_label`, не объект), is_studded, price, delivery_min, delivery_max, images [{id, url}] (список, whenLoaded). Вложенные сущности — компактными Resource-классами (правило «связанные сущности — через relation и вложенные Resource»).
+- **Структура элемента:** id, name, slug, brand {id, name, slug} (вложенный Resource, whenLoaded), model {id, name, slug} (вложенный Resource `ProductModelReferenceResource`, whenLoaded; null, если `model_id` не задан), width, profile, diameter, season {label: русское название через аксессор `season_label`, value: значение из БД} — объект в формате фасета, is_studded, price, delivery_min, delivery_max, images [{id, url}] (список, whenLoaded). Вложенные сущности — компактными Resource-классами (правило «связанные сущности — через relation и вложенные Resource»).
 
 ## Кеш и инвалидация
 
 - Фасеты: `TireFilterValuesCacheService`, ключ `tire-filter:{cityId|null→'default'}:{md5(filters)}`.
-- Листинг: `TireListCacheService`, ключ `tire-list:v3:{city|default}:{md5(фильтры+page+perPage+sort)}`. **В кеш — только чистый массив** через JSON-roundtrip `json_decode(Resource::collection(...)->toJson(), true)`: `resolve()` не рекурсивный, вложенные Resource ломались при unserialize (`__PHP_Incomplete_Class`), версия в ключе инвалидирует несовместимый кеш при смене payload (v2 — битый кеш Resource-объектов; v3 — добавлено поле model, ADR 0004).
+- Листинг: `TireListCacheService`, ключ `tire-list:v4:{city|default}:{md5(фильтры+page+perPage+sort)}`. **В кеш — только чистый массив** через JSON-roundtrip `json_decode(Resource::collection(...)->toJson(), true)`: `resolve()` не рекурсивный, вложенные Resource ломались при unserialize (`__PHP_Incomplete_Class`), версия в ключе инвалидирует несовместимый кеш при смене payload (v2 — битый кеш Resource-объектов; v3 — поле model; v4 — season объектом, ADR 0004).
 - Оба сервиса: `forget()` сбрасывает все варианты по индексу ключей (драйвер database — теги недоступны). `catalog_prices` пишется `upsert()` без Eloquent-событий — инвалидация только явным `forget()` в ImportMasterJob / PointImportJob + Observers (6 обсерверов). См. [Кеширование](caching.md).
 
 ## Слои

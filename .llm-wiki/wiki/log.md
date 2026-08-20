@@ -41,3 +41,11 @@
 
 ## [2026-08-20] ingest | Публичный API каталога: model в элементе листинга /api/catalog/tires
 - Updated: Кеширование (версия ключа tire-list v3)
+
+## [2026-08-20] ingest | Публичный API каталога: season-объект, meta.default, slug из характеристик
+- Updated: Кеширование (версия ключа tire-list v4)
+- Updated: Шина (TireProduct) — формула slug без brand/name
+- Updated: Город и география (geo-city.md) — meta.default в справочнике
+
+## [2026-08-20] ingest | Публичный API каталога: region в справочнике городов /api/reference/city
+- Updated: Город и география (geo-city.md) — region в элементе справочника

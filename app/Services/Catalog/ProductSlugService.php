@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 final readonly class ProductSlugService
 {
     public function tire(
-        int $brandId,
-        string $name,
         ?int $width,
         ?int $profile,
         ?string $diameter,
@@ -22,15 +20,7 @@ final readonly class ProductSlugService
         bool $isRunflat,
         ?int $ignoreId = null,
     ): string {
-        $base = ProductSlugBuilder::tire(
-            $this->brandSlug($brandId),
-            $name,
-            $width,
-            $profile,
-            $diameter,
-            $isStudded,
-            $isRunflat,
-        );
+        $base = ProductSlugBuilder::tire($width, $profile, $diameter, $isStudded, $isRunflat);
 
         return $this->unique($base, 'tire_products', $ignoreId);
     }

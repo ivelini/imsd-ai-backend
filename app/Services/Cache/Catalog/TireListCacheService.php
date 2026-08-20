@@ -37,7 +37,8 @@ final readonly class TireListCacheService
         // null — город по умолчанию из конфига, резолвится в замыкании по имени.
         // v2: до версии payload сериализовался с вложенными Resource-объектами (битый кеш)
         // v3: добавлено поле model в элемент листинга
-        $key = 'tire-list:v3:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
+        // v4: season — объект {label, value} вместо строки
+        $key = 'tire-list:v4:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
 
         /** @var array $data */
         $data = $this->cache->remember($key, $this->ttl, $query);

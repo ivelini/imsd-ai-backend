@@ -89,8 +89,6 @@ final readonly class TireProductController
     private function slugFrom(array $data, ?int $ignoreId = null): string
     {
         return $this->slugService->tire(
-            brandId: (int) $data['brand_id'],
-            name: $data['name'],
             width: isset($data['width']) ? (int) $data['width'] : null,
             profile: isset($data['profile']) ? (int) $data['profile'] : null,
             diameter: $data['diameter'] ?? null,

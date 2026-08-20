@@ -30,7 +30,7 @@ final readonly class GetTireListController
      * Фильтры каталога, пагинация, сортировка по цене города.
      */
     #[Group('Каталог', weight: 10)]
-    #[Response(type: 'array{data: list<array{id: int, name: string, brand: array{id: int, name: string}, model: array{id: int, name: string, slug: string}|null, width: int|null, profile: int|null, diameter: string|null, season: string|null, is_studded: bool, price: float|null, delivery_min: int|null, delivery_max: int|null, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int}}')]
+    #[Response(type: 'array{data: list<array{id: int, name: string, brand: array{id: int, name: string}, model: array{id: int, name: string, slug: string}|null, width: int|null, profile: int|null, diameter: string|null, season: array{label: string, value: string}, is_studded: bool, price: float|null, delivery_min: int|null, delivery_max: int|null, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int}}')]
     public function __invoke(TireListRequest $request): JsonResponse
     {
         $cityId = $request->validated('city_id');

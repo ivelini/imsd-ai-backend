@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md)
 
 ## Overview
 
@@ -20,7 +20,7 @@
 
 `is_xl` и `year` при импорте не заполняются (нет в XLSX) — вручную в админке.
 
-`slug` = `{brand-slug}-{name}-{width}-{profile}-{diameter}[-studded][-runflat]` (флаги только при true, null-размеры опускаются; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
+`slug` = `{width}-{profile}-{diameter}[-studded][-runflat]` — только характеристики, без brand и name (флаги только при true, null-размеры опускаются; коллизия → суффикс `-2`). Без brand/name slug стабилен при смене названий бренда/модели — URL карточки не ломается при реимпорте. Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 
 ## Связи
 

@@ -58,9 +58,9 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertCreated()
-            ->assertJsonPath('data.slug', 'nokian-hakka-215-60-16');
+            ->assertJsonPath('data.slug', '215-60-16');
 
-        $this->assertDatabaseHas('tire_products', ['slug' => 'nokian-hakka-215-60-16']);
+        $this->assertDatabaseHas('tire_products', ['slug' => '215-60-16']);
     }
 
     public function test_tire_update_recalculates_slug(): void
@@ -85,7 +85,7 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertOk()
-            ->assertJsonPath('data.slug', 'nokian-hakka-225-60-16');
+            ->assertJsonPath('data.slug', '225-60-16');
     }
 
     public function test_tire_update_keeps_slug_when_unchanged(): void
@@ -94,6 +94,7 @@ class ProductSlugTest extends TestCase
             'brand_id' => $this->brand->id,
             'model_id' => $this->tireModel->id,
             'season' => 'summer',
+            'slug' => '215-60-16',
             'width' => 215,
             'profile' => 60,
             'diameter' => '16',
@@ -110,7 +111,7 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertOk()
-            ->assertJsonPath('data.slug', 'nokian-hakka-plus-215-60-16');
+            ->assertJsonPath('data.slug', '215-60-16');
     }
 
     public function test_tire_import_generates_slug(): void
@@ -119,7 +120,7 @@ class ProductSlugTest extends TestCase
 
         $this->assertDatabaseHas('tire_products', [
             'ean' => 'TIRE-1',
-            'slug' => 'nokian-hakka-215-60-16',
+            'slug' => '215-60-16',
         ]);
     }
 
@@ -131,7 +132,7 @@ class ProductSlugTest extends TestCase
 
         $this->assertDatabaseHas('tire_products', [
             'ean' => 'TIRE-2',
-            'slug' => 'nokian-hakka-225-60-16',
+            'slug' => '225-60-16',
         ]);
     }
 
@@ -141,8 +142,8 @@ class ProductSlugTest extends TestCase
         $upsert->execute($this->tireRow(ean: 'TIRE-3', width: 215));
         $upsert->execute($this->tireRow(ean: 'TIRE-4', width: 215));
 
-        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-3', 'slug' => 'nokian-hakka-215-60-16']);
-        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-4', 'slug' => 'nokian-hakka-215-60-16-2']);
+        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-3', 'slug' => '215-60-16']);
+        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-4', 'slug' => '215-60-16-2']);
     }
 
     public function test_wheel_store_generates_slug(): void
@@ -196,13 +197,13 @@ class ProductSlugTest extends TestCase
             'brand_id' => $this->brand->id,
             'model_id' => $this->tireModel->id,
             'season' => 'summer',
-            'slug' => 'nokian-hakka-215-60-16',
+            'slug' => '215-60-16',
         ]);
 
         $this->actingAs($this->admin, 'sanctum')
             ->getJson("/api/admin/catalog/tires/{$tire->id}")
             ->assertOk()
-            ->assertJsonPath('data.slug', 'nokian-hakka-215-60-16');
+            ->assertJsonPath('data.slug', '215-60-16');
     }
 
     private function tireRow(string $ean, ?int $width): ImportTireRow

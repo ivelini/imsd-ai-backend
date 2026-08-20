@@ -1,7 +1,7 @@
 # Город и география: регионы, города, точки выдачи
 
-> Sources: Проект (db-schema.md), 2026-08-19; реализация 2026-08-20 (slug, публичный справочник городов)
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [architecture.md](../../raw/project/architecture.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md)
+> Sources: Проект (db-schema.md), 2026-08-19; реализация 2026-08-20 (slug, публичный справочник городов); реализация 2026-08-20 (meta.default); реализация 2026-08-20 (region в элементе)
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [architecture.md](../../raw/project/architecture.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-20-city-reference-region.md](../../raw/project/2026-08-20-city-reference-region.md)
 
 ## Overview
 
@@ -16,7 +16,7 @@
 
 ## Публичный вывод
 
-`GET /api/reference/city` — справочник всех городов для дропдаунов: `{label: name, value: id, slug}`, сортировка по имени, без кеша. Slug города нужен для URL карточек — см. [Публичный API каталога](../concepts/public-catalog-filter-api.md).
+`GET /api/reference/city` — справочник всех городов для дропдаунов: `{label: name, value: id, slug, region: {id, name}}`, сортировка по имени, без кеша; `meta.default` — город по умолчанию из `config/shop.php` ({label, value}, null — города нет в БД). Slug города нужен для URL карточек — см. [Публичный API каталога](../concepts/public-catalog-filter-api.md).
 | `delivery_points` | `city_id`, `address`, `phone`, `email`, `work_hours`, `info`, `pickup_from_truck` | Точки выдачи |
 | `city_price_rules` | `city_id`, `price_from`, `price_to`, `markup` | Наценка города: фиксированные ₽ по диапазону нашей цены |
 | `city_delivery_times` | `city_id`, `delivery_days`, `priority` | Срок из Челябинска до города (рабочих дней) |

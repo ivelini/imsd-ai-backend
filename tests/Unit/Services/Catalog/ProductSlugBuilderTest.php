@@ -11,24 +11,24 @@ class ProductSlugBuilderTest extends TestCase
     public function test_tire_full_slug(): void
     {
         $this->assertSame(
-            'nokian-hakka-215-60-16-studded-runflat',
-            ProductSlugBuilder::tire('nokian', 'Hakka', 215, 60, '16', true, true),
+            '215-60-16-studded-runflat',
+            ProductSlugBuilder::tire(215, 60, '16', true, true),
         );
     }
 
     public function test_tire_omits_false_flags(): void
     {
         $this->assertSame(
-            'nokian-hakka-215-60-16',
-            ProductSlugBuilder::tire('nokian', 'Hakka', 215, 60, '16', false, false),
+            '215-60-16',
+            ProductSlugBuilder::tire(215, 60, '16', false, false),
         );
     }
 
     public function test_tire_omits_null_dimensions(): void
     {
         $this->assertSame(
-            'nokian-hakka-16',
-            ProductSlugBuilder::tire('nokian', 'Hakka', null, null, '16', false, false),
+            '16',
+            ProductSlugBuilder::tire(null, null, '16', false, false),
         );
     }
 
@@ -46,14 +46,5 @@ class ProductSlugBuilderTest extends TestCase
 
         $this->assertStringContainsString('5x114.3', $slug);
         $this->assertStringContainsString('58.6', $slug);
-    }
-
-    public function test_slug_uses_brand_slug_not_name(): void
-    {
-        // brand.slug — уже транслитерированное значение (belshina), в формулу идёт он
-        $this->assertSame(
-            'belshina-artmotion-215-60-16',
-            ProductSlugBuilder::tire('belshina', 'ArtMotion', 215, 60, '16', false, false),
-        );
     }
 }

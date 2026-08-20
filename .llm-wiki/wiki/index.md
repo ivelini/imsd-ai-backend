@@ -22,7 +22,7 @@
 
 | Article | Summary | Updated |
 |---------|---------|---------|
-| [Шина (TireProduct)](entities/tire-product.md) | tire_products: поля, сезоны, индексы, парсинг размеров, связи | 2026-08-19 |
+| [Шина (TireProduct)](entities/tire-product.md) | tire_products: поля, сезоны, индексы, парсинг размеров, связи, формула slug | 2026-08-20 |
 | [Диск (WheelProduct)](entities/wheel-product.md) | wheel_products: тип материала, геометрия (PCD/ET/DIA), парсинг при импорте | 2026-08-19 |
 | [Запись catalog_prices](entities/catalog-price.md) | Пара stock × city: полная цена и сроки, UNIQUE, пересчёт и инвалидация | 2026-08-19 |
-| [Город и география](entities/geo-city.md) | Регионы, города (с slug и публичным справочником /api/reference/city), точки выдачи, city_price_rules, city_delivery_times | 2026-08-20 |
+| [Город и география](entities/geo-city.md) | Регионы, города (с slug и публичным справочником /api/reference/city: region, meta.default), точки выдачи, city_price_rules, city_delivery_times | 2026-08-20 |

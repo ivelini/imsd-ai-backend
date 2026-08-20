@@ -48,8 +48,6 @@ final readonly class UpsertTireProduct
                 'model_id' => $model->id,
                 'name' => $row->name,
                 'slug' => $this->slugService->tire(
-                    brandId: $brand->id,
-                    name: $row->name,
                     width: $row->width,
                     profile: $row->profile,
                     diameter: $row->diameter,

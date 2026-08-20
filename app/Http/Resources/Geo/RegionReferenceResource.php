@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Http\Resources\Catalog;
+namespace App\Http\Resources\Geo;
 
-use App\Models\Catalog\Brand\Brand;
+use App\Models\Delivery\Region;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** Бренд в публичном каталоге. */
-final class BrandResource extends JsonResource
+/** Регион города в справочнике публичного API: {id, name}. */
+final class RegionReferenceResource extends JsonResource
 {
-    /** @var Brand */
+    /** @var Region */
     public $resource;
 
-    /** @return array<string, mixed> */
+    /** @return array{id: int, name: string} */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'slug' => $this->resource->slug,
         ];
     }
 }

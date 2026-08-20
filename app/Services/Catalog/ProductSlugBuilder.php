@@ -7,14 +7,13 @@ use Illuminate\Support\Str;
 /**
  * Формула slug товара из характеристик (чистая функция, без БД).
  *
- * Шина: brand-name-width-profile-diameter[-studded][-runflat] (флаги только при true).
+ * Шина: width-profile-diameter[-studded][-runflat] (флаги только при true) —
+ * без brand и name: slug стабилен при смене названий, URL карточки не ломается.
  * Диск: brand-name-width-diameter-et-pcd-hub_diameter (pcd «4*98» → «4x98»).
  */
 final class ProductSlugBuilder
 {
     public static function tire(
-        string $brandSlug,
-        string $name,
         ?int $width,
         ?int $profile,
         ?string $diameter,
@@ -22,8 +21,6 @@ final class ProductSlugBuilder
         bool $isRunflat,
     ): string {
         return implode('-', self::parts([
-            $brandSlug,
-            Str::slug($name),
             $width,
             $profile,
             $diameter,

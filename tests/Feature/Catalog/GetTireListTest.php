@@ -82,6 +82,16 @@ class GetTireListTest extends TestCase
         $this->assertNull($this->getJson(self::PATH)->json('data.0.model'));
     }
 
+    public function test_returns_season_reference(): void
+    {
+        $tire = TireProduct::factory()->create(['season' => 'winter']);
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $season = $this->getJson(self::PATH)->json('data.0.season');
+
+        $this->assertSame(['label' => 'Зимняя', 'value' => 'winter'], $season);
+    }
+
     public function test_default_per_page_is_48(): void
     {
         TireProduct::factory()->count(50)->create()->each(function (TireProduct $tire): void {
@@ -182,7 +192,7 @@ class GetTireListTest extends TestCase
         $data = $this->getJson(self::PATH.'?season=winter')->json('data');
 
         $this->assertCount(1, $data);
-        $this->assertSame('Зимняя', $data[0]['season']);
+        $this->assertSame(['label' => 'Зимняя', 'value' => 'winter'], $data[0]['season']);
     }
 
     public function test_studded_filter(): void
@@ -213,7 +223,10 @@ class GetTireListTest extends TestCase
         $data = $this->getJson(self::PATH.'?brand=nokian')->json('data');
 
         $this->assertCount(1, $data);
-        $this->assertSame(['id' => $nokian->id, 'name' => 'Nokian'], $data[0]['brand']);
+        $this->assertSame(
+            ['id' => $nokian->id, 'name' => 'Nokian', 'slug' => $nokian->slug],
+            $data[0]['brand'],
+        );
     }
 
     public function test_country_slug_filter(): void
@@ -383,7 +396,7 @@ class GetTireListTest extends TestCase
             ->assertJsonPath('data.0.name', 'Кеш-шина')
             ->assertJsonPath('data.0.brand.id', $tire->brand->id)
             ->assertJsonPath('data.0.model.id', $model->id)
-            ->assertJsonPath('data.0.season', 'Летняя');
+            ->assertJsonPath('data.0.season.value', 'summer');
     }
 
     public function test_cache_key_includes_filters(): void

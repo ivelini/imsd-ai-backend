@@ -10,8 +10,18 @@ final readonly class GetCityReference
 {
     public function execute(): Collection
     {
+        // region_id обязателен в select — без него eager load не сматчит реляцию
         return City::query()
+            ->with('region')
             ->orderBy('name')
-            ->get(['id', 'name', 'slug']);
+            ->get(['id', 'name', 'slug', 'region_id']);
+    }
+
+    /** Город по умолчанию из config/shop.php (null — города нет в БД). */
+    public function defaultCity(string $name): ?City
+    {
+        return City::query()
+            ->where('name', $name)
+            ->first(['id', 'name']);
     }
 }

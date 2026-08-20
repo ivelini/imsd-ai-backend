@@ -24,7 +24,10 @@ final class TireListItemResource extends JsonResource
             'width' => $tire->width,
             'profile' => $tire->profile,
             'diameter' => $tire->diameter,
-            'season' => $tire->season_label,
+            // Формат фасета: label — русское название (аксессор), value — значение из БД
+            'season' => $tire->season !== null
+                ? ['label' => $tire->season_label, 'value' => $tire->season->value]
+                : null,
             'is_studded' => $tire->is_studded,
             'price' => $tire->city_price,
             'delivery_min' => $tire->city_delivery_min,
