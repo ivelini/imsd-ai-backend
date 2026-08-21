@@ -4,15 +4,15 @@ description: Ship changes с обязательным обновлением wik
 
 # Ship changes + wiki sync
 
-Commit and push current branch. Обновление wiki (.llm-wiki/) — **обязательный** шаг, без вопроса пользователю. Для коммита без wiki используйте `/ship`.
+Commit and push current branch. Обновление wiki (.llm-wiki/) — **обязательный** шаг, без вопроса пользователю. Синхронизация ADR (documentations/adr/) — **по вопросу пользователю**, если изменения затрагивают функционал. Для коммита без wiki используйте `/ship`.
 
 ## Steps
 
 1. Run `git status` and `git diff` to understand all current changes (staged and unstaged).
 2. Determine the current branch: `git branch --show-current` — коммитим и пушим именно её. PR/MR не создаём.
 3. Sync with remote if the branch has an upstream (`git rev-parse --abbrev-ref @{u}` succeeds): `git pull --ff-only origin <branch>`. If no upstream yet — skip (first push creates it). If pull fails — stop and report.
-4. Синхронизация wiki (см. раздел ниже) — выполнить **до** генерации commit message, чтобы wiki-правки попали в тот же коммит. Перед обновлением wiki — обновить индекс кода: `codegraph sync -q` (актуальный индекс нужен агенту при Ingest).
-5. Based on the changes (including wiki updates from step 4), generate a commit message in the project's style (look at recent commits for language/format).
+4. Синхронизация wiki и ADR (см. разделы ниже) — выполнить **до** генерации commit message, чтобы wiki/ADR-правки попали в тот же коммит. Перед обновлением wiki — обновить индекс кода: `codegraph sync -q` (актуальный индекс нужен агенту при Ingest).
+5. Based on the changes (including wiki and ADR updates from step 4), generate a commit message in the project's style (look at recent commits for language/format).
 6. Stage all changed files: `git add -A`
 7. Commit with the generated message.
 8. Push: `git push origin <branch>`
@@ -57,3 +57,13 @@ Important:
 6. Добавить запись в `.llm-wiki/wiki/log.md` в формате `## [YYYY-MM-DD] ingest | <статья>`
 
 Не редактировать wiki-файлы произвольно в обход этого процесса — сохраняется схема `raw/` → `wiki/` с индексом и логом. Wiki-файлы должны попасть в staging (шаг 6 выше, `git add -A`) и войти в тот же коммит, что и код.
+
+## Синхронизация ADR при изменениях кода
+
+**Обязательная проверка** перед генерацией commit message (шаг 5): если изменения затрагивают функционал или бизнес-логику (тот же список, что «Что отражать в wiki» — изменение бизнес-логики, добавление/удаление функционала, интеграции, структура моделей/миграций, очереди/расписания, рефакторинг с изменением поведения) — **спросить пользователя** в чате, нужно ли создать новый или обновить существующий ADR. Вопрос задаётся явно («Создать или обновить ADR по этим изменениям?»), без самостоятельной записи — решение о записи за пользователем.
+
+**Когда НЕ спрашивать:**
+- Изменения косметические (форматирование, комментарии, опечатки) или не меняют поведение системы (зависимости без логики, фронтенд без бизнес-логики).
+- ADR по этим изменениям уже создан/изменён в ходе текущей работы — файлы ADR уже есть в списке изменений (`git status`), повторный вопрос не нужен.
+
+**Как обновлять** (после подтверждения пользователя): правила ведения — глобальное правило `adr.md` и `documentations/adr/README.md`. Новый ADR — следующий свободный номер по порядку, файл по шаблону `0000-template.md`; изменение существующего — правка содержимого (при замене решения — статус `Superseded` в старом). Обновить индексы: таблицу в `documentations/adr/README.md` и таблицу «Решения (ADR)» в `CLAUDE.md`. ADR-файлы должны попасть в staging (шаг 6) и войти в тот же коммит, что и код.
