@@ -27,6 +27,7 @@ final readonly class GetTireList
             ->with([
                 'brand',
                 'model',
+                'origin',
                 'images' => fn ($q) => $q->orderBy('is_main', 'desc')->orderBy('sort')->orderBy('id'),
             ])
             // requireCityPrice: товар без цены города в листинг не попадает

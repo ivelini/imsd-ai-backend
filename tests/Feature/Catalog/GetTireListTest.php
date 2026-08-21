@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\DTOs\Catalog\OriginInfo;
 use App\DTOs\Catalog\Tire\EuroLabel;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Origin\ProductOrigin;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
@@ -60,10 +62,39 @@ class GetTireListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'slug', 'brand', 'model', 'width', 'profile', 'diameter', 'season', 'is_studded', 'euro_label', 'price', 'delivery_min', 'delivery_max', 'images'],
+            ['id', 'ean', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'profile', 'diameter', 'season', 'is_studded', 'euro_label', 'price', 'delivery_min', 'delivery_max', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($tire->id, $response->json('data.0.id'));
+    }
+
+    public function test_origin_included_in_item(): void
+    {
+        $origin = ProductOrigin::create([
+            'vendor' => new OriginInfo('Shandong Haohua Tire', '<p>Описание.</p>'),
+            'manufacture_country' => new OriginInfo('100% Китай', null),
+            'manufacture_year' => new OriginInfo('2024-2025', null),
+        ]);
+
+        $tire = TireProduct::factory()->create(['origin_id' => $origin->id]);
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $this->getJson(self::PATH)
+            ->assertOk()
+            ->assertJsonPath('data.0.origin.vendor.badge', 'Shandong Haohua Tire')
+            ->assertJsonPath('data.0.origin.vendor.description', '<p>Описание.</p>')
+            ->assertJsonPath('data.0.origin.manufacture_country.badge', '100% Китай')
+            ->assertJsonPath('data.0.origin.manufacture_year.badge', '2024-2025');
+    }
+
+    public function test_origin_null_when_absent(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $this->getJson(self::PATH)
+            ->assertOk()
+            ->assertJsonPath('data.0.origin', null);
     }
 
     public function test_meta_seo_from_config_without_brand(): void

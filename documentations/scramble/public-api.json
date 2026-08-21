@@ -265,6 +265,9 @@
                                                     "id": {
                                                         "type": "integer"
                                                     },
+                                                    "ean": {
+                                                        "type": "string"
+                                                    },
                                                     "name": {
                                                         "type": "string"
                                                     },
@@ -310,6 +313,82 @@
                                                             "id",
                                                             "name",
                                                             "slug"
+                                                        ]
+                                                    },
+                                                    "origin": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "vendor": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            },
+                                                            "manufacture_country": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            },
+                                                            "manufacture_year": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "vendor",
+                                                            "manufacture_country",
+                                                            "manufacture_year"
                                                         ]
                                                     },
                                                     "width": {
@@ -412,10 +491,12 @@
                                                 },
                                                 "required": [
                                                     "id",
+                                                    "ean",
                                                     "name",
                                                     "slug",
                                                     "brand",
                                                     "model",
+                                                    "origin",
                                                     "width",
                                                     "profile",
                                                     "diameter",
@@ -794,6 +875,82 @@
                                                             "slug"
                                                         ]
                                                     },
+                                                    "origin": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "vendor": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            },
+                                                            "manufacture_country": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            },
+                                                            "manufacture_year": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "properties": {
+                                                                    "badge": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "null"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "badge",
+                                                                    "description"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "vendor",
+                                                            "manufacture_country",
+                                                            "manufacture_year"
+                                                        ]
+                                                    },
                                                     "width": {
                                                         "type": [
                                                             "string",
@@ -891,6 +1048,7 @@
                                                     "slug",
                                                     "brand",
                                                     "model",
+                                                    "origin",
                                                     "width",
                                                     "diameter",
                                                     "pcd",
@@ -1246,7 +1404,7 @@
                                                                 "type": "integer"
                                                             },
                                                             "value": {
-                                                                "type": "integer"
+                                                                "type": "string"
                                                             }
                                                         },
                                                         "required": [
@@ -1264,7 +1422,7 @@
                                                                 "type": "integer"
                                                             },
                                                             "value": {
-                                                                "type": "integer"
+                                                                "type": "string"
                                                             }
                                                         },
                                                         "required": [

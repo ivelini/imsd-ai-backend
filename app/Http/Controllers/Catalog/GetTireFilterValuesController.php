@@ -27,7 +27,7 @@ final readonly class GetTireFilterValuesController
      * (без city_id — для города по умолчанию из config/shop.php).
      */
     #[Group('Справочник / фильтр', weight: 10)]
-    #[Response(type: 'array{data: array{width: list<array{label: int, value: int}>, profile: list<array{label: int, value: int}>, diameter: list<array{label: string, value: string}>, season: list<array{label: string, value: string}>, studded: list<array{label: string, value: string}>, brand: list<array{label: string, value: string}>, country: list<array{label: string, value: string}>, delivery: list<array{label: string, value: string}>, price: array{min: float, max: float}}}')]
+    #[Response(type: 'array{data: array{width: list<array{label: int, value: string}>, profile: list<array{label: int, value: string}>, diameter: list<array{label: string, value: string}>, season: list<array{label: string, value: string}>, studded: list<array{label: string, value: string}>, brand: list<array{label: string, value: string}>, country: list<array{label: string, value: string}>, delivery: list<array{label: string, value: string}>, price: array{min: float, max: float}}}')]
     public function __invoke(TireFilterValuesRequest $request): TireFilterValuesResource
     {
         $cityId = $request->validated('city_id');

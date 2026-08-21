@@ -21,6 +21,7 @@ final class WheelListItemResource extends JsonResource
             'slug' => $wheel->slug,
             'brand' => $this->whenLoaded('brand', fn () => new BrandResource($wheel->brand)),
             'model' => $this->whenLoaded('model', fn () => new ProductModelReferenceResource($wheel->model)),
+            'origin' => $this->whenLoaded('origin', fn () => new ProductOriginResource($wheel->origin)),
             'width' => $wheel->width,
             'diameter' => $wheel->diameter,
             'pcd' => $wheel->pcd,

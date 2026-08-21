@@ -7858,13 +7858,6 @@
                         "minimum": 2000,
                         "maximum": 2030
                     },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "description": "\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0442\u043e\u0432\u0430\u0440\u0430 (JSON)."
-                    },
                     "is_published": {
                         "type": "boolean",
                         "description": "\u041e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u043d \u043d\u0430 \u0441\u0430\u0439\u0442\u0435."
@@ -7989,12 +7982,6 @@
                             }
                         ]
                     },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
                     "is_published": {
                         "type": "boolean"
                     },
@@ -8041,7 +8028,6 @@
                     "is_xl",
                     "year",
                     "euro_label",
-                    "description",
                     "is_published",
                     "is_bestseller",
                     "is_new",
@@ -8278,12 +8264,6 @@
                             "null"
                         ]
                     },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
                     "is_published": {
                         "type": "boolean"
                     },
@@ -8385,12 +8365,6 @@
                             "null"
                         ]
                     },
-                    "description": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
                     "is_published": {
                         "type": "boolean"
                     },
@@ -8433,7 +8407,6 @@
                     "hub_diameter",
                     "width",
                     "diameter",
-                    "description",
                     "is_published",
                     "is_bestseller",
                     "is_new",

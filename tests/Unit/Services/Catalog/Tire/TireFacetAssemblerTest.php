@@ -11,19 +11,19 @@ class TireFacetAssemblerTest extends TestCase
     public function test_dimension_sorts_numerically_and_deduplicates(): void
     {
         $this->assertSame([
-            ['label' => 175, 'value' => 175],
-            ['label' => 205, 'value' => 205],
-            ['label' => 225, 'value' => 225],
-        ], TireFacetAssembler::dimension([225, 175, 205, 175]));
+            ['label' => 175, 'value' => 'w175'],
+            ['label' => 205, 'value' => 'w205'],
+            ['label' => 225, 'value' => 'w225'],
+        ], TireFacetAssembler::dimension([225, 175, 205, 175], 'w'));
     }
 
     public function test_dimension_sorts_diameter_strings_numerically(): void
     {
         $this->assertSame([
-            ['label' => '15.5', 'value' => '15.5'],
-            ['label' => '16', 'value' => '16'],
-            ['label' => '17', 'value' => '17'],
-        ], TireFacetAssembler::dimension(['17', '16', '15.5']));
+            ['label' => '15.5', 'value' => 'r15.5'],
+            ['label' => '16', 'value' => 'r16'],
+            ['label' => '17', 'value' => 'r17'],
+        ], TireFacetAssembler::dimension(['17', '16', '15.5'], 'r'));
     }
 
     public function test_season_keeps_enum_order_and_drops_absent_values(): void

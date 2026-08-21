@@ -12,21 +12,12 @@ use App\Enums\Catalog\Season;
 final class TireFacetAssembler
 {
     /** @param  list<int|string>  $values  @return list<array{label: int|string, value: int|string}> */
-    public static function dimension(array $values): array
+    public static function dimension(array $values, string $prefix): array
     {
         $values = array_values(array_unique($values));
         sort($values, SORT_NUMERIC);
 
-        return array_map(fn (int|string $value): array => ['label' => $value, 'value' => $value], $values);
-    }
-
-    /** @param  list<int|string>  $values  @return list<array{label: int|string, value: int|string}> */
-    public static function diameter(array $values): array
-    {
-        $values = array_values(array_unique($values));
-        sort($values, SORT_NUMERIC);
-
-        return array_map(fn (int|string $value): array => ['label' => $value, 'value' => 'r'.$value], $values);
+        return array_map(fn (int|string $value): array => ['label' => $value, 'value' => $prefix.$value], $values);
     }
 
     /** @param  list<string>  $present  @return list<array{label: string, value: string}> */

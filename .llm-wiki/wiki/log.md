@@ -72,3 +72,7 @@
 - Updated: Шина (TireProduct) — origin_id, description на модели
 - Updated: Диск (WheelProduct) — origin_id, description на модели
 - Updated: Импорт каталога из XLSX — маппинг origin-колонок и description
+
+## [2026-08-21] ingest | Origin в публичных листингах /api/catalog/tires и /api/catalog/wheels
+- Updated: Публичный API каталога — origin в структуре элемента
+- Updated: Происхождение товара (ProductOrigin) — вывод в API, версии кеша

@@ -15,6 +15,10 @@
 
 Колонок нет в файле → флаг `origin_present` (ключ отсутствует в данных строки) → `origin_id` не трогается при реимпорте; основной импорт не падает. Файлы с частичным триплетом (например, wheels.xlsx — только `origin_vendor`) создают запись с null-полями.
 
+## Вывод в API
+
+С 2026-08-21 в публичных листингах `/api/catalog/tires` и `/api/catalog/wheels` элемент содержит `origin` — вложенный компактный `ProductOriginResource` (whenLoaded; null без origin_id): vendor/manufacture_country/manufacture_year, каждый `{badge, description}|null`. Версии кеш-ключей листингов подняты (tire-list v6, wheel-list v2). См. [Публичный API каталога](../concepts/public-catalog-filter-api.md).
+
 ## See Also
 
 - [Шина (TireProduct)](tire-product.md)

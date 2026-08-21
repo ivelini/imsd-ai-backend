@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\DTOs\Catalog\OriginInfo;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Origin\ProductOrigin;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Catalog\Wheel\WheelProduct;
@@ -56,10 +58,39 @@ class GetWheelListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'slug', 'brand', 'model', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'delivery_min', 'delivery_max', 'images'],
+            ['id', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'delivery_min', 'delivery_max', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($wheel->id, $response->json('data.0.id'));
+    }
+
+    public function test_origin_included_in_item(): void
+    {
+        $origin = ProductOrigin::create([
+            'vendor' => new OriginInfo('Shandong Haohua Tire', '<p>Описание.</p>'),
+            'manufacture_country' => new OriginInfo('100% Китай', null),
+            'manufacture_year' => new OriginInfo('2024-2025', null),
+        ]);
+
+        $wheel = WheelProduct::factory()->create(['origin_id' => $origin->id]);
+        $this->createCatalogPrice($this->createStock($wheel), $this->defaultCity);
+
+        $this->getJson(self::PATH)
+            ->assertOk()
+            ->assertJsonPath('data.0.origin.vendor.badge', 'Shandong Haohua Tire')
+            ->assertJsonPath('data.0.origin.vendor.description', '<p>Описание.</p>')
+            ->assertJsonPath('data.0.origin.manufacture_country.badge', '100% Китай')
+            ->assertJsonPath('data.0.origin.manufacture_year.badge', '2024-2025');
+    }
+
+    public function test_origin_null_when_absent(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($wheel), $this->defaultCity);
+
+        $this->getJson(self::PATH)
+            ->assertOk()
+            ->assertJsonPath('data.0.origin', null);
     }
 
     public function test_meta_seo_without_brand(): void

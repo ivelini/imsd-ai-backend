@@ -32,7 +32,7 @@ final readonly class GetWheelListController
      * Фильтры каталога, пагинация, сортировка по цене города.
      */
     #[Group('Каталог', weight: 10)]
-    #[Response(type: 'array{data: list<array{id: int, name: string, slug: string, brand: array{id: int, name: string, slug: string}, model: array{id: int, name: string, slug: string}|null, width: string|null, diameter: int|null, pcd: string|null, et: string|null, hub_diameter: string|null, type: array{label: string, value: string}|null, color: string|null, price: float|null, delivery_min: int|null, delivery_max: int|null, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int, seo: array{title: string, description: string|null}}}')]
+    #[Response(type: 'array{data: list<array{id: int, name: string, slug: string, brand: array{id: int, name: string, slug: string}, model: array{id: int, name: string, slug: string}|null, origin: array{vendor: array{badge: string, description: string|null}|null, manufacture_country: array{badge: string, description: string|null}|null, manufacture_year: array{badge: string, description: string|null}|null}|null, width: string|null, diameter: int|null, pcd: string|null, et: string|null, hub_diameter: string|null, type: array{label: string, value: string}|null, color: string|null, price: float|null, delivery_min: int|null, delivery_max: int|null, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int, seo: array{title: string, description: string|null}}}')]
     public function __invoke(WheelListRequest $request): JsonResponse
     {
         $cityId = $request->validated('city_id');

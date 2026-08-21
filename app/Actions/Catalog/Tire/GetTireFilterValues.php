@@ -29,9 +29,9 @@ final readonly class GetTireFilterValues
             ->byCatalogFilters($cityId, $filters);
 
         return [
-            'width' => TireFacetAssembler::dimension($this->distinct(clone $published, 'width')),
-            'profile' => TireFacetAssembler::dimension($this->distinct(clone $published, 'profile')),
-            'diameter' => TireFacetAssembler::diameter($this->distinct(clone $published, 'diameter')),
+            'width' => TireFacetAssembler::dimension($this->distinct(clone $published, 'width'), 'w'),
+            'profile' => TireFacetAssembler::dimension($this->distinct(clone $published, 'profile'), 'p'),
+            'diameter' => TireFacetAssembler::dimension($this->distinct(clone $published, 'diameter'), 'r'),
             'season' => TireFacetAssembler::season($this->seasonValues(clone $published)),
             'studded' => TireFacetAssembler::studded($this->distinct(clone $published, 'is_studded')),
             'brand' => TireFacetAssembler::named($this->brandNames(clone $published)),

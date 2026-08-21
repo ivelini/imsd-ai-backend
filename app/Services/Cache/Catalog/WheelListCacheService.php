@@ -34,8 +34,8 @@ final readonly class WheelListCacheService
     ): array {
         ksort($filters);
 
-        // v1: первая версия формата payload листинга дисков
-        $key = 'wheel-list:v1:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
+        // v2: origin — происхождение товара в элементе листинга
+        $key = 'wheel-list:v2:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
 
         /** @var array $data */
         $data = $this->cache->remember($key, $this->ttl, $query);

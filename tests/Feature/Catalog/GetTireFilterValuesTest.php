@@ -75,7 +75,7 @@ class GetTireFilterValuesTest extends TestCase
 
         $data = $this->getJson(self::PATH)->json('data');
 
-        $this->assertSame([['label' => 205, 'value' => 205]], $data['width']);
+        $this->assertSame([['label' => 205, 'value' => 'w205']], $data['width']);
         $this->assertEquals(['min' => 3000.0, 'max' => 3000.0], $data['price']);
     }
 
@@ -181,7 +181,7 @@ class GetTireFilterValuesTest extends TestCase
 
         $data = $this->getJson(self::PATH.'?width[]=205')->json('data');
 
-        $this->assertSame([['label' => 205, 'value' => 205]], $data['width']);
+        $this->assertSame([['label' => 205, 'value' => 'w205']], $data['width']);
         $this->assertEquals(['min' => 1000.0, 'max' => 1000.0], $data['price']);
     }
 
@@ -199,7 +199,7 @@ class GetTireFilterValuesTest extends TestCase
         $data = $this->getJson(self::PATH.'?brand=nokian')->assertOk()->json('data');
 
         $this->assertSame([['label' => 'Nokian', 'value' => 'nokian']], $data['brand']);
-        $this->assertSame([['label' => 205, 'value' => 205]], $data['width']);
+        $this->assertSame([['label' => 205, 'value' => 'w205']], $data['width']);
     }
 
     public function test_delivery_bucket_filter_narrows_facets(): void
@@ -213,7 +213,7 @@ class GetTireFilterValuesTest extends TestCase
         $data = $this->getJson(self::PATH.'?delivery[]=after5days')->json('data');
 
         $this->assertSame([['label' => 'После 5 дней', 'value' => 'after5days']], $data['delivery']);
-        $this->assertSame([['label' => 215, 'value' => 215]], $data['width']);
+        $this->assertSame([['label' => 215, 'value' => 'w215']], $data['width']);
     }
 
     public function test_price_filter_narrows_facets(): void
@@ -227,7 +227,7 @@ class GetTireFilterValuesTest extends TestCase
         $data = $this->getJson(self::PATH.'?price_min=3000&price_max=4000')->json('data');
 
         $this->assertEquals(['min' => 3500.0, 'max' => 3500.0], $data['price']);
-        $this->assertSame([['label' => 215, 'value' => 215]], $data['width']);
+        $this->assertSame([['label' => 215, 'value' => 'w215']], $data['width']);
     }
 
     public function test_invalid_filters_rejected(): void
@@ -246,12 +246,12 @@ class GetTireFilterValuesTest extends TestCase
         $this->createCatalogPrice($this->createStock($other), $this->defaultCity);
 
         $narrowData = $this->getJson(self::PATH.'?width[]=205')->json('data');
-        $this->assertSame([['label' => 205, 'value' => 205]], $narrowData['width']);
+        $this->assertSame([['label' => 205, 'value' => 'w205']], $narrowData['width']);
 
         $fullData = $this->getJson(self::PATH)->json('data');
         $this->assertSame([
-            ['label' => 205, 'value' => 205],
-            ['label' => 215, 'value' => 215],
+            ['label' => 205, 'value' => 'w205'],
+            ['label' => 215, 'value' => 'w215'],
         ], $fullData['width']);
     }
 
