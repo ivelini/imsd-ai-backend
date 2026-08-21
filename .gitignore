@@ -31,3 +31,7 @@ Thumbs.db
 .claude/skills/infer-conventions
 .claude/skills/laravel-best-practices
 .claude/skills/tailwindcss-development
+
+# Временные файлы Excel / LibreOffice (~$*, *.tmp)
+~$*
+*.tmp
