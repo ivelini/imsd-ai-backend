@@ -224,6 +224,7 @@ class ProductSlugTest extends TestCase
             quantity: null,
             purchase_price: null,
             minimum_market_price: null,
+            euroLabel: null,
             descriptions: [],
             promos: [],
         );

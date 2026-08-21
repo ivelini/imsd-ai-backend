@@ -29,6 +29,7 @@ final class TireListItemResource extends JsonResource
                 ? ['label' => $tire->season_label, 'value' => $tire->season->value]
                 : null,
             'is_studded' => $tire->is_studded,
+            'euro_label' => $tire->euro_label,
             'price' => $tire->city_price,
             'delivery_min' => $tire->city_delivery_min,
             'delivery_max' => $tire->city_delivery_max,

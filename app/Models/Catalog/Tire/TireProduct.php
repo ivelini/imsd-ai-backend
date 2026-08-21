@@ -2,7 +2,9 @@
 
 namespace App\Models\Catalog\Tire;
 
+use App\Casts\EuroLabelCast;
 use App\Casts\SeasonCast;
+use App\DTOs\Catalog\Tire\EuroLabel;
 use App\Enums\Catalog\Season;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Builders\TireProductBuilder;
@@ -38,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property bool $is_runflat
  * @property bool $is_xl
  * @property int|null $year
+ * @property EuroLabel|null $euro_label Евро-лейбл: сопротивление качению, сцепление, шум
  * @property string|null $description
  * @property bool $is_published
  * @property bool $is_bestseller
@@ -73,6 +76,7 @@ class TireProduct extends Model
         'is_runflat',
         'is_xl',
         'year',
+        'euro_label',
         'description',
         'is_published',
         'is_bestseller',
@@ -83,6 +87,7 @@ class TireProduct extends Model
     {
         return [
             'season' => SeasonCast::class,
+            'euro_label' => EuroLabelCast::class,
             'width' => 'integer',
             'profile' => 'integer',
             'is_studded' => 'boolean',

@@ -2,11 +2,13 @@
 
 namespace App\DTOs\TireImport;
 
+use App\DTOs\Catalog\Tire\EuroLabel;
+
 /** Строка из XLSX после маппинга. */
 final readonly class ImportTireRow
 {
     /**
-     * @param  array<string, string|null>  $descriptions  Ключи: vendor, default, manufacture_country, manufacture_year, euro_label
+     * @param  array<string, string|null>  $descriptions  Ключи: vendor, default, manufacture_country, manufacture_year
      * @param  array<string, string|null>  $promos  promo_1 … promo_5
      */
     public function __construct(
@@ -25,31 +27,8 @@ final readonly class ImportTireRow
         public ?int $quantity,
         public ?float $purchase_price,
         public ?float $minimum_market_price,
+        public ?EuroLabel $euroLabel,
         public array $descriptions,
         public array $promos,
     ) {}
-
-    /** @param  array<string, mixed>  $data */
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            ean: trim((string) ($data['ean'] ?? '')),
-            brand_name: trim((string) ($data['brand_name'] ?? '')),
-            season_raw: trim((string) ($data['season_raw'] ?? '')),
-            country_name: isset($data['country_name']) ? trim((string) $data['country_name']) : null,
-            name: trim((string) ($data['name'] ?? '')),
-            width: isset($data['width']) ? (int) $data['width'] : null,
-            profile: isset($data['profile']) ? (int) $data['profile'] : null,
-            diameter: isset($data['diameter']) ? trim((string) $data['diameter']) : null,
-            load_speed_index: isset($data['load_speed_index']) ? trim((string) $data['load_speed_index']) : null,
-            is_runflat_raw: isset($data['is_runflat_raw']) ? trim((string) $data['is_runflat_raw']) : null,
-            is_studded_raw: isset($data['is_studded_raw']) ? trim((string) $data['is_studded_raw']) : null,
-            warehouse_name: isset($data['warehouse_name']) ? trim((string) $data['warehouse_name']) : null,
-            quantity: isset($data['quantity']) ? (int) $data['quantity'] : null,
-            purchase_price: isset($data['purchase_price']) ? (float) $data['purchase_price'] : null,
-            minimum_market_price: isset($data['minimum_market_price']) ? (float) $data['minimum_market_price'] : null,
-            descriptions: $data['descriptions'] ?? [],
-            promos: $data['promos'] ?? [],
-        );
-    }
 }

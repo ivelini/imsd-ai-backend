@@ -31,10 +31,9 @@ final readonly class UpsertTireProduct
 
         $season = $this->rowMapper->toSeason($row->season_raw);
         $loadIndexResult = $this->rowMapper->parseLoadSpeedIndex($row->load_speed_index);
-        $description = json_encode(
-            $this->descriptionBuilder->build($row->descriptions),
-            JSON_UNESCAPED_UNICODE,
-        );
+        $descriptions = $this->descriptionBuilder->build($row->descriptions);
+        // Пустые описания — null, а не "[]": JSON-массив не соответствует формату объекта
+        $description = $descriptions === [] ? null : json_encode($descriptions, JSON_UNESCAPED_UNICODE);
 
         $isStudded = $this->rowMapper->toBool($row->is_studded_raw);
         $isRunflat = $this->rowMapper->toBool($row->is_runflat_raw);
@@ -64,6 +63,7 @@ final readonly class UpsertTireProduct
                 'speed_index' => $loadIndexResult['speed'],
                 'is_studded' => $isStudded,
                 'is_runflat' => $isRunflat,
+                'euro_label' => $row->euroLabel,
                 'description' => $description,
             ],
         );

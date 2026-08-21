@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Import;
 
+use App\DTOs\Catalog\Tire\EuroLabel;
+use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Services\Import\TireRowProcessor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,5 +50,45 @@ class TireRowProcessorTest extends TestCase
         $this->assertTrue($result->created);
         $this->assertNull($result->stockId);
         $this->assertSame(0, Stock::count());
+    }
+
+    public function test_processor_persists_descriptions_and_euro_label(): void
+    {
+        app(TireRowProcessor::class)->process([
+            'ean' => 'T-001',
+            'brand_name' => 'Brand A',
+            'season_raw' => 'зимняя',
+            'name' => 'Tire A',
+            'width' => '205',
+            'profile' => '55',
+            'diameter' => '16',
+            'load_speed_index' => '91T',
+            'description_default' => 'Описание',
+            'description_euro_label' => 'D/C/71',
+        ]);
+
+        $tire = TireProduct::where('ean', 'T-001')->firstOrFail();
+
+        $this->assertSame(['default' => 'Описание'], json_decode($tire->description, true));
+        $this->assertEquals(new EuroLabel('D', 'C', '71'), $tire->euro_label);
+    }
+
+    public function test_processor_sets_null_description_without_descriptions(): void
+    {
+        app(TireRowProcessor::class)->process([
+            'ean' => 'T-001',
+            'brand_name' => 'Brand A',
+            'season_raw' => 'зимняя',
+            'name' => 'Tire A',
+            'width' => '205',
+            'profile' => '55',
+            'diameter' => '16',
+            'load_speed_index' => '91T',
+        ]);
+
+        $tire = TireProduct::where('ean', 'T-001')->firstOrFail();
+
+        $this->assertNull($tire->description);
+        $this->assertNull($tire->euro_label);
     }
 }

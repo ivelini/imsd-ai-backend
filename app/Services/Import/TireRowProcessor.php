@@ -5,10 +5,10 @@ namespace App\Services\Import;
 use App\Actions\Import\Tire\UpsertStock;
 use App\Actions\Import\Tire\UpsertTireProduct;
 use App\DTOs\Import\RowProcessResult;
-use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Preconditions\TireImport\EnsureEanNotEmpty;
+use App\Services\TireImport\RowMapper;
 
 /** Обработка строки чанка шин: DTO → upsert товара + остаток. */
 final readonly class TireRowProcessor implements ChunkRowProcessor
@@ -17,11 +17,12 @@ final readonly class TireRowProcessor implements ChunkRowProcessor
         private UpsertTireProduct $upsertTireProduct,
         private UpsertStock $upsertStock,
         private EnsureEanNotEmpty $ensureEanNotEmpty,
+        private RowMapper $rowMapper,
     ) {}
 
     public function process(array $rowData): RowProcessResult
     {
-        $row = ImportTireRow::fromArray($rowData);
+        $row = $this->rowMapper->map($rowData);
 
         $this->ensureEanNotEmpty->ensure($row->ean);
 

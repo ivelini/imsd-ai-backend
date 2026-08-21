@@ -52,3 +52,8 @@
 
 ## [2026-08-21] ingest | Листинг шин: meta.seo + delivery-массив
 - Updated: Кеширование (версия ключа tire-list v5)
+
+## [2026-08-21] ingest | Евро-лейбл шины (euro_label) в импорте и API
+- Updated: Шина (TireProduct) — поле euro_label jsonb + каст EuroLabelCast
+- Updated: Импорт каталога из XLSX — RowMapper::map в пайплайне, описания и парсер description_euro_label
+- Updated: Публичный API каталога — euro_label в структуре элемента листинга

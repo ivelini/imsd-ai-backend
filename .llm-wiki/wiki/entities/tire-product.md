@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20; евро-лейбл 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md)
 
 ## Overview
 
@@ -16,9 +16,12 @@
 | Размеры | `width`, `profile`, `diameter` (diameter — string: может быть «16C», «R16») |
 | Индексы | `load_index`, `speed_index` (из «86T» → 86, T) |
 | Характеристики | `season` (winter/summer/all-season), `is_studded`, `is_runflat`, `is_xl`, `year` |
-| Прочее | `description` (HTML), `image` |
+| Евро-лейбл | `euro_label` (jsonb: `{rollingResistance: A–G, wetGrip: A–G, noiseEmission: dB}` — value object `EuroLabel` + каст `EuroLabelCast`; мусор в БД → null) |
+| Прочее | `description` (JSON-строка: vendor/default/manufacture_country/manufacture_year; null, если пусто), `image` |
 
 `is_xl` и `year` при импорте не заполняются (нет в XLSX) — вручную в админке.
+
+`euro_label` приходит из XLSX-колонки `description_euro_label` («D/C/71») через `RowMapper::parseEuroLabel`; невалидная строка → null (см. [Импорт каталога из XLSX](../concepts/xlsx-import-pipeline.md)).
 
 `slug` = `{width}-{profile}-{diameter}[-studded][-runflat]` — только характеристики, без brand и name (флаги только при true, null-размеры опускаются; коллизия → суффикс `-2`). Без brand/name slug стабилен при смене названий бренда/модели — URL карточки не ломается при реимпорте. Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 

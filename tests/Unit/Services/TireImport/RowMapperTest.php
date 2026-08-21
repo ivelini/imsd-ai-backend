@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\TireImport;
 
+use App\DTOs\Catalog\Tire\EuroLabel;
 use App\Services\TireImport\RowMapper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +48,56 @@ class RowMapperTest extends TestCase
         ]);
 
         $this->assertSame('AA-002', $row->ean);
+    }
+
+    public function test_parse_euro_label_parses_valid_format(): void
+    {
+        $label = $this->mapper->parseEuroLabel('D/C/71');
+
+        $this->assertInstanceOf(EuroLabel::class, $label);
+        $this->assertSame('D', $label->rollingResistance);
+        $this->assertSame('C', $label->wetGrip);
+        $this->assertSame('71', $label->noiseEmission);
+    }
+
+    public function test_parse_euro_label_uppercases_letters(): void
+    {
+        $label = $this->mapper->parseEuroLabel('d/c/71');
+
+        $this->assertSame('D', $label?->rollingResistance);
+        $this->assertSame('C', $label?->wetGrip);
+    }
+
+    #[DataProvider('provideInvalidEuroLabels')]
+    public function test_parse_euro_label_returns_null_for_invalid(?string $input): void
+    {
+        $this->assertNull($this->mapper->parseEuroLabel($input));
+    }
+
+    /** @return array<string, array{string|null}> */
+    public static function provideInvalidEuroLabels(): array
+    {
+        return [
+            'null' => [null],
+            'empty' => [''],
+            'two_segments' => ['D/C'],
+            'four_segments' => ['D/C/71/1'],
+            'rolling_not_letter' => ['1/D/71'],
+            'wet_out_of_range' => ['D/1/71'],
+            'noise_not_number' => ['D/C/7X'],
+        ];
+    }
+
+    public function test_map_extracts_euro_label_without_duplicating_in_descriptions(): void
+    {
+        $withLabel = $this->mapper->map(['description_euro_label' => 'D/C/71']);
+
+        $this->assertSame('D', $withLabel->euroLabel?->rollingResistance);
+        $this->assertArrayNotHasKey('euro_label', $withLabel->descriptions);
+
+        $withoutLabel = $this->mapper->map([]);
+
+        $this->assertNull($withoutLabel->euroLabel);
     }
 
     public function test_nullable_int_returns_null_for_empty(): void

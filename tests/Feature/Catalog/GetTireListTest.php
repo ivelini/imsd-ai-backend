@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\DTOs\Catalog\Tire\EuroLabel;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
@@ -59,7 +60,7 @@ class GetTireListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'slug', 'brand', 'model', 'width', 'profile', 'diameter', 'season', 'is_studded', 'price', 'delivery_min', 'delivery_max', 'images'],
+            ['id', 'name', 'slug', 'brand', 'model', 'width', 'profile', 'diameter', 'season', 'is_studded', 'euro_label', 'price', 'delivery_min', 'delivery_max', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($tire->id, $response->json('data.0.id'));
@@ -112,6 +113,24 @@ class GetTireListTest extends TestCase
         $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
 
         $this->assertNull($this->getJson(self::PATH)->json('data.0.model'));
+    }
+
+    public function test_serializes_euro_label_object_or_null(): void
+    {
+        $withLabel = TireProduct::factory()->create(['euro_label' => new EuroLabel('D', 'C', '71')]);
+        $this->createCatalogPrice($this->createStock($withLabel), $this->defaultCity);
+
+        $withoutLabel = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($withoutLabel), $this->defaultCity);
+
+        // Сортировка по id desc: последняя созданная (без лейбла) — первая в списке
+        $items = $this->getJson(self::PATH)->json('data');
+
+        $this->assertNull($items[0]['euro_label']);
+        $this->assertSame(
+            ['rollingResistance' => 'D', 'wetGrip' => 'C', 'noiseEmission' => '71'],
+            $items[1]['euro_label'],
+        );
     }
 
     public function test_returns_season_reference(): void

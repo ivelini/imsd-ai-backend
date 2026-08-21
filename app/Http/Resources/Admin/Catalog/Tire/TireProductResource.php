@@ -44,6 +44,7 @@ final class TireProductResource extends JsonResource
             'is_runflat' => $tire->is_runflat,
             'is_xl' => $tire->is_xl,
             'year' => $tire->year,
+            'euro_label' => $tire->euro_label,
             'description' => $tire->description,
             'is_published' => $tire->is_published,
             'is_bestseller' => $tire->is_bestseller,

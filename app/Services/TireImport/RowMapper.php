@@ -2,6 +2,7 @@
 
 namespace App\Services\TireImport;
 
+use App\DTOs\Catalog\Tire\EuroLabel;
 use App\DTOs\TireImport\ImportTireRow;
 
 /** Маппинг сырой строки XLSX → DTO. */
@@ -47,7 +48,6 @@ final class RowMapper
             'default' => $data['description_default'] ?? null,
             'manufacture_country' => $data['description_manufacture_country'] ?? null,
             'manufacture_year' => $data['description_manufacture_year'] ?? null,
-            'euro_label' => $data['description_euro_label'] ?? null,
         ];
 
         $promos = [];
@@ -72,6 +72,7 @@ final class RowMapper
             quantity: $this->nullableInt($data['quantity'] ?? $data['count'] ?? null),
             purchase_price: $this->nullableFloat($data['purchase_price'] ?? $data['price'] ?? null),
             minimum_market_price: $this->nullableFloat($data['minimum_market_price'] ?? null),
+            euroLabel: $this->parseEuroLabel($data['description_euro_label'] ?? null),
             descriptions: $descriptions,
             promos: $promos,
         );
@@ -95,6 +96,38 @@ final class RowMapper
         $key = mb_strtolower(trim($value));
 
         return $this->seasonMap[$key] ?? 'summer';
+    }
+
+    /**
+     * Парсинг "D/C/71" → EuroLabel(rollingResistance, wetGrip, noiseEmission).
+     * Невалидный формат (не 3 сегмента, буквы вне A–G, шум не число) → null — мусор из XLSX не попадает в БД.
+     */
+    public function parseEuroLabel(?string $value): ?EuroLabel
+    {
+        $value = trim($value ?? '');
+        if ($value === '') {
+            return null;
+        }
+
+        $parts = explode('/', $value);
+        if (count($parts) !== 3) {
+            return null;
+        }
+
+        [$rolling, $wet, $noise] = $parts;
+        $rolling = strtoupper(trim($rolling));
+        $wet = strtoupper(trim($wet));
+        $noise = trim($noise);
+
+        if (
+            ! preg_match('/^[A-G]$/', $rolling)
+            || ! preg_match('/^[A-G]$/', $wet)
+            || ! preg_match('/^\d{2,3}$/', $noise)
+        ) {
+            return null;
+        }
+
+        return new EuroLabel(rollingResistance: $rolling, wetGrip: $wet, noiseEmission: $noise);
     }
 
     /**
