@@ -146,9 +146,16 @@ class TireProductBuilder extends Builder
         return $this;
     }
 
-    public function byDeliveryRange(int $cityId, DeliveryDaysType $type): self
+    /** @param  list<DeliveryDaysType>  $types  Товар попадает, если min_days входит в любой бакет. */
+    public function byDeliveryRanges(int $cityId, array $types): self
     {
-        $this->whereIn('tire_products.id', $this->productIdsByDeliveryRange($cityId, $type));
+        $ids = [];
+
+        foreach ($types as $type) {
+            $ids = array_merge($ids, $this->productIdsByDeliveryRange($cityId, $type));
+        }
+
+        $this->whereIn('tire_products.id', array_values(array_unique($ids)));
 
         return $this;
     }
@@ -196,7 +203,10 @@ class TireProductBuilder extends Builder
         }
 
         if (! empty($filters['delivery'])) {
-            $this->byDeliveryRange($cityId, DeliveryDaysType::from($filters['delivery']));
+            $this->byDeliveryRanges(
+                $cityId,
+                array_map(fn (string $value): DeliveryDaysType => DeliveryDaysType::from($value), $filters['delivery']),
+            );
         }
 
         // requireCityPrice — листинг не показывает товары без цены города (пустой диапазон = «есть цена»)
@@ -221,7 +231,7 @@ class TireProductBuilder extends Builder
             ->where('catalog_prices.city_id', $cityId)
             ->whereNotNull('catalog_prices.delivery_min')
             ->groupBy('stocks.stockable_id')
-            ->havingRaw('MIN(catalog_prices.delivery_min) BETWEEN ? AND ?', [$type->minDays(), $type->maxDays() ?? 999999])
+            ->havingRaw('MIN(catalog_prices.delivery_min) BETWEEN ? AND ?', [$type->minDays(), $type->maxDays() ?? 999])
             ->selectRaw('stocks.stockable_id as stockable_id')
             ->pluck('stockable_id')
             ->all();

@@ -30,8 +30,9 @@ class TireFilterValuesRequest extends FormRequest
             'brand' => ['nullable', 'string', 'max:255', 'exists:brands,slug'],
             /** Страна бренда (slug). */
             'country' => ['nullable', 'string', 'max:255', 'exists:countries,slug'],
-            /** Бакет срока доставки. */
-            'delivery' => ['nullable', Rule::in(array_column(DeliveryDaysType::cases(), 'value'))],
+            /** Бакеты срока доставки (массив). */
+            'delivery' => ['nullable', 'array'],
+            'delivery.*' => ['required', Rule::in(array_column(DeliveryDaysType::cases(), 'value'))],
             /** Цена от. */
             'price_min' => ['nullable', 'numeric', 'min:0'],
             /** Цена до. */

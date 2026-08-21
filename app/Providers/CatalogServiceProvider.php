@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Actions\Catalog\Tire\GetTireListSeo;
 use App\Http\Controllers\Catalog\GetCityReferenceController;
 use App\Http\Controllers\Catalog\GetTireFilterValuesController;
 use App\Http\Controllers\Catalog\GetTireListController;
@@ -65,6 +66,10 @@ class CatalogServiceProvider extends ServiceProvider
         $this->app->when(GetCityReferenceController::class)
             ->needs('$defaultCityName')
             ->giveConfig('shop.default_city');
+
+        $this->app->when(GetTireListSeo::class)
+            ->needs('$defaultSeo')
+            ->giveConfig('shop.seo');
     }
 
     public function boot(): void

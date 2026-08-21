@@ -49,7 +49,13 @@ class GetTireListTest extends TestCase
 
         $response->assertOk();
         $this->assertEquals(
-            ['current_page' => 1, 'last_page' => 1, 'per_page' => 48, 'total' => 1],
+            [
+                'current_page' => 1,
+                'last_page' => 1,
+                'per_page' => 48,
+                'total' => 1,
+                'seo' => ['title' => str_replace('{city}', 'в Челябинске', config('shop.seo.title')), 'description' => config('shop.seo.description')],
+            ],
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
@@ -57,6 +63,32 @@ class GetTireListTest extends TestCase
             array_keys($response->json('data.0')),
         );
         $this->assertSame($tire->id, $response->json('data.0.id'));
+    }
+
+    public function test_meta_seo_from_config_without_brand(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        // Без brand — дефолтные мета из config/shop.php с подстановкой выбранного города
+        $this->assertSame(
+            ['title' => str_replace('{city}', 'в Челябинске', config('shop.seo.title')), 'description' => config('shop.seo.description')],
+            $this->getJson(self::PATH)->json('meta.seo'),
+        );
+    }
+
+    public function test_meta_seo_with_brand(): void
+    {
+        $brand = Brand::factory()->create(['name' => 'Nokian', 'slug' => 'nokian', 'type' => 'tire', 'description' => 'Финские шины']);
+        $tire = TireProduct::factory()->create(['brand_id' => $brand->id]);
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity);
+
+        $seo = $this->getJson(self::PATH.'?brand=nokian')->json('meta.seo');
+
+        $this->assertSame(
+            ['title' => 'Шины Nokian в Челябинске', 'description' => 'Финские шины'],
+            $seo,
+        );
     }
 
     public function test_returns_model_reference(): void
@@ -254,10 +286,25 @@ class GetTireListTest extends TestCase
         $slow = TireProduct::factory()->create();
         $this->createCatalogPrice($this->createStock($slow), $this->defaultCity, deliveryMin: 6);
 
-        $data = $this->getJson(self::PATH.'?delivery=between1and3days')->json('data');
+        $data = $this->getJson(self::PATH.'?delivery[]=between1and3days')->json('data');
 
         $this->assertCount(1, $data);
         $this->assertSame($fast->id, $data[0]['id']);
+    }
+
+    public function test_delivery_multiple_buckets(): void
+    {
+        $today = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($today), $this->defaultCity, deliveryMin: 0);
+
+        $slow = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($slow), $this->defaultCity, deliveryMin: 6);
+
+        $data = $this->getJson(self::PATH.'?delivery[]=today&delivery[]=between1and3days')->json('data');
+
+        // Товар попадает, если min_days входит в любой из выбранных бакетов
+        $this->assertCount(1, $data);
+        $this->assertSame($today->id, $data[0]['id']);
     }
 
     public function test_price_range_filter(): void
@@ -339,6 +386,7 @@ class GetTireListTest extends TestCase
         $this->getJson(self::PATH.'?per_page=5')->assertStatus(422);
         $this->getJson(self::PATH.'?per_page=101')->assertStatus(422);
         $this->getJson(self::PATH.'?page=0')->assertStatus(422);
+        $this->getJson(self::PATH.'?delivery=between1and3days')->assertStatus(422);
     }
 
     public function test_out_of_range_page_returns_empty(): void

@@ -124,21 +124,26 @@
                         }
                     },
                     {
-                        "name": "delivery",
+                        "name": "delivery[]",
                         "in": "query",
-                        "description": "\u0411\u0430\u043a\u0435\u0442 \u0441\u0440\u043e\u043a\u0430 \u0434\u043e\u0441\u0442\u0430\u0432\u043a\u0438.",
+                        "required": true,
                         "schema": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
+                            "type": "array",
                             "enum": [
                                 "today",
                                 "between1and3days",
                                 "between3and5days",
-                                "after5days",
-                                null
-                            ]
+                                "after5days"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "today",
+                                    "between1and3days",
+                                    "between3and5days",
+                                    "after5days"
+                                ]
+                            }
                         }
                     },
                     {
@@ -393,13 +398,32 @@
                                                 },
                                                 "total": {
                                                     "type": "integer"
+                                                },
+                                                "seo": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "title": {
+                                                            "type": "string"
+                                                        },
+                                                        "description": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "title",
+                                                        "description"
+                                                    ]
                                                 }
                                             },
                                             "required": [
                                                 "current_page",
                                                 "last_page",
                                                 "per_page",
-                                                "total"
+                                                "total",
+                                                "seo"
                                             ]
                                         }
                                     },
@@ -612,21 +636,26 @@
                         }
                     },
                     {
-                        "name": "delivery",
+                        "name": "delivery[]",
                         "in": "query",
-                        "description": "\u0411\u0430\u043a\u0435\u0442 \u0441\u0440\u043e\u043a\u0430 \u0434\u043e\u0441\u0442\u0430\u0432\u043a\u0438.",
+                        "required": true,
                         "schema": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
+                            "type": "array",
                             "enum": [
                                 "today",
                                 "between1and3days",
                                 "between3and5days",
-                                "after5days",
-                                null
-                            ]
+                                "after5days"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "today",
+                                    "between1and3days",
+                                    "between3and5days",
+                                    "after5days"
+                                ]
+                            }
                         }
                     },
                     {

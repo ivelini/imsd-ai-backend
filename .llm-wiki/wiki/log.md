@@ -49,3 +49,6 @@
 
 ## [2026-08-20] ingest | Публичный API каталога: region в справочнике городов /api/reference/city
 - Updated: Город и география (geo-city.md) — region в элементе справочника
+
+## [2026-08-21] ingest | Листинг шин: meta.seo + delivery-массив
+- Updated: Кеширование (версия ключа tire-list v5)

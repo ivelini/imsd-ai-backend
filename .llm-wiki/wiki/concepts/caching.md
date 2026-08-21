@@ -27,7 +27,7 @@
 
 ## Сериализация payload (ADR 0004)
 
-В кеш — только чистый массив: `json_decode($resource->toJson(), true)` (JSON-roundtrip). `resolve()`/`toArray()` не рекурсивны — вложенные Resource (brand, images) остаются объектами и при `unserialize` оживают как `__PHP_Incomplete_Class` (баг листинга 2026-08-19). Схема ключа версионируется (`tire-list:v4:...`) — смена формата payload инвалидирует старые ключи (v2 → v3: поле model; v3 → v4: season объектом, 2026-08-20).
+В кеш — только чистый массив: `json_decode($resource->toJson(), true)` (JSON-roundtrip). `resolve()`/`toArray()` не рекурсивны — вложенные Resource (brand, images) остаются объектами и при `unserialize` оживают как `__PHP_Incomplete_Class` (баг листинга 2026-08-19). Схема ключа версионируется (`tire-list:v5:...`) — смена формата payload инвалидирует старые ключи (v2 → v3: поле model; v3 → v4: season объектом; v4 → v5: meta.seo, 2026-08-21).
 
 ## See Also
 

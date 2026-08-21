@@ -210,7 +210,7 @@ class GetTireFilterValuesTest extends TestCase
         $slow = TireProduct::factory()->create(['width' => 215]);
         $this->createCatalogPrice($this->createStock($slow), $this->defaultCity, deliveryMin: 6);
 
-        $data = $this->getJson(self::PATH.'?delivery=after5days')->json('data');
+        $data = $this->getJson(self::PATH.'?delivery[]=after5days')->json('data');
 
         $this->assertSame([['label' => 'После 5 дней', 'value' => 'after5days']], $data['delivery']);
         $this->assertSame([['label' => 215, 'value' => 215]], $data['width']);
