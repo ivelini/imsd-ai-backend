@@ -7089,6 +7089,26 @@
                 ],
                 "title": "DeliveryScheduleResource"
             },
+            "EuroLabel": {
+                "type": "object",
+                "properties": {
+                    "rollingResistance": {
+                        "type": "string"
+                    },
+                    "wetGrip": {
+                        "type": "string"
+                    },
+                    "noiseEmission": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "rollingResistance",
+                    "wetGrip",
+                    "noiseEmission"
+                ],
+                "title": "EuroLabel"
+            },
             "Image": {
                 "type": "object",
                 "properties": {
@@ -7959,6 +7979,16 @@
                             "null"
                         ]
                     },
+                    "euro_label": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/EuroLabel"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
                     "description": {
                         "type": [
                             "string",
@@ -8010,6 +8040,7 @@
                     "is_runflat",
                     "is_xl",
                     "year",
+                    "euro_label",
                     "description",
                     "is_published",
                     "is_bestseller",

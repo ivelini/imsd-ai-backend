@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read Brand $brand
  * @property-read ProductModel|null $model
  * @property-read Country|null $country
+ * @property float|null $city_price Цена города из catalog_prices (transient, ставит GetWheelList)
+ * @property int|null $city_delivery_min Срок доставки города (transient, ставит GetWheelList)
+ * @property int|null $city_delivery_max Срок доставки города (transient, ставит GetWheelList)
  */
 class WheelProduct extends Model
 {
@@ -74,6 +77,11 @@ class WheelProduct extends Model
     {
         return [
             'type' => WheelTypeCast::class,
+            // decimal:1 — стабильный строковый формат на чтении/записи
+            // (pgsql отдаёт '38.0', sqlite в тестах теряет дробную часть: 38)
+            'width' => 'decimal:1',
+            'et' => 'decimal:1',
+            'hub_diameter' => 'decimal:1',
             'is_published' => 'boolean',
             'is_bestseller' => 'boolean',
             'is_new' => 'boolean',

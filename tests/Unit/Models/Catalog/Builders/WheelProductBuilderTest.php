@@ -2,7 +2,13 @@
 
 namespace Tests\Unit\Models\Catalog\Builders;
 
+use App\Models\Catalog\Brand\Brand;
+use App\Models\Catalog\Warehouse\Stock;
+use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Catalog\Wheel\WheelProduct;
+use App\Models\Delivery\CatalogPrice;
+use App\Models\Delivery\City;
+use App\Models\Delivery\Region;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -96,5 +102,84 @@ class WheelProductBuilderTest extends TestCase
             ->get();
 
         $this->assertCount(0, $result);
+    }
+
+    public function test_by_catalog_filters_applies_dimension_and_slug_filters(): void
+    {
+        $nokian = Brand::factory()->create(['name' => 'Nokian', 'slug' => 'nokian']);
+        $kama = Brand::factory()->create(['name' => 'Kama', 'slug' => 'kama']);
+
+        $alloyNokian = WheelProduct::factory()->create(['brand_id' => $nokian->id, 'type' => 'alloy', 'pcd' => '5*112']);
+        WheelProduct::factory()->create(['brand_id' => $nokian->id, 'type' => 'steel', 'pcd' => '5*112']);
+        WheelProduct::factory()->create(['brand_id' => $kama->id, 'type' => 'alloy', 'pcd' => '5*114.3']);
+
+        $result = WheelProduct::query()
+            ->byCatalogFilters(1, ['type' => 'alloy', 'pcd' => ['5*112'], 'brand' => 'nokian'])
+            ->get();
+
+        $this->assertSame([$alloyNokian->id], $result->pluck('id')->all());
+    }
+
+    public function test_by_catalog_filters_delivery_bucket(): void
+    {
+        $city = $this->createCity();
+        $fast = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($fast), $city, deliveryMin: 1);
+
+        $slow = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($slow), $city, deliveryMin: 6);
+
+        $result = WheelProduct::query()
+            ->byCatalogFilters($city->id, ['delivery' => ['after5days']])
+            ->get();
+
+        $this->assertSame([$slow->id], $result->pluck('id')->all());
+    }
+
+    public function test_by_catalog_filters_requires_city_price(): void
+    {
+        $city = $this->createCity();
+        $priced = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($priced), $city, price: 1000);
+
+        $unpriced = WheelProduct::factory()->create();
+        $this->createStock($unpriced);
+
+        $result = WheelProduct::query()
+            ->byCatalogFilters($city->id, [], requireCityPrice: true)
+            ->get();
+
+        $this->assertSame([$priced->id], $result->pluck('id')->all());
+    }
+
+    private function createCity(): City
+    {
+        return City::create(['region_id' => Region::create(['code' => '74', 'name' => 'Область'])->id, 'name' => 'Город', 'sort' => 1]);
+    }
+
+    private function createStock(WheelProduct $wheel, array $overrides = []): Stock
+    {
+        return Stock::create(array_merge([
+            'stockable_type' => $wheel->getMorphClass(),
+            'stockable_id' => $wheel->id,
+            'warehouse_id' => Warehouse::factory()->create()->id,
+            'quantity' => 5,
+            'price' => 1000,
+        ], $overrides));
+    }
+
+    private function createCatalogPrice(
+        Stock $stock,
+        City $city,
+        ?float $price = 1000,
+        ?int $deliveryMin = 2,
+    ): CatalogPrice {
+        return CatalogPrice::create([
+            'stock_id' => $stock->id,
+            'city_id' => $city->id,
+            'price' => $price,
+            'delivery_min' => $deliveryMin,
+            'delivery_max' => $deliveryMin,
+        ]);
     }
 }

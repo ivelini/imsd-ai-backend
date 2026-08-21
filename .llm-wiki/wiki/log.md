@@ -57,3 +57,7 @@
 - Updated: Шина (TireProduct) — поле euro_label jsonb + каст EuroLabelCast
 - Updated: Импорт каталога из XLSX — RowMapper::map в пайплайне, описания и парсер description_euro_label
 - Updated: Публичный API каталога — euro_label в структуре элемента листинга
+
+## [2026-08-21] ingest | Публичный каталог дисков: фасеты + листинг
+- Updated: Диск (WheelProduct) — касты decimal:1, byCatalogFilters, публичный каталог
+- Updated: Кеширование — wheel-filter/wheel-list, WheelProductObserver, 6 обсерверов + импорт-джобы

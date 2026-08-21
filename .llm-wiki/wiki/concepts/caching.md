@@ -23,11 +23,11 @@
 
 ## Ключ
 
-Кеш фильтра `TireFilterValuesCacheService` — ключ `tire-filter:{cityId|null→'default'}:{md5(фильтров)}`: город и фильтры в ключе. Так как вариантов много (город × набор фильтров), `forget()` сбрасывает все варианты по индексу ключей (при `remember()` ключ регистрируется в индексе). Драйвер — database, теги недоступны.
+Кеши фильтров `TireFilterValuesCacheService` (ключ `tire-filter:{cityId|null→'default'}:{md5(фильтров)}`) и `WheelFilterValuesCacheService` (ключ `wheel-filter:...`); кеши листингов `TireListCacheService` (`tire-list:v5:...`) и `WheelListCacheService` (`wheel-list:v1:...`). Город и фильтры в ключе. Так как вариантов много (город × набор фильтров), `forget()` сбрасывает все варианты по индексу ключей (при `remember()` ключ регистрируется в индексе). Драйвер — database, теги недоступны.
 
 ## Сериализация payload (ADR 0004)
 
-В кеш — только чистый массив: `json_decode($resource->toJson(), true)` (JSON-roundtrip). `resolve()`/`toArray()` не рекурсивны — вложенные Resource (brand, images) остаются объектами и при `unserialize` оживают как `__PHP_Incomplete_Class` (баг листинга 2026-08-19). Схема ключа версионируется (`tire-list:v5:...`) — смена формата payload инвалидирует старые ключи (v2 → v3: поле model; v3 → v4: season объектом; v4 → v5: meta.seo, 2026-08-21).
+В кеш — только чистый массив: `json_decode($resource->toJson(), true)` (JSON-roundtrip). `resolve()`/`toArray()` не рекурсивны — вложенные Resource (brand, images) остаются объектами и при `unserialize` оживают как `__PHP_Incomplete_Class` (баг листинга 2026-08-19). Схема ключа версионируется (`tire-list:v5:...`, `wheel-list:v1:...`) — смена формата payload инвалидирует старые ключи (v2 → v3: поле model; v3 → v4: season объектом; v4 → v5: meta.seo, 2026-08-21). Каталог дисков (2026-08-21): wheel-сервисы сбрасывают те же 6 обсерверов (Stock, DeliverySchedule, CityDeliveryTime, CityPriceRule, WarehouseMarkupRule, TireProduct) + WheelProductObserver + ImportMasterJob / PointImportJob.
 
 ## See Also
 

@@ -126,7 +126,6 @@
                     {
                         "name": "delivery[]",
                         "in": "query",
-                        "required": true,
                         "schema": {
                             "type": "array",
                             "enum": [
@@ -179,6 +178,18 @@
                                 "integer",
                                 "null"
                             ]
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "\u0413\u043e\u0440\u043e\u0434 \u0441\u043b\u0430\u0433\u043e\u043c (\u0431\u0435\u0437 exists: \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u0439 \u0441\u043b\u0430\u0433 \u043d\u0435 422 \u2014 \u0444\u043e\u043b\u0431\u044d\u043a \u043d\u0430 \u0434\u0435\u0444\u043e\u043b\u0442\u043d\u044b\u0439 \u0433\u043e\u0440\u043e\u0434).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
                         }
                     },
                     {
@@ -257,6 +268,9 @@
                                                     "name": {
                                                         "type": "string"
                                                     },
+                                                    "slug": {
+                                                        "type": "string"
+                                                    },
                                                     "brand": {
                                                         "type": "object",
                                                         "properties": {
@@ -265,11 +279,15 @@
                                                             },
                                                             "name": {
                                                                 "type": "string"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string"
                                                             }
                                                         },
                                                         "required": [
                                                             "id",
-                                                            "name"
+                                                            "name",
+                                                            "slug"
                                                         ]
                                                     },
                                                     "model": {
@@ -313,7 +331,10 @@
                                                         ]
                                                     },
                                                     "season": {
-                                                        "type": "object",
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
                                                         "properties": {
                                                             "label": {
                                                                 "type": "string"
@@ -329,6 +350,28 @@
                                                     },
                                                     "is_studded": {
                                                         "type": "boolean"
+                                                    },
+                                                    "euro_label": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "rollingResistance": {
+                                                                "type": "string"
+                                                            },
+                                                            "wetGrip": {
+                                                                "type": "string"
+                                                            },
+                                                            "noiseEmission": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "rollingResistance",
+                                                            "wetGrip",
+                                                            "noiseEmission"
+                                                        ]
                                                     },
                                                     "price": {
                                                         "type": [
@@ -370,6 +413,7 @@
                                                 "required": [
                                                     "id",
                                                     "name",
+                                                    "slug",
                                                     "brand",
                                                     "model",
                                                     "width",
@@ -377,6 +421,483 @@
                                                     "diameter",
                                                     "season",
                                                     "is_studded",
+                                                    "euro_label",
+                                                    "price",
+                                                    "delivery_min",
+                                                    "delivery_max",
+                                                    "images"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "seo": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "title": {
+                                                            "type": "string"
+                                                        },
+                                                        "description": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "title",
+                                                        "description"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "current_page",
+                                                "last_page",
+                                                "per_page",
+                                                "total",
+                                                "seo"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/catalog/wheels": {
+            "get": {
+                "operationId": "catalog.getWheelList",
+                "description": "\u0424\u0438\u043b\u044c\u0442\u0440\u044b \u043a\u0430\u0442\u0430\u043b\u043e\u0433\u0430, \u043f\u0430\u0433\u0438\u043d\u0430\u0446\u0438\u044f, \u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u043f\u043e \u0446\u0435\u043d\u0435 \u0433\u043e\u0440\u043e\u0434\u0430.",
+                "summary": "\u0421\u043f\u0438\u0441\u043e\u043a \u0434\u0438\u0441\u043a\u043e\u0432 \u0434\u043b\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0433\u043e \u0433\u043e\u0440\u043e\u0434\u0430 (\u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u2014 \u0438\u0437 config/shop.php)",
+                "tags": [
+                    "\u041a\u0430\u0442\u0430\u043b\u043e\u0433"
+                ],
+                "parameters": [
+                    {
+                        "name": "width[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 1,
+                                "maximum": 20
+                            }
+                        }
+                    },
+                    {
+                        "name": "diameter[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 50
+                            }
+                        }
+                    },
+                    {
+                        "name": "pcd[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 20
+                            }
+                        }
+                    },
+                    {
+                        "name": "et[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 10
+                            }
+                        }
+                    },
+                    {
+                        "name": "hub_diameter[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 10
+                            }
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "\u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b: alloy, steel, forged.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "alloy",
+                                "steel",
+                                "forged",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "color",
+                        "in": "query",
+                        "description": "\u0426\u0432\u0435\u0442.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 50
+                        }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "\u0411\u0440\u0435\u043d\u0434 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "\u0421\u0442\u0440\u0430\u043d\u0430 \u0431\u0440\u0435\u043d\u0434\u0430 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "delivery[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "enum": [
+                                "today",
+                                "between1and3days",
+                                "between3and5days",
+                                "after5days"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "today",
+                                    "between1and3days",
+                                    "between3and5days",
+                                    "after5days"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "price_min",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u043e\u0442.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "price_max",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u0434\u043e.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "ID \u0433\u043e\u0440\u043e\u0434\u0430 \u0434\u043b\u044f \u0440\u0430\u0441\u0447\u0451\u0442\u0430 \u0446\u0435\u043d\u044b \u0438 \u0434\u043e\u0441\u0442\u0430\u0432\u043a\u0438 (\u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u2014 \u0438\u0437 config/shop.php).",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "\u0413\u043e\u0440\u043e\u0434 \u0441\u043b\u0430\u0433\u043e\u043c (\u0431\u0435\u0437 exists: \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u0439 \u0441\u043b\u0430\u0433 \u043d\u0435 422 \u2014 \u0444\u043e\u043b\u0431\u044d\u043a \u043d\u0430 \u0434\u0435\u0444\u043e\u043b\u0442\u043d\u044b\u0439 \u0433\u043e\u0440\u043e\u0434).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "\u041d\u043e\u043c\u0435\u0440 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u044b.",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "\u042d\u043b\u0435\u043c\u0435\u043d\u0442\u043e\u0432 \u043d\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435 (10\u2013100, \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e 48).",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 10,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "\u0421\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0430 \u2014 \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e \u0446\u0435\u043d\u0435 \u0433\u043e\u0440\u043e\u0434\u0430.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "price",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_dir",
+                        "in": "query",
+                        "description": "\u041d\u0430\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0441\u043e\u0440\u0442\u0438\u0440\u043e\u0432\u043a\u0438.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "asc",
+                                "desc",
+                                null
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "slug": {
+                                                        "type": "string"
+                                                    },
+                                                    "brand": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "slug"
+                                                        ]
+                                                    },
+                                                    "model": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "slug"
+                                                        ]
+                                                    },
+                                                    "width": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "diameter": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "pcd": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "et": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "hub_diameter": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "type": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    },
+                                                    "color": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "price": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "delivery_min": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "delivery_max": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "images": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "url"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "slug",
+                                                    "brand",
+                                                    "model",
+                                                    "width",
+                                                    "diameter",
+                                                    "pcd",
+                                                    "et",
+                                                    "hub_diameter",
+                                                    "type",
+                                                    "color",
                                                     "price",
                                                     "delivery_min",
                                                     "delivery_max",
@@ -638,7 +1159,6 @@
                     {
                         "name": "delivery[]",
                         "in": "query",
-                        "required": true,
                         "schema": {
                             "type": "array",
                             "enum": [
@@ -691,6 +1211,18 @@
                                 "integer",
                                 "null"
                             ]
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "\u0413\u043e\u0440\u043e\u0434 \u0441\u043b\u0430\u0433\u043e\u043c (\u0431\u0435\u0437 exists: \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u0439 \u0441\u043b\u0430\u0433 \u043d\u0435 422 \u2014 \u0444\u043e\u043b\u0431\u044d\u043a \u043d\u0430 \u0434\u0435\u0444\u043e\u043b\u0442\u043d\u044b\u0439 \u0433\u043e\u0440\u043e\u0434).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
                         }
                     }
                 ],
@@ -891,6 +1423,430 @@
                 }
             }
         },
+        "/reference/filter/wheel": {
+            "get": {
+                "operationId": "catalog.getWheelFilterValues",
+                "description": "\u041f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442 query-\u0444\u0438\u043b\u044c\u0442\u0440\u044b \u0438 \u0441\u0443\u0436\u0430\u0435\u0442 \u0444\u0430\u0441\u0435\u0442\u044b \u0434\u043e \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0445 \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0439.",
+                "summary": "\u0424\u0430\u0441\u0435\u0442\u044b \u0444\u0438\u043b\u044c\u0442\u0440\u0430 \u0434\u0438\u0441\u043a\u043e\u0432 \u0434\u043b\u044f \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0433\u043e \u0433\u043e\u0440\u043e\u0434\u0430 (\u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u2014 \u0438\u0437 config/shop.php)",
+                "tags": [
+                    "\u0421\u043f\u0440\u0430\u0432\u043e\u0447\u043d\u0438\u043a / \u0444\u0438\u043b\u044c\u0442\u0440"
+                ],
+                "parameters": [
+                    {
+                        "name": "width[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "number",
+                                "minimum": 1,
+                                "maximum": 20
+                            }
+                        }
+                    },
+                    {
+                        "name": "diameter[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 50
+                            }
+                        }
+                    },
+                    {
+                        "name": "pcd[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 20
+                            }
+                        }
+                    },
+                    {
+                        "name": "et[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 10
+                            }
+                        }
+                    },
+                    {
+                        "name": "hub_diameter[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 10
+                            }
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "\u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b: alloy, steel, forged.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "alloy",
+                                "steel",
+                                "forged",
+                                null
+                            ]
+                        }
+                    },
+                    {
+                        "name": "color",
+                        "in": "query",
+                        "description": "\u0426\u0432\u0435\u0442.",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 50
+                        }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "\u0411\u0440\u0435\u043d\u0434 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "\u0421\u0442\u0440\u0430\u043d\u0430 \u0431\u0440\u0435\u043d\u0434\u0430 (slug).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "delivery[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "enum": [
+                                "today",
+                                "between1and3days",
+                                "between3and5days",
+                                "after5days"
+                            ],
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "today",
+                                    "between1and3days",
+                                    "between3and5days",
+                                    "after5days"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "price_min",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u043e\u0442.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "price_max",
+                        "in": "query",
+                        "description": "\u0426\u0435\u043d\u0430 \u0434\u043e.",
+                        "schema": {
+                            "type": [
+                                "number",
+                                "null"
+                            ],
+                            "minimum": 0
+                        }
+                    },
+                    {
+                        "name": "city_id",
+                        "in": "query",
+                        "description": "ID \u0433\u043e\u0440\u043e\u0434\u0430 \u0434\u043b\u044f \u0440\u0430\u0441\u0447\u0451\u0442\u0430 \u0446\u0435\u043d\u044b \u0438 \u0434\u043e\u0441\u0442\u0430\u0432\u043a\u0438 (\u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u2014 \u0438\u0437 config/shop.php).",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "\u0413\u043e\u0440\u043e\u0434 \u0441\u043b\u0430\u0433\u043e\u043c (\u0431\u0435\u0437 exists: \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u0439 \u0441\u043b\u0430\u0433 \u043d\u0435 422 \u2014 \u0444\u043e\u043b\u0431\u044d\u043a \u043d\u0430 \u0434\u0435\u0444\u043e\u043b\u0442\u043d\u044b\u0439 \u0433\u043e\u0440\u043e\u0434).",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 255
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "`WheelFilterValuesResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "width": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "diameter": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "integer"
+                                                            },
+                                                            "value": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "pcd": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "et": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "hub_diameter": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "type": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "color": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "brand": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "country": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "delivery": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "value": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "label",
+                                                            "value"
+                                                        ]
+                                                    }
+                                                },
+                                                "price": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "min": {
+                                                            "type": "number"
+                                                        },
+                                                        "max": {
+                                                            "type": "number"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "min",
+                                                        "max"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "width",
+                                                "diameter",
+                                                "pcd",
+                                                "et",
+                                                "hub_diameter",
+                                                "type",
+                                                "color",
+                                                "brand",
+                                                "country",
+                                                "delivery",
+                                                "price"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/login": {
             "get": {
                 "operationId": "login",
@@ -1005,6 +1961,58 @@
                     "price"
                 ],
                 "title": "TireFilterValuesResource"
+            },
+            "WheelFilterValuesResource": {
+                "type": "object",
+                "properties": {
+                    "width": {
+                        "type": "string"
+                    },
+                    "diameter": {
+                        "type": "string"
+                    },
+                    "pcd": {
+                        "type": "string"
+                    },
+                    "et": {
+                        "type": "string"
+                    },
+                    "hub_diameter": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "brand": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "delivery": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "width",
+                    "diameter",
+                    "pcd",
+                    "et",
+                    "hub_diameter",
+                    "type",
+                    "color",
+                    "brand",
+                    "country",
+                    "delivery",
+                    "price"
+                ],
+                "title": "WheelFilterValuesResource"
             }
         },
         "responses": {

@@ -1,15 +1,19 @@
 # Публичный API каталога: фасетный фильтр и листинг шин
 
-> Sources: Memory-заметка, 2026-08-14; реализация 2026-08-19 (city_id + инвалидация); реализация 2026-08-19 (листинг, ADR 0004); реализация 2026-08-20 (справочник городов); реализация 2026-08-20 (model в листинге); реализация 2026-08-20 (season-объект, meta.default, slug из характеристик); реализация 2026-08-20 (region в справочнике городов); реализация 2026-08-21 (meta.seo, delivery-массив); реализация 2026-08-21 (euro_label в листинге); Scramble public-api.json, 2026-08
-> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md); [2026-08-19-tire-filter-city-id.md](../../raw/project/2026-08-19-tire-filter-city-id.md); [2026-08-19-public-tire-list.md](../../raw/project/2026-08-19-public-tire-list.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md); [2026-08-20-tire-list-model.md](../../raw/project/2026-08-20-tire-list-model.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-20-city-reference-region.md](../../raw/project/2026-08-20-city-reference-region.md); [2026-08-21-tire-list-seo-delivery-array.md](../../raw/project/2026-08-21-tire-list-seo-delivery-array.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md)
+> Sources: Memory-заметка, 2026-08-14; реализация 2026-08-19 (city_id + инвалидация); реализация 2026-08-19 (листинг, ADR 0004); реализация 2026-08-20 (справочник городов); реализация 2026-08-20 (model в листинге); реализация 2026-08-20 (season-объект, meta.default, slug из характеристик); реализация 2026-08-20 (region в справочнике городов); реализация 2026-08-21 (meta.seo, delivery-массив); реализация 2026-08-21 (euro_label в листинге); реализация 2026-08-21 (каталог дисков); Scramble public-api.json, 2026-08
+> Raw: [public-catalog-filter-api.md](../../raw/project/public-catalog-filter-api.md); [2026-08-19-tire-filter-city-id.md](../../raw/project/2026-08-19-tire-filter-city-id.md); [2026-08-19-public-tire-list.md](../../raw/project/2026-08-19-public-tire-list.md); [2026-08-20-city-reference.md](../../raw/project/2026-08-20-city-reference.md); [2026-08-20-tire-list-model.md](../../raw/project/2026-08-20-tire-list-model.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-20-city-reference-region.md](../../raw/project/2026-08-20-city-reference-region.md); [2026-08-21-tire-list-seo-delivery-array.md](../../raw/project/2026-08-21-tire-list-seo-delivery-array.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md)
 
 ## Overview
 
-Три эндпоинта публичного каталога шин на одном контракте фильтров:
+Пять эндпоинтов публичного каталога на общем контракте фильтров:
 
 - `GET /api/reference/city` — справочник всех городов для дропдаунов: `{label: name, value: id, slug}` (см. раздел «Справочник городов»).
-- `GET /api/reference/filter/tire` — фасеты: width, profile, diameter, season, studded, brand, country, delivery, price. Принимает query-фильтры и сужает фасеты до доступных значений (аналог GetTireDimensions): с выбранным `season` в фасете `width` остаются только ширины доступных шин.
-- `GET /api/catalog/tires` — пагинированный листинг (см. раздел «Листинг»).
+- `GET /api/reference/filter/tire` — фасеты шин: width, profile, diameter, season, studded, brand, country, delivery, price (см. раздел «Фасеты шин»).
+- `GET /api/catalog/tires` — пагинированный листинг шин (см. раздел «Листинг шин»).
+- `GET /api/reference/filter/wheel` — фасеты дисков (см. раздел «Каталог дисков»).
+- `GET /api/catalog/wheels` — пагинированный листинг дисков (см. раздел «Каталог дисков»).
+
+Общие соглашения (город, delivery/price, brand/country по slug, кеш) — разделы «Соглашения контракта» и «Кеш и инвалидация».
 
 ## Справочник городов (GET /api/reference/city)
 
@@ -28,7 +32,7 @@
 - **`width[]`** — множественный query-параметр; **`delivery[]`** — массив бакетов (товар попадает, если min_days входит в любой выбранный; `delivery=…` строкой → 422).
 - **Фильтрация** — единый скоуп `TireProductBuilder::byCatalogFilters(cityId, filters, requireCityPrice)`: общий источник для фасетов и листинга (размеры, сезон, шипы, brand/country по slug, delivery-бакеты, price-диапазон по catalog_prices).
 
-## Листинг (GET /api/catalog/tires)
+## Листинг шин (GET /api/catalog/tires)
 
 Query-параметры = контракт фильтров + `page` (дефолт 1), `per_page` (дефолт 48, лимит 10–100), `sort_by=price` (только цена), `sort_dir` (asc|desc, дефолт desc). Ответ: `{data: [шины], meta: {current_page, last_page, per_page, total, seo}}` (без links).
 
@@ -39,11 +43,20 @@ Query-параметры = контракт фильтров + `page` (дефо�
 - **Сортировка по цене** — скалярный коррелированный подзапрос `CAST(MIN(cp.price) AS NUMERIC)` по стокам города (CAST обязателен для sqlite); без `sort_by` — `id desc` без join.
 - **Структура элемента:** id, name, slug, brand {id, name, slug} (вложенный Resource, whenLoaded), model {id, name, slug} (вложенный Resource `ProductModelReferenceResource`, whenLoaded; null, если `model_id` не задан), width, profile, diameter, season {label: русское название через аксессор `season_label`, value: значение из БД} — объект в формате фасета, is_studded, euro_label {rollingResistance, wetGrip, noiseEmission} (value object `EuroLabel`, null при отсутствии), price, delivery_min, delivery_max, images [{id, url}] (список, whenLoaded). Вложенные сущности — компактными Resource-классами (правило «связанные сущности — через relation и вложенные Resource»).
 
+## Каталог дисков (GET /api/reference/filter/wheel, GET /api/catalog/wheels)
+
+Зеркало каталога шин на морфе `wheel` (stocks/catalog_prices полиморфные — механика delivery/price переносится 1-в-1). Реализация: `GetWheelFilterValues` / `GetWheelList` (Actions, копии шинных), `WheelFacetAssembler` (чистые функции), `WheelProductBuilder::byCatalogFilters` — единый источник фильтров фасетов и листинга.
+
+- **Фасеты** (11): width, diameter, pcd, et, hub_diameter, type, color, brand, country, delivery, price. Форматы: width/et/hub_diameter — decimal как в БД (строка '6.5'/'38.0', каст `decimal:1`); diameter — число **без префикса r** (в отличие от шин); pcd — строка '5*112'; type — `{label: Литые/Стальные/Кованые, value: alloy/steel/forged}` — как season у шин; brand/country — по slug; delivery/price — те же бакеты/диапазон по catalog_prices.
+- **Листинг**: те же соглашения (published + в наличии + цена города через `requireCityPrice`, пагинация 10–100, `sort_by=price` подзапросом, id desc, city_id → city-слаг → дефолт, meta.seo). Элемент: id, name, slug, brand, model, width, diameter, pcd, et, hub_diameter, type {label, value}, color, price, delivery_min, delivery_max, images.
+- **SEO**: один класс для обоих каталогов — `GetCatalogListSeo` (ренейм `GetTireListSeo`); без brand — дефолт config/shop.php «Шины и диски в {city}», с brand — категория по типу бренда («Диски …» для wheel).
+- Валидация фильтров: `WheelFilterValuesRequest` (width[] numeric, diameter[] integer, pcd[]/et[]/hub_diameter[] строки, type — WheelType, brand/country slug) + `WheelListRequest` (пагинация/сортировка).
+
 ## Кеш и инвалидация
 
-- Фасеты: `TireFilterValuesCacheService`, ключ `tire-filter:{cityId|null→'default'}:{md5(filters)}`.
-- Листинг: `TireListCacheService`, ключ `tire-list:v5:{city|default}:{md5(фильтры+page+perPage+sort)}`. **В кеш — только чистый массив** через JSON-roundtrip `json_decode(Resource::collection(...)->toJson(), true)`: `resolve()` не рекурсивный, вложенные Resource ломались при unserialize (`__PHP_Incomplete_Class`), версия в ключе инвалидирует несовместимый кеш при смене payload (v2 — битый кеш Resource-объектов; v3 — поле model; v4 — season объектом; v5 — meta.seo, ADR 0004).
-- Оба сервиса: `forget()` сбрасывает все варианты по индексу ключей (драйвер database — теги недоступны). `catalog_prices` пишется `upsert()` без Eloquent-событий — инвалидация только явным `forget()` в ImportMasterJob / PointImportJob + Observers (6 обсерверов). См. [Кеширование](caching.md).
+- Фасеты: `TireFilterValuesCacheService` (ключ `tire-filter:{cityId|null→'default'}:{md5(filters)}`) и `WheelFilterValuesCacheService` (ключ `wheel-filter:{city|default}:{md5(filters)}`).
+- Листинг: `TireListCacheService`, ключ `tire-list:v5:{city|default}:{md5(фильтры+page+perPage+sort)}`; `WheelListCacheService`, ключ `wheel-list:v1:...`. **В кеш — только чистый массив** через JSON-roundtrip `json_decode(Resource::collection(...)->toJson(), true)`: `resolve()` не рекурсивный, вложенные Resource ломались при unserialize (`__PHP_Incomplete_Class`), версия в ключе инвалидирует несовместимый кеш при смене payload (шины: v2 — битый кеш Resource-объектов; v3 — поле model; v4 — season объектом; v5 — meta.seo, ADR 0004).
+- Все сервисы: `forget()` сбрасывает все варианты по индексу ключей (драйвер database — теги недоступны). `catalog_prices` пишется `upsert()` без Eloquent-событий — инвалидация только явным `forget()` в ImportMasterJob / PointImportJob + Observers (8: Stock, Brand, TireProduct, WheelProduct, DeliverySchedule, CityDeliveryTime, CityPriceRule, WarehouseMarkupRule; первые шесть сбрасывают и wheel-кеши). См. [Кеширование](caching.md).
 
 ## Слои
 

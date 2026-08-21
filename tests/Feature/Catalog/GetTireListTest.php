@@ -218,6 +218,43 @@ class GetTireListTest extends TestCase
         $this->assertEquals(1500.0, $data[0]['price']);
     }
 
+    public function test_accepts_city_slug(): void
+    {
+        $chelyabinsk = City::create([
+            'region_id' => $this->region->id,
+            'name' => 'Челябинск',
+            'slug' => 'chelyabinsk',
+            'sort' => 1,
+        ]);
+
+        $tireA = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tireA), $chelyabinsk, price: 1500);
+
+        $tireB = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tireB), $this->otherCity, price: 500);
+
+        $data = $this->getJson(self::PATH.'?city=chelyabinsk')->json('data');
+
+        // Цена и сео города из слага, а не дефолтного
+        $this->assertCount(1, $data);
+        $this->assertSame($tireA->id, $data[0]['id']);
+        $this->assertEquals(1500.0, $data[0]['price']);
+        $this->assertStringContainsString('в Челябинске', $this->getJson(self::PATH.'?city=chelyabinsk')->json('meta.seo.title'));
+    }
+
+    public function test_unknown_city_slug_falls_back_to_default(): void
+    {
+        $tire = TireProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($tire), $this->defaultCity, price: 2500);
+
+        $response = $this->getJson(self::PATH.'?city=unknown-slug');
+
+        // Несуществующий слаг — не 422, работает дефолтный город
+        $response->assertOk();
+        $this->assertSame(1, $response->json('meta.total'));
+        $this->assertEquals(2500.0, $response->json('data.0.price'));
+    }
+
     public function test_width_filter(): void
     {
         $narrow = TireProduct::factory()->create(['width' => 205]);

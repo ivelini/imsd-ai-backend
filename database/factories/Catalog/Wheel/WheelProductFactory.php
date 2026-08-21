@@ -20,6 +20,10 @@ class WheelProductFactory extends Factory
             'type' => 'alloy',
             'diameter' => fake()->randomElement([15, 16, 17, 18]),
             'width' => fake()->randomFloat(1, 5, 9),
+            'pcd' => fake()->randomElement(['5*112', '5*114.3', '5*120']),
+            'et' => fake()->randomElement([35, 38, 40, 45]),
+            'hub_diameter' => fake()->randomElement([57.1, 66.1, 66.6]),
+            'color' => fake()->randomElement(['серебристый', 'чёрный']),
         ];
     }
 }

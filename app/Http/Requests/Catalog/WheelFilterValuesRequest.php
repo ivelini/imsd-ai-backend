@@ -3,29 +3,35 @@
 namespace App\Http\Requests\Catalog;
 
 use App\Enums\Catalog\DeliveryDaysType;
-use App\Enums\Catalog\Season;
+use App\Enums\Catalog\WheelType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-/** Валидация query-параметров активного фильтра шин (публичный контракт). */
-class TireFilterValuesRequest extends FormRequest
+/** Валидация query-параметров активного фильтра дисков (публичный контракт). */
+class WheelFilterValuesRequest extends FormRequest
 {
     public function rules(): array
     {
         return [
-            /** Ширина профиля в мм. */
+            /** Ширина диска в дюймах (массив). */
             'width' => ['nullable', 'array'],
-            'width.*' => ['integer', 'min:1', 'max:500'],
-            /** Высота профиля в %. */
-            'profile' => ['nullable', 'array'],
-            'profile.*' => ['integer', 'min:1', 'max:150'],
-            /** Посадочный диаметр в дюймах. */
+            'width.*' => ['numeric', 'min:1', 'max:20'],
+            /** Посадочный диаметр в дюймах (массив). */
             'diameter' => ['nullable', 'array'],
-            'diameter.*' => ['string', 'max:10'],
-            /** Сезонность: summer, winter, all-season. */
-            'season' => ['nullable', Rule::in(array_column(Season::cases(), 'value'))],
-            /** Шипованность. */
-            'studded' => ['nullable', Rule::in(['studded', 'not_studded'])],
+            'diameter.*' => ['integer', 'min:1', 'max:50'],
+            /** Разболтовка PCD (массив, строка «5*112»). */
+            'pcd' => ['nullable', 'array'],
+            'pcd.*' => ['string', 'max:20'],
+            /** Вылет ET (массив, строка как в БД, «38.0»). */
+            'et' => ['nullable', 'array'],
+            'et.*' => ['string', 'max:10'],
+            /** Диаметр ступицы DIA (массив, строка как в БД, «66.1»). */
+            'hub_diameter' => ['nullable', 'array'],
+            'hub_diameter.*' => ['string', 'max:10'],
+            /** Материал: alloy, steel, forged. */
+            'type' => ['nullable', Rule::in(array_column(WheelType::cases(), 'value'))],
+            /** Цвет. */
+            'color' => ['nullable', 'string', 'max:50'],
             /** Бренд (slug). */
             'brand' => ['nullable', 'string', 'max:255', 'exists:brands,slug'],
             /** Страна бренда (slug). */

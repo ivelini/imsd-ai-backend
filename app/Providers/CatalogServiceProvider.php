@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use App\Actions\Catalog\Tire\GetTireListSeo;
+use App\Actions\Catalog\GetCatalogListSeo;
 use App\Http\Controllers\Catalog\GetCityReferenceController;
 use App\Http\Controllers\Catalog\GetTireFilterValuesController;
 use App\Http\Controllers\Catalog\GetTireListController;
+use App\Http\Controllers\Catalog\GetWheelFilterValuesController;
+use App\Http\Controllers\Catalog\GetWheelListController;
 use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
@@ -22,9 +24,12 @@ use App\Observers\DeliveryScheduleObserver;
 use App\Observers\StockObserver;
 use App\Observers\TireProductObserver;
 use App\Observers\WarehouseMarkupRuleObserver;
+use App\Observers\WheelProductObserver;
 use App\Services\Cache\Catalog\ReferencesCacheService;
 use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use App\Services\Cache\Catalog\TireListCacheService;
+use App\Services\Cache\Catalog\WheelFilterValuesCacheService;
+use App\Services\Cache\Catalog\WheelListCacheService;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -55,6 +60,20 @@ class CatalogServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->bind(WheelFilterValuesCacheService::class, function (Application $app): WheelFilterValuesCacheService {
+            return new WheelFilterValuesCacheService(
+                $app->make(Repository::class),
+                (int) config('cache_ttl.wheel_filter'),
+            );
+        });
+
+        $this->app->bind(WheelListCacheService::class, function (Application $app): WheelListCacheService {
+            return new WheelListCacheService(
+                $app->make(Repository::class),
+                (int) config('cache_ttl.wheel_list'),
+            );
+        });
+
         $this->app->when(GetTireFilterValuesController::class)
             ->needs('$defaultCityName')
             ->giveConfig('shop.default_city');
@@ -63,11 +82,19 @@ class CatalogServiceProvider extends ServiceProvider
             ->needs('$defaultCityName')
             ->giveConfig('shop.default_city');
 
+        $this->app->when(GetWheelFilterValuesController::class)
+            ->needs('$defaultCityName')
+            ->giveConfig('shop.default_city');
+
+        $this->app->when(GetWheelListController::class)
+            ->needs('$defaultCityName')
+            ->giveConfig('shop.default_city');
+
         $this->app->when(GetCityReferenceController::class)
             ->needs('$defaultCityName')
             ->giveConfig('shop.default_city');
 
-        $this->app->when(GetTireListSeo::class)
+        $this->app->when(GetCatalogListSeo::class)
             ->needs('$defaultSeo')
             ->giveConfig('shop.seo');
     }
@@ -83,6 +110,7 @@ class CatalogServiceProvider extends ServiceProvider
         Brand::observe(BrandObserver::class);
 
         TireProduct::observe(TireProductObserver::class);
+        WheelProduct::observe(WheelProductObserver::class);
         Stock::observe(StockObserver::class);
         DeliverySchedule::observe(DeliveryScheduleObserver::class);
         CityDeliveryTime::observe(CityDeliveryTimeObserver::class);

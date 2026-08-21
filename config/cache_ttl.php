@@ -10,4 +10,10 @@ return [
 
     /** Листинг шин (публичный каталог). */
     'tire_list' => (int) env('CACHE_TTL_TIRE_LIST', 3600),
+
+    /** Фасеты фильтра дисков (публичный каталог). */
+    'wheel_filter' => (int) env('CACHE_TTL_WHEEL_FILTER', 3600),
+
+    /** Листинг дисков (публичный каталог). */
+    'wheel_list' => (int) env('CACHE_TTL_WHEEL_LIST', 3600),
 ];

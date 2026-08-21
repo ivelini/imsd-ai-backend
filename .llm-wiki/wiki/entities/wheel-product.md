@@ -1,7 +1,7 @@
 # Диск (WheelProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; публичный каталог и касты 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md)
 
 ## Overview
 
@@ -17,6 +17,8 @@
 | Геометрия | `width`, `diameter`, `et` (вылет), `pcd` (напр. «5*114.3»), `hub_diameter` (DIA), `bolts` |
 | Прочее | `description`, `image` |
 
+Касты (с 2026-08-21): `width`, `et`, `hub_diameter` — `decimal:1` (стабильная строка '6.5'/'38.0' на чтении/записи; sqlite в тестах терял дробную часть). Фильтры `byWidths/byEts/byHubDiameters` нормализуют вход `number_format(1)` — сравнение со значениями БД в обеих средах.
+
 `slug` = `{brand-slug}-{name}-{width}-{diameter}-{et}-{pcd}-{hub_diameter}` (`4*98` → `4x98`, точка в hub_diameter сохраняется; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 
 ## Парсинг при импорте
@@ -31,9 +33,14 @@
 
 Полиморф: `stocks`, `images`, `promotions`, `order_items` (`itemable`). Морф-тип: `wheel` → `WheelProduct`.
 
+## Публичный каталог
+
+С 2026-08-21: фасеты (`/api/reference/filter/wheel`) и листинг (`/api/catalog/wheels`) по образцу шин. Фильтры — `WheelProductBuilder::byCatalogFilters(cityId, filters, requireCityPrice)` (единственный источник для фасетов и листинга; brand/country по slug, delivery/price по stocks+catalog_prices морфа 'wheel'). См. [Публичный API каталога](../concepts/public-catalog-filter-api.md).
+
 ## See Also
 
 - [Шина (TireProduct)](tire-product.md)
 - [Запись catalog_prices](catalog-price.md)
 - [Импорт каталога из XLSX](../concepts/xlsx-import-pipeline.md)
 - [Каталог: ценообразование](../concepts/catalog-pricing.md)
+- [Публичный API каталога](../concepts/public-catalog-filter-api.md)

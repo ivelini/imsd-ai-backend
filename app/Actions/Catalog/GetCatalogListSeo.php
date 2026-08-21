@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Actions\Catalog\Tire;
+namespace App\Actions\Catalog;
 
 use App\Models\Catalog\Brand\Brand;
 use App\Services\Catalog\SeoTitleBuilder;
 
 /**
- * SEO-мета листинга: при выбранном brand — из brands (title с городом, description);
- * без brand — дефолт из config/shop.php.
+ * SEO-мета листинга каталога (шины и диски): при выбранном brand — из brands
+ * (title с городом, description); без brand — дефолт из config/shop.php.
  */
-final readonly class GetTireListSeo
+final readonly class GetCatalogListSeo
 {
     /** @param  array{title: string, description: string|null}  $defaultSeo  */
     public function __construct(
