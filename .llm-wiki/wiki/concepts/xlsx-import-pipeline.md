@@ -1,7 +1,7 @@
 # Импорт каталога из XLSX: пайплайн
 
-> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
+> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21; origin и перенос description 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md); [2026-08-21-product-origin-description-move.md](../../raw/project/2026-08-21-product-origin-description-move.md)
 
 ## Overview
 
@@ -34,8 +34,9 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 - `stock` → склад (у кого купили). Колонка `supplier` (завод-изготовитель) удалена из маппинга 2026-08-19 вместе со справочником.
 - `price` → `stocks.purchase_price`; наценка склада применяется при импорте → `stocks.price`; далее `catalog_prices` (см. [Каталог: ценообразование](catalog-pricing.md)).
 - `image` — URL, скачивается и кладётся в `images` (`is_main=true`).
-- Описания (`description_vendor`, `description_default`, `description_manufacture_country`, `description_manufacture_year`) — JSON-объект в `tire_products.description` (null, если пусто). С 2026-08-21 строка маппится `RowMapper::map()` в `TireRowProcessor` (раньше `ImportTireRow::fromArray()` терял описания — писалось `"[]"`).
-- Евро-лейбл `description_euro_label` («D/C/71») → `tire_products.euro_label` jsonb `{rollingResistance, wetGrip, noiseEmission}` через `RowMapper::parseEuroLabel` (буквы A–G, шум 2–3 цифры; невалидно → null, строка не падает). Отдельная колонка, в JSON-описании не дублируется.
+- Описание — единая колонка `description` (text) → `product_models.description` при каждом импорте строки с колонкой; колонки нет в файле → description модели не трогается (флаг description_present). С 2026-08-21: колонки `description` у товаров удалены, старые колонки описаний (vendor_description/description_default/description_manufacture_*) не читаются, DescriptionBuilder удалён.
+- Происхождение (с 2026-08-21): опциональные колонки `origin_vendor`, `origin_manufacture_country`, `origin_manufacture_year` (формат `##Badge## <p>…</p>`) → `product_origins` (jsonb `{badge, description}`, UNIQUE-триплет) → `origin_id` товара; колонок нет → origin_id не трогается. См. [Происхождение товара (ProductOrigin)](../entities/product-origin.md).
+- Евро-лейбл `description_euro_label` («D/C/71») → `tire_products.euro_label` jsonb `{rollingResistance, wetGrip, noiseEmission}` через `RowMapper::parseEuroLabel` (буквы A–G, шум 2–3 цифры; невалидно → null, строка не падает). Отдельная колонка.
 - Точки выдачи: регион/city → regions/cities; колонки диапазонов `0-5000 … 15001-100000` → `city_price_rules`; срок → `city_delivery_times`; адрес и контакты → `delivery_points`.
 - Автомобили (CSV): марка → модели → модификации (поколение, годы); шины/диски OEM/замена/тюнинг — split по `|`, каждое значение → своя строка (`vehicle_tire_sizes` / `vehicle_wheel_specs`).
 
@@ -51,5 +52,6 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 
 - [Шина (TireProduct)](../entities/tire-product.md)
 - [Диск (WheelProduct)](../entities/wheel-product.md)
+- [Происхождение товара (ProductOrigin)](../entities/product-origin.md)
 - [Каталог: ценообразование](catalog-pricing.md)
 - [Город и география](../entities/geo-city.md)

@@ -52,7 +52,7 @@ class TireRowProcessorTest extends TestCase
         $this->assertSame(0, Stock::count());
     }
 
-    public function test_processor_persists_descriptions_and_euro_label(): void
+    public function test_processor_persists_description_and_euro_label(): void
     {
         app(TireRowProcessor::class)->process([
             'ean' => 'T-001',
@@ -63,17 +63,17 @@ class TireRowProcessorTest extends TestCase
             'profile' => '55',
             'diameter' => '16',
             'load_speed_index' => '91T',
-            'description_default' => 'Описание',
+            'description' => 'Описание',
             'description_euro_label' => 'D/C/71',
         ]);
 
         $tire = TireProduct::where('ean', 'T-001')->firstOrFail();
 
-        $this->assertSame(['default' => 'Описание'], json_decode($tire->description, true));
+        $this->assertSame('Описание', $tire->model->description);
         $this->assertEquals(new EuroLabel('D', 'C', '71'), $tire->euro_label);
     }
 
-    public function test_processor_sets_null_description_without_descriptions(): void
+    public function test_processor_keeps_null_model_description_without_column(): void
     {
         app(TireRowProcessor::class)->process([
             'ean' => 'T-001',
@@ -88,7 +88,7 @@ class TireRowProcessorTest extends TestCase
 
         $tire = TireProduct::where('ean', 'T-001')->firstOrFail();
 
-        $this->assertNull($tire->description);
+        $this->assertNull($tire->model->description);
         $this->assertNull($tire->euro_label);
     }
 }

@@ -25,6 +25,7 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
         $this->ensureEanNotEmpty->ensure($ean);
 
         $exists = WheelProduct::where('ean', $ean)->exists();
+        $originKeys = ['origin_vendor', 'origin_manufacture_country', 'origin_manufacture_year'];
 
         $this->upsertWheelProduct->execute(new UpsertWheelProductInput(
             ean: $ean,
@@ -39,7 +40,12 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
             hubDiameter: $rowData['hub_diameter'] ?? null,
             et: $rowData['et'] ?? null,
             wheelTypeRaw: $rowData['wheel_type_raw'] ?? null,
-            description: $rowData['description_vendor'] ?? null,
+            description: $this->nullableString($rowData['description'] ?? null),
+            descriptionPresent: array_key_exists('description', $rowData),
+            originVendor: OriginParser::parse($rowData['origin_vendor'] ?? null),
+            originManufactureCountry: OriginParser::parse($rowData['origin_manufacture_country'] ?? null),
+            originManufactureYear: OriginParser::parse($rowData['origin_manufacture_year'] ?? null),
+            originPresent: $this->hasKey($rowData, $originKeys),
         ));
 
         $stockId = null;
@@ -56,5 +62,24 @@ final readonly class WheelRowProcessor implements ChunkRowProcessor
         }
 
         return new RowProcessResult(created: ! $exists, stockId: $stockId);
+    }
+
+    private function nullableString(?string $value): ?string
+    {
+        $v = trim($value ?? '');
+
+        return $v === '' ? null : $v;
+    }
+
+    /** Колонка есть в файле, если её ключ присутствует в данных строки (даже со значением null/''). */
+    private function hasKey(array $data, array $keys): bool
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $data)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

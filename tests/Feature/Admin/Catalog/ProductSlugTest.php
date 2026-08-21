@@ -227,7 +227,12 @@ class ProductSlugTest extends TestCase
             purchase_price: null,
             minimum_market_price: null,
             euroLabel: null,
-            descriptions: [],
+            description: null,
+            description_present: false,
+            origin_vendor: null,
+            origin_manufacture_country: null,
+            origin_manufacture_year: null,
+            origin_present: false,
             promos: [],
         );
     }

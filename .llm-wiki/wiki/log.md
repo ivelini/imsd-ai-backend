@@ -66,3 +66,9 @@
 - Updated: Шина (TireProduct) — name по TireNameBuilder, slug brand-model-размер-индекс-флаги
 - Updated: Диск (WheelProduct) — slug: точки → дефисы
 - Updated: Импорт каталога из XLSX — slug модели только из названия, маппинг name/slug
+
+## [2026-08-21] ingest | Происхождение товара (ProductOrigin) и перенос description на модель
+- Created: Происхождение товара (ProductOrigin)
+- Updated: Шина (TireProduct) — origin_id, description на модели
+- Updated: Диск (WheelProduct) — origin_id, description на модели
+- Updated: Импорт каталога из XLSX — маппинг origin-колонок и description

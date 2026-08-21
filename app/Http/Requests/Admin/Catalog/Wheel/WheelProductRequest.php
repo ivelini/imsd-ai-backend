@@ -33,7 +33,6 @@ class WheelProductRequest extends FormRequest
             'hub_diameter' => ['nullable', 'numeric'],
             'width' => ['nullable', 'numeric'],
             'diameter' => ['nullable', 'integer'],
-            'description' => ['nullable', 'string'],
             'is_published' => ['boolean'],
             'is_bestseller' => ['boolean'],
             'is_new' => ['boolean'],

@@ -4,6 +4,7 @@ namespace App\Services\TireImport;
 
 use App\DTOs\Catalog\Tire\EuroLabel;
 use App\DTOs\TireImport\ImportTireRow;
+use App\Services\Import\OriginParser;
 
 /** Маппинг сырой строки XLSX → DTO. */
 final class RowMapper
@@ -43,18 +44,13 @@ final class RowMapper
      */
     public function map(array $data): ImportTireRow
     {
-        $descriptions = [
-            'vendor' => $data['vendor_description'] ?? $data['description_vendor'] ?? null,
-            'default' => $data['description_default'] ?? null,
-            'manufacture_country' => $data['description_manufacture_country'] ?? null,
-            'manufacture_year' => $data['description_manufacture_year'] ?? null,
-        ];
-
         $promos = [];
         for ($i = 1; $i <= 5; $i++) {
             $key = "promo_{$i}";
             $promos[$key] = $data[$key] ?? null;
         }
+
+        $originPresent = $this->hasKey($data, ['origin_vendor', 'origin_manufacture_country', 'origin_manufacture_year']);
 
         return new ImportTireRow(
             ean: trim($data['ean'] ?? $data['product_article'] ?? ''),
@@ -73,9 +69,26 @@ final class RowMapper
             purchase_price: $this->nullableFloat($data['purchase_price'] ?? $data['price'] ?? null),
             minimum_market_price: $this->nullableFloat($data['minimum_market_price'] ?? null),
             euroLabel: $this->parseEuroLabel($data['description_euro_label'] ?? null),
-            descriptions: $descriptions,
+            description: $this->nullableString($data['description'] ?? null),
+            description_present: $this->hasKey($data, ['description']),
+            origin_vendor: OriginParser::parse($data['origin_vendor'] ?? null),
+            origin_manufacture_country: OriginParser::parse($data['origin_manufacture_country'] ?? null),
+            origin_manufacture_year: OriginParser::parse($data['origin_manufacture_year'] ?? null),
+            origin_present: $originPresent,
             promos: $promos,
         );
+    }
+
+    /** Колонка есть в файле, если её ключ присутствует в данных строки (даже со значением null/''). */
+    private function hasKey(array $data, array $keys): bool
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $data)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function toBool(?string $value): bool

@@ -53,8 +53,6 @@ class TireProductRequest extends FormRequest
             'is_xl' => ['boolean'],
             /** Год выпуска. */
             'year' => ['nullable', 'integer', 'min:2000', 'max:2030'],
-            /** Описание товара (JSON). */
-            'description' => ['nullable', 'string'],
             /** Опубликован на сайте. */
             'is_published' => ['boolean'],
             /** Хит продаж. */

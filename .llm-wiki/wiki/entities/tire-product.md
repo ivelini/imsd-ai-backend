@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20; евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20; евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21; origin и перенос description 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md); [2026-08-21-product-origin-description-move.md](../../raw/project/2026-08-21-product-origin-description-move.md)
 
 ## Overview
 
@@ -12,12 +12,12 @@
 | Группа | Поля |
 |--------|------|
 | Идентификация | `id`, `brand_id` (FK, денормализовано), `model_id` (FK → product_models), `name` (отображаемое), `slug` (уникальный, URL карточки), `ean` (артикул) |
-| Происхождение | `country_id` (FK → countries). `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
+| Происхождение | `country_id` (FK → countries). `origin_id` (FK → product_origins, nullable): производитель/страна/год производства (с 2026-08-21). `supplier_id` удалён 2026-08-19 |
 | Размеры | `width`, `profile`, `diameter` (diameter — string: может быть «16C», «R16») |
 | Индексы | `load_index`, `speed_index` (из «86T» → 86, T) |
 | Характеристики | `season` (winter/summer/all-season), `is_studded`, `is_runflat`, `is_xl`, `year` |
 | Евро-лейбл | `euro_label` (jsonb: `{rollingResistance: A–G, wetGrip: A–G, noiseEmission: dB}` — value object `EuroLabel` + каст `EuroLabelCast`; мусор в БД → null) |
-| Прочее | `description` (JSON-строка: vendor/default/manufacture_country/manufacture_year; null, если пусто), `image` |
+| Прочее | `image`. Колонка `description` удалена 2026-08-21 — описание живёт на модели (`product_models.description`, text из колонки XLSX `description`) |
 
 `is_xl` и `year` при импорте не заполняются (нет в XLSX) — вручную в админке.
 
@@ -32,6 +32,7 @@
 - Полиморф: `stocks` (остатки и цены по складам), `images`, `promotions`, `order_items` (`itemable`).
 - Морф-тип: `tire` → `TireProduct` (AppServiceProvider).
 - Парсинг размеров: `235/50 R18` → width=235, profile=50, diameter=18.
+- `origin` (belongsTo → product_origins): производитель, страна, год производства из origin-колонок XLSX (см. [Происхождение товара (ProductOrigin)](product-origin.md)).
 
 ## Цена
 

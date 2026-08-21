@@ -6,6 +6,7 @@ use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\ProductSlugService;
+use App\Services\Import\OriginResolver;
 use App\Services\TireImport\ReferenceResolver;
 
 /** Создание или обновление товара (диска) по EAN. */
@@ -26,6 +27,7 @@ final readonly class UpsertWheelProduct
     public function __construct(
         private ReferenceResolver $referenceResolver,
         private ProductSlugService $slugService,
+        private OriginResolver $originResolver,
     ) {}
 
     public function execute(UpsertWheelProductInput $input): void
@@ -33,6 +35,16 @@ final readonly class UpsertWheelProduct
         $brand = $this->referenceResolver->resolveBrand($input->brandName, 'wheel');
         $modelName = ReferenceResolver::parseWheelModelName($input->name);
         $model = $this->referenceResolver->resolveModel($brand, $modelName, 'wheel');
+
+        if ($input->descriptionPresent) {
+            $model->update(['description' => $input->description]);
+        }
+
+        $origin = $this->originResolver->resolve(
+            $input->originVendor,
+            $input->originManufactureCountry,
+            $input->originManufactureYear,
+        );
 
         $country = $input->countryName !== null
             ? $this->referenceResolver->resolveCountry($input->countryName)
@@ -43,33 +55,35 @@ final readonly class UpsertWheelProduct
 
         $existing = WheelProduct::where('ean', $input->ean)->first();
 
-        WheelProduct::updateOrCreate(
-            ['ean' => $input->ean],
-            [
-                'brand_id' => $brand->id,
-                'model_id' => $model->id,
-                'name' => $input->name,
-                'slug' => $this->slugService->wheel(
-                    brandId: $brand->id,
-                    name: $input->name,
-                    width: $input->width,
-                    diameter: $input->diameter,
-                    et: $input->et,
-                    pcd: $pcd,
-                    hubDiameter: $input->hubDiameter,
-                    ignoreId: $existing?->id,
-                ),
-                'country_id' => $country?->id,
-                'type' => $wheelType,
-                'color' => $input->color,
-                'pcd' => $pcd,
-                'hub_diameter' => $input->hubDiameter !== null ? (float) $input->hubDiameter : null,
-                'et' => $input->et !== null ? (float) $input->et : null,
-                'width' => $input->width !== null ? (float) $input->width : null,
-                'diameter' => $input->diameter,
-                'description' => $input->description,
-            ],
-        );
+        $data = [
+            'brand_id' => $brand->id,
+            'model_id' => $model->id,
+            'name' => $input->name,
+            'slug' => $this->slugService->wheel(
+                brandId: $brand->id,
+                name: $input->name,
+                width: $input->width,
+                diameter: $input->diameter,
+                et: $input->et,
+                pcd: $pcd,
+                hubDiameter: $input->hubDiameter,
+                ignoreId: $existing?->id,
+            ),
+            'country_id' => $country?->id,
+            'type' => $wheelType,
+            'color' => $input->color,
+            'pcd' => $pcd,
+            'hub_diameter' => $input->hubDiameter !== null ? (float) $input->hubDiameter : null,
+            'et' => $input->et !== null ? (float) $input->et : null,
+            'width' => $input->width !== null ? (float) $input->width : null,
+            'diameter' => $input->diameter,
+        ];
+
+        if ($input->originPresent) {
+            $data['origin_id'] = $origin?->id;
+        }
+
+        WheelProduct::updateOrCreate(['ean' => $input->ean], $data);
     }
 
     private function resolveWheelType(?string $raw): string

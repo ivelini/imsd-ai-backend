@@ -10,6 +10,7 @@ use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Builders\TireProductBuilder;
 use App\Models\Catalog\Country\Country;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Origin\ProductOrigin;
 use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Image;
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $id
  * @property int $brand_id
  * @property int|null $model_id
+ * @property int|null $origin_id Происхождение (производитель, страна, год)
  * @property string $name
  * @property string|null $slug URL-часть (brand-model-width-profile-r{diameter}-{load}{speed})
  * @property int|null $country_id
@@ -41,7 +43,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property bool $is_xl
  * @property int|null $year
  * @property EuroLabel|null $euro_label Евро-лейбл: сопротивление качению, сцепление, шум
- * @property string|null $description
  * @property bool $is_published
  * @property bool $is_bestseller
  * @property bool $is_new
@@ -49,6 +50,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property Carbon $updated_at
  * @property-read Brand $brand
  * @property-read ProductModel|null $model
+ * @property-read ProductOrigin|null $origin
  * @property-read Country|null $country
  * @property float|null $city_price Цена города из catalog_prices (transient, ставит GetTireList)
  * @property int|null $city_delivery_min Срок доставки города (transient, ставит GetTireList)
@@ -62,6 +64,7 @@ class TireProduct extends Model
     protected $fillable = [
         'brand_id',
         'model_id',
+        'origin_id',
         'name',
         'slug',
         'country_id',
@@ -77,7 +80,6 @@ class TireProduct extends Model
         'is_xl',
         'year',
         'euro_label',
-        'description',
         'is_published',
         'is_bestseller',
         'is_new',
@@ -114,6 +116,11 @@ class TireProduct extends Model
     public function model(): BelongsTo
     {
         return $this->belongsTo(ProductModel::class, 'model_id');
+    }
+
+    public function origin(): BelongsTo
+    {
+        return $this->belongsTo(ProductOrigin::class, 'origin_id');
     }
 
     public function country(): BelongsTo

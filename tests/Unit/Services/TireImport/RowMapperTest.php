@@ -88,16 +88,31 @@ class RowMapperTest extends TestCase
         ];
     }
 
-    public function test_map_extracts_euro_label_without_duplicating_in_descriptions(): void
+    public function test_map_extracts_euro_label(): void
     {
         $withLabel = $this->mapper->map(['description_euro_label' => 'D/C/71']);
 
         $this->assertSame('D', $withLabel->euroLabel?->rollingResistance);
-        $this->assertArrayNotHasKey('euro_label', $withLabel->descriptions);
 
         $withoutLabel = $this->mapper->map([]);
 
         $this->assertNull($withoutLabel->euroLabel);
+    }
+
+    public function test_map_extracts_description_and_presence_flags(): void
+    {
+        $row = $this->mapper->map(['description' => 'Описание', 'origin_vendor' => '##Badge##']);
+
+        $this->assertSame('Описание', $row->description);
+        $this->assertTrue($row->description_present);
+        $this->assertSame('Badge', $row->origin_vendor?->badge);
+        $this->assertTrue($row->origin_present);
+
+        $empty = $this->mapper->map([]);
+
+        $this->assertNull($empty->description);
+        $this->assertFalse($empty->description_present);
+        $this->assertFalse($empty->origin_present);
     }
 
     public function test_nullable_int_returns_null_for_empty(): void

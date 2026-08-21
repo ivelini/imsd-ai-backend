@@ -41,7 +41,6 @@ final class WheelProductResource extends JsonResource
             'hub_diameter' => $wheel->hub_diameter,
             'width' => $wheel->width,
             'diameter' => $wheel->diameter,
-            'description' => $wheel->description,
             'is_published' => $wheel->is_published,
             'is_bestseller' => $wheel->is_bestseller,
             'is_new' => $wheel->is_new,

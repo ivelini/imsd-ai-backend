@@ -36,10 +36,6 @@ return [
         'count' => 'quantity',
         'price' => 'purchase_price',
         'minimum_market_price' => 'minimum_market_price',
-        'vendor_description' => 'description_vendor',
-        'description_default' => 'description_default',
-        'description_manufacture_country' => 'description_manufacture_country',
-        'description_manufacture_year' => 'description_manufacture_year',
         'description_euro_label' => 'description_euro_label',
     ],
 

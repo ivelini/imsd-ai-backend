@@ -1,7 +1,7 @@
 # Диск (WheelProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; публичный каталог и касты 2026-08-21; slug без точек 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; публичный каталог и касты 2026-08-21; slug без точек 2026-08-21; origin и перенос description 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md); [2026-08-21-product-origin-description-move.md](../../raw/project/2026-08-21-product-origin-description-move.md)
 
 ## Overview
 
@@ -12,10 +12,10 @@
 | Группа | Поля |
 |--------|------|
 | Идентификация | `id`, `brand_id`, `model_id` (FK → product_models), `name`, `slug` (уникальный, URL карточки), `ean` |
-| Происхождение | `country_id`. `supplier_id` удалён 2026-08-19 — не использовался в бизнес-логике |
+| Происхождение | `country_id`. `origin_id` (FK → product_origins, nullable): производитель/страна/год производства (с 2026-08-21). `supplier_id` удалён 2026-08-19 |
 | Тип | `type` (alloy/steel/forged — литой/штампованный/кованый), `color` |
 | Геометрия | `width`, `diameter`, `et` (вылет), `pcd` (напр. «5*114.3»), `hub_diameter` (DIA), `bolts` |
-| Прочее | `description`, `image` |
+| Прочее | `image`. Колонка `description` удалена 2026-08-21 — описание живёт на модели (`product_models.description`, text из колонки XLSX `description`) |
 
 Касты (с 2026-08-21): `width`, `et`, `hub_diameter` — `decimal:1` (стабильная строка '6.5'/'38.0' на чтении/записи; sqlite в тестах терял дробную часть). Фильтры `byWidths/byEts/byHubDiameters` нормализуют вход `number_format(1)` — сравнение со значениями БД в обеих средах.
 
@@ -40,6 +40,7 @@
 ## See Also
 
 - [Шина (TireProduct)](tire-product.md)
+- [Происхождение товара (ProductOrigin)](product-origin.md)
 - [Запись catalog_prices](catalog-price.md)
 - [Импорт каталога из XLSX](../concepts/xlsx-import-pipeline.md)
 - [Каталог: ценообразование](../concepts/catalog-pricing.md)
