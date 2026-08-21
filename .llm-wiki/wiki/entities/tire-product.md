@@ -1,7 +1,7 @@
 # Шина (TireProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20; евро-лейбл 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; формула slug из характеристик 2026-08-20; евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-20-season-default-slug.md](../../raw/project/2026-08-20-season-default-slug.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
 
 ## Overview
 
@@ -23,7 +23,9 @@
 
 `euro_label` приходит из XLSX-колонки `description_euro_label` («D/C/71») через `RowMapper::parseEuroLabel`; невалидная строка → null (см. [Импорт каталога из XLSX](../concepts/xlsx-import-pipeline.md)).
 
-`slug` = `{width}-{profile}-{diameter}[-studded][-runflat]` — только характеристики, без brand и name (флаги только при true, null-размеры опускаются; коллизия → суффикс `-2`). Без brand/name slug стабилен при смене названий бренда/модели — URL карточки не ломается при реимпорте. Генерируется ProductSlugService при создании/обновлении (админка, импорт).
+`name` при импорте собирается по формуле (чистый `TireNameBuilder`, ADR 0001): «Шина {сезон_нж} {бренд} {модель} {width}/{profile} R{diameter} {load}{speed}» — сезон в нижнем регистре, индексы склеиваются из `load_index`+`speed_index` («91»+«T» → «91T»), части пропускаются при отсутствии; признаки «шипованная»/runflat в name не выводятся. Пример: «Шина зимняя Gislaved Soft Frost 200 195/55 R16 91T».
+
+`slug` = `{brand-slug}-{model-slug}-{width}-{profile}-r{diameter}-{load}{speed}[-studded][-runflat]` (с 2026-08-21) — всё в lowercase («91T» → «91t»), единый разделитель дефис, части только при наличии/true; коллизия → суффикс `-2`. Смена подхода: раньше slug был только из характеристик (стабилен при смене названий), теперь SEO-адрес с брендом и моделью — URL меняется при переимпорте и смене названия модели. Генерируется ProductSlugService (БД-обвязка: slug бренда/модели по id) при создании/обновлении (админка, импорт — единый билдер). Пример: `gislaved-soft-frost-200-195-55-r16-91t-studded`.
 
 ## Связи
 

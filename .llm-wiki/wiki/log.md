@@ -61,3 +61,8 @@
 ## [2026-08-21] ingest | Публичный каталог дисков: фасеты + листинг
 - Updated: Диск (WheelProduct) — касты decimal:1, byCatalogFilters, публичный каталог
 - Updated: Кеширование — wheel-filter/wheel-list, WheelProductObserver, 6 обсерверов + импорт-джобы
+
+## [2026-08-21] ingest | SEO-формулы name/slug при импорте (шины, диски, модели)
+- Updated: Шина (TireProduct) — name по TireNameBuilder, slug brand-model-размер-индекс-флаги
+- Updated: Диск (WheelProduct) — slug: точки → дефисы
+- Updated: Импорт каталога из XLSX — slug модели только из названия, маппинг name/slug

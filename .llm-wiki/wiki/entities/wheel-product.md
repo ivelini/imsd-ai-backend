@@ -1,7 +1,7 @@
 # Диск (WheelProduct)
 
-> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; публичный каталог и касты 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md)
+> Sources: Проект (db-schema.md), 2026-08-19; удаление supplier 2026-08-19; slug 2026-08-19; публичный каталог и касты 2026-08-21; slug без точек 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-19-drop-supplier.md](../../raw/project/2026-08-19-drop-supplier.md); [2026-08-19-product-slug.md](../../raw/project/2026-08-19-product-slug.md); [2026-08-21-wheel-catalog.md](../../raw/project/2026-08-21-wheel-catalog.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
 
 ## Overview
 
@@ -19,7 +19,7 @@
 
 Касты (с 2026-08-21): `width`, `et`, `hub_diameter` — `decimal:1` (стабильная строка '6.5'/'38.0' на чтении/записи; sqlite в тестах терял дробную часть). Фильтры `byWidths/byEts/byHubDiameters` нормализуют вход `number_format(1)` — сравнение со значениями БД в обеих средах.
 
-`slug` = `{brand-slug}-{name}-{width}-{diameter}-{et}-{pcd}-{hub_diameter}` (`4*98` → `4x98`, точка в hub_diameter сохраняется; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
+`slug` = `{brand-slug}-{name}-{width}-{diameter}-{et}-{pcd}-{hub_diameter}` (`4*98` → `4x98`; с 2026-08-21 точки → дефисы: «7.5» → «7-5», «5*114.3» → «5x114-3», «58.6» → «58-6»; коллизия → суффикс `-2`). Генерируется ProductSlugService при создании/обновлении (админка, импорт).
 
 ## Парсинг при импорте
 

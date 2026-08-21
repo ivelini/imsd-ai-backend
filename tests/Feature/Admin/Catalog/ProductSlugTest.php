@@ -38,10 +38,10 @@ class ProductSlugTest extends TestCase
 
         $this->brand = Brand::factory()->create(['name' => 'Nokian', 'slug' => 'nokian']);
         $this->tireModel = ProductModel::create([
-            'brand_id' => $this->brand->id, 'name' => 'Hakka', 'slug' => 'nokian-hakka', 'type' => 'tire',
+            'brand_id' => $this->brand->id, 'name' => 'Hakka', 'slug' => 'hakka', 'type' => 'tire',
         ]);
         $this->wheelModel = ProductModel::create([
-            'brand_id' => $this->brand->id, 'name' => 'XX', 'slug' => 'nokian-xx', 'type' => 'wheel',
+            'brand_id' => $this->brand->id, 'name' => 'XX', 'slug' => 'xx', 'type' => 'wheel',
         ]);
     }
 
@@ -58,9 +58,9 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertCreated()
-            ->assertJsonPath('data.slug', '215-60-16');
+            ->assertJsonPath('data.slug', 'nokian-hakka-215-60-r16');
 
-        $this->assertDatabaseHas('tire_products', ['slug' => '215-60-16']);
+        $this->assertDatabaseHas('tire_products', ['slug' => 'nokian-hakka-215-60-r16']);
     }
 
     public function test_tire_update_recalculates_slug(): void
@@ -85,7 +85,7 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertOk()
-            ->assertJsonPath('data.slug', '225-60-16');
+            ->assertJsonPath('data.slug', 'nokian-hakka-225-60-r16');
     }
 
     public function test_tire_update_keeps_slug_when_unchanged(): void
@@ -94,7 +94,7 @@ class ProductSlugTest extends TestCase
             'brand_id' => $this->brand->id,
             'model_id' => $this->tireModel->id,
             'season' => 'summer',
-            'slug' => '215-60-16',
+            'slug' => 'nokian-hakka-215-60-r16',
             'width' => 215,
             'profile' => 60,
             'diameter' => '16',
@@ -111,16 +111,17 @@ class ProductSlugTest extends TestCase
                 'diameter' => '16',
             ])
             ->assertOk()
-            ->assertJsonPath('data.slug', '215-60-16');
+            ->assertJsonPath('data.slug', 'nokian-hakka-215-60-r16');
     }
 
-    public function test_tire_import_generates_slug(): void
+    public function test_tire_import_generates_slug_and_name(): void
     {
         app(UpsertTireProduct::class)->execute($this->tireRow(ean: 'TIRE-1', width: 215));
 
         $this->assertDatabaseHas('tire_products', [
             'ean' => 'TIRE-1',
-            'slug' => '215-60-16',
+            'name' => 'Шина летняя Nokian Hakka 215/60 R16',
+            'slug' => 'nokian-hakka-215-60-r16',
         ]);
     }
 
@@ -132,7 +133,8 @@ class ProductSlugTest extends TestCase
 
         $this->assertDatabaseHas('tire_products', [
             'ean' => 'TIRE-2',
-            'slug' => '225-60-16',
+            'name' => 'Шина летняя Nokian Hakka 225/60 R16',
+            'slug' => 'nokian-hakka-225-60-r16',
         ]);
     }
 
@@ -142,8 +144,8 @@ class ProductSlugTest extends TestCase
         $upsert->execute($this->tireRow(ean: 'TIRE-3', width: 215));
         $upsert->execute($this->tireRow(ean: 'TIRE-4', width: 215));
 
-        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-3', 'slug' => '215-60-16']);
-        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-4', 'slug' => '215-60-16-2']);
+        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-3', 'slug' => 'nokian-hakka-215-60-r16']);
+        $this->assertDatabaseHas('tire_products', ['ean' => 'TIRE-4', 'slug' => 'nokian-hakka-215-60-r16-2']);
     }
 
     public function test_wheel_store_generates_slug(): void
@@ -160,7 +162,7 @@ class ProductSlugTest extends TestCase
                 'hub_diameter' => '58.6',
             ])
             ->assertCreated()
-            ->assertJsonPath('data.slug', 'nokian-xx-7-16-45-4x98-58.6');
+            ->assertJsonPath('data.slug', 'nokian-xx-7-16-45-4x98-58-6');
     }
 
     public function test_wheel_collision_gets_suffix(): void
@@ -168,7 +170,7 @@ class ProductSlugTest extends TestCase
         WheelProduct::factory()->create([
             'brand_id' => $this->brand->id,
             'model_id' => $this->wheelModel->id,
-            'slug' => 'nokian-xx-7-16-45-4x98-58.6',
+            'slug' => 'nokian-xx-7-16-45-4x98-58-6',
             'width' => '7',
             'diameter' => 16,
             'et' => '45',
@@ -188,7 +190,7 @@ class ProductSlugTest extends TestCase
                 'hub_diameter' => '58.6',
             ])
             ->assertCreated()
-            ->assertJsonPath('data.slug', 'nokian-xx-7-16-45-4x98-58.6-2');
+            ->assertJsonPath('data.slug', 'nokian-xx-7-16-45-4x98-58-6-2');
     }
 
     public function test_slug_in_admin_response(): void

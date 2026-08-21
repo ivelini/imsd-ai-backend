@@ -7,23 +7,32 @@ use Illuminate\Support\Str;
 /**
  * Формула slug товара из характеристик (чистая функция, без БД).
  *
- * Шина: width-profile-diameter[-studded][-runflat] (флаги только при true) —
- * без brand и name: slug стабилен при смене названий, URL карточки не ломается.
- * Диск: brand-name-width-diameter-et-pcd-hub_diameter (pcd «4*98» → «4x98»).
+ * Шина: brand-model-width-profile-r{diameter}-{load}{speed}[-studded][-runflat] —
+ * индексы и флаги только при наличии/true, всё в lowercase.
+ * Диск: brand-name-width-diameter-et-pcd-hub (pcd «4*98» → «4x98»), точки → дефисы.
  */
 final class ProductSlugBuilder
 {
     public static function tire(
+        string $brandSlug,
+        string $modelSlug,
         ?int $width,
         ?int $profile,
         ?string $diameter,
+        ?string $loadIndex,
+        ?string $speedIndex,
         bool $isStudded,
         bool $isRunflat,
     ): string {
+        $index = strtolower(($loadIndex ?? '').($speedIndex ?? ''));
+
         return implode('-', self::parts([
+            $brandSlug,
+            $modelSlug,
             $width,
             $profile,
-            $diameter,
+            $diameter !== null ? 'r'.$diameter : null,
+            $index !== '' ? $index : null,
             $isStudded ? 'studded' : null,
             $isRunflat ? 'runflat' : null,
         ]));
@@ -38,7 +47,7 @@ final class ProductSlugBuilder
         ?string $pcd,
         ?string $hubDiameter,
     ): string {
-        return implode('-', self::parts([
+        $slug = implode('-', self::parts([
             $brandSlug,
             Str::slug($name),
             $width,
@@ -47,6 +56,8 @@ final class ProductSlugBuilder
             $pcd !== null ? str_replace('*', 'x', $pcd) : null,
             $hubDiameter,
         ]));
+
+        return str_replace('.', '-', $slug);
     }
 
     /** @param  list<string|int|null>  $values */

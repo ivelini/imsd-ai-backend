@@ -4,8 +4,10 @@ namespace App\Actions\Import\Tire;
 
 use App\DTOs\TireImport\ImportTireRow;
 use App\DTOs\TireImport\UpsertResult;
+use App\Enums\Catalog\Season;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Services\Catalog\ProductSlugService;
+use App\Services\Catalog\Tire\TireNameBuilder;
 use App\Services\TireImport\DescriptionBuilder;
 use App\Services\TireImport\ReferenceResolver;
 use App\Services\TireImport\RowMapper;
@@ -37,6 +39,16 @@ final readonly class UpsertTireProduct
 
         $isStudded = $this->rowMapper->toBool($row->is_studded_raw);
         $isRunflat = $this->rowMapper->toBool($row->is_runflat_raw);
+        $name = TireNameBuilder::build(
+            season: Season::from($season),
+            brandName: $brand->name,
+            modelName: $model->name,
+            width: $row->width,
+            profile: $row->profile,
+            diameter: $row->diameter,
+            loadIndex: $loadIndexResult['load'],
+            speedIndex: $loadIndexResult['speed'],
+        );
 
         $existing = TireProduct::where('ean', $row->ean)->first();
 
@@ -45,11 +57,15 @@ final readonly class UpsertTireProduct
             [
                 'brand_id' => $brand->id,
                 'model_id' => $model->id,
-                'name' => $row->name,
+                'name' => $name,
                 'slug' => $this->slugService->tire(
+                    brandId: $brand->id,
+                    modelId: $model->id,
                     width: $row->width,
                     profile: $row->profile,
                     diameter: $row->diameter,
+                    loadIndex: $loadIndexResult['load'],
+                    speedIndex: $loadIndexResult['speed'],
                     isStudded: $isStudded,
                     isRunflat: $isRunflat,
                     ignoreId: $existing?->id,

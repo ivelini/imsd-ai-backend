@@ -1,7 +1,7 @@
 # Импорт каталога из XLSX: пайплайн
 
-> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md)
+> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md)
 
 ## Overview
 
@@ -25,7 +25,8 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 
 Ключевые правила — полная таблица в [db-schema.md §Маппинг](../../raw/project/db-schema.md), здесь суть:
 
-- `product_article` → `ean`; `vendor` → поиск/создание бренда; `name` → модель (для дисков парсится `parseWheelModelName()`: убирает «Диск » и размерную часть).
+- `product_article` → `ean`; `vendor` → поиск/создание бренда; `name` → модель (для дисков парсится `parseWheelModelName()`: убирает «Диск » и размерную часть). Slug модели (с 2026-08-21) — только из названия модели (`Str::slug(name)`), без префикса бренда; уникальность парой (brand_id, slug).
+- Name товара (шины) с 2026-08-21 собирается по формуле TireNameBuilder: «Шина {сезон} {бренд} {модель} {размер} {индекс}» (SEO), slug — `{brand-slug}-{model-slug}-{width}-{profile}-r{diameter}-{load}{speed}[-studded][-runflat]`; диск — slug с точками→дефисами. Детали — в [Шина (TireProduct)](../entities/tire-product.md) и [Диск (WheelProduct)](../entities/wheel-product.md).
 - Размеры: `235/50 R18` → width/profile/diameter; диски `7.5 x 18 ET45` → width/diameter/et; PCD `5*114.3` → 5×114.3; болты `12*1.5` → qty×size.
 - `load_speed_index` → split: `86T` → load=86, speed=T.
 - Булевы: «Да»/«Нет» → true/false (`config: boolean_true`).

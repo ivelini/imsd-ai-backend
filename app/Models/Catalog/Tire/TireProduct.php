@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property int $brand_id
  * @property int|null $model_id
  * @property string $name
- * @property string|null $slug URL-часть из характеристик (brand-name-width-profile-diameter)
+ * @property string|null $slug URL-часть (brand-model-width-profile-r{diameter}-{load}{speed})
  * @property int|null $country_id
  * @property string|null $ean
  * @property Season|null $season

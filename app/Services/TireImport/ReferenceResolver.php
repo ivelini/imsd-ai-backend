@@ -52,10 +52,10 @@ final class ReferenceResolver
         );
     }
 
-    /** Поиск или создание модели товара в рамках бренда. */
+    /** Поиск или создание модели товара в рамках бренда. Slug — только из названия модели. */
     public function resolveModel(Brand $brand, string $name, string $type): ProductModel
     {
-        $slug = $brand->slug.'-'.Str::slug($name);
+        $slug = Str::slug($name);
 
         return ProductModel::firstOrCreate(
             ['brand_id' => $brand->id, 'slug' => $slug],
