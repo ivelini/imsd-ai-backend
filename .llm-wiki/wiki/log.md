@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-09] ingest | Волна 1b: партия справочников на Filament
+- Updated: Админ-панель на Filament (7 ресурсов, read-only Cities/Countries, снос 7 API-срезов)
+
 ## [2026-09-09] ingest | Волна 1a: BrandResource + снос API брендов
 - Updated: Админ-панель на Filament (волна 1, политика delete через Precondition)
 

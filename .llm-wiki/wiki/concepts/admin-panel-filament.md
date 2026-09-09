@@ -1,7 +1,7 @@
 # Админ-панель на Filament
 
 > Sources: Проект, 2026-09-09
-> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md)
+> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md)
 
 ## Решение
 
@@ -25,6 +25,8 @@
 Экран переносится: Filament-ресурс (форма/таблица) → приёмка → снос API-среза (маршрут, контроллер, Request/Resource, Action чтения; Precondition переиспользуется панелью; Observer остаётся — инвалидация срабатывает на записи из формы). Bulk-delete не используется там, где удаление под Precondition (массовое удаление обходило бы проверку).
 
 **1a — Brand (готово):** `BrandResource`; delete через `EnsureBrandHasNoProducts` (danger-нотификация); срезаны маршрут/контроллер/Request/Resource/GetBrandList. `BrandBriefResource` живёт до волны 2 (вложен в API Tire/Wheel). Тесты: BrandResourceTest (7) + BrandApiRemovalTest (404).
+
+**1b — партия справочников (готово):** Warehouses, WarehouseMarkupRules, DeliverySchedules, CityPriceRules, DeliveryPoints (CRUD) + Cities, Countries (read-only: `canCreate/canEdit/canDelete = false`, только List). Детали: день недели — Select со скалярными значениями `WeekDay` (модель кастует integer), `TimePicker->seconds(false)` ('H:i' в БД); `WeekDay::label()` добавлен. Удаление партии — стандартный DeleteAction (Precondition'ов нет). Снесены маршруты/контроллеры/Request'ы/Resources/Actions чтения 7 разделов; `StockResource`/`GetWarehouseStock` живут до волны 2. Тесты: 19 ресурсных + DirectoryApiRemovalTest (7 × 404).
 
 ## See Also
 

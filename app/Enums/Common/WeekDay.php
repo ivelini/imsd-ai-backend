@@ -12,4 +12,17 @@ enum WeekDay: int
     case Friday = 4;
     case Saturday = 5;
     case Sunday = 6;
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Monday => 'Понедельник',
+            self::Tuesday => 'Вторник',
+            self::Wednesday => 'Среда',
+            self::Thursday => 'Четверг',
+            self::Friday => 'Пятница',
+            self::Saturday => 'Суббота',
+            self::Sunday => 'Воскресенье',
+        };
+    }
 }

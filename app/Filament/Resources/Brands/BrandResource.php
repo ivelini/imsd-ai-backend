@@ -20,6 +20,8 @@ class BrandResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Бренды';
+
     public static function form(Schema $schema): Schema
     {
         return BrandForm::configure($schema);
