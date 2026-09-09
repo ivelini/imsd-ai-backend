@@ -6,7 +6,8 @@
 
 | Article | Summary | Updated |
 |---------|---------|---------|
-| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа, аутентификация, enums, корзина | 2026-08-19 |
+| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа, аутентификация, enums, корзина | 2026-09-09 |
+| [Админ-панель на Filament](concepts/admin-panel-filament.md) | Решение о переходе с React SPA на Filament; каркас: панель /panel, session-guard admin, FilamentUser (is_active), AdminRoleCode + policies, нативные уведомления; политика слоёв (запись через Actions); волны миграции | 2026-09-09 |
 | [Бизнес-модель: цепочка движения товара](concepts/business-model.md) | Завод → склад → компания → точка выдачи/курьер; сущности и их видимость клиенту | 2026-08-19 |
 | [Заказ: жизненный цикл](concepts/order-lifecycle.md) | Статусная машина заказа (pending → paid → … → delivered), отмена и возврат, кто меняет статусы | 2026-08-19 |
 | [Каталог: ценообразование](concepts/catalog-pricing.md) | Полная цена города: цепочка наценок, MarkupRuleMatcher, акции, пересчёт catalog_prices, округление | 2026-08-19 |

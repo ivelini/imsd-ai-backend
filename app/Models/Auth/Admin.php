@@ -2,7 +2,10 @@
 
 namespace App\Models\Auth;
 
+use App\Enums\Auth\AdminRoleCode;
 use Carbon\Carbon;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,7 +23,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon $updated_at
  * @property-read AdminRole|null $role
  */
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, Notifiable;
 
@@ -53,6 +56,12 @@ class Admin extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return $this->role?->code === 'super-admin';
+        return $this->role?->code === AdminRoleCode::SuperAdmin->value;
+    }
+
+    /** Доступ в панель — только активным администраторам. */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->is_active;
     }
 }

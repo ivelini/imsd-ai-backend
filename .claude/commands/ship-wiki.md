@@ -4,7 +4,7 @@ description: Ship changes с обязательным обновлением wik
 
 # Ship changes + wiki sync
 
-Commit and push current branch. Обновление wiki (.llm-wiki/) — **обязательный** шаг, без вопроса пользователю. Синхронизация ADR (documentations/adr/) — **по вопросу пользователю**, если изменения затрагивают функционал. Для коммита без wiki используйте `/ship`.
+Commit and push current branch. Обновление wiki (.llm-wiki/) — **обязательный** шаг, без вопроса пользователю. Синхронизация ADR — **по вопросу пользователю**, если изменения затрагивают функционал. Для коммита без wiki используйте `/ship`.
 
 ## Steps
 
@@ -13,10 +13,11 @@ Commit and push current branch. Обновление wiki (.llm-wiki/) — **о�
 3. Sync with remote if the branch has an upstream (`git rev-parse --abbrev-ref @{u}` succeeds): `git pull --ff-only origin <branch>`. If no upstream yet — skip (first push creates it). If pull fails — stop and report.
 4. Синхронизация wiki и ADR (см. разделы ниже) — выполнить **до** генерации commit message, чтобы wiki/ADR-правки попали в тот же коммит. Перед обновлением wiki — обновить индекс кода: `codegraph sync -q` (актуальный индекс нужен агенту при Ingest).
 5. Based on the changes (including wiki and ADR updates from step 4), generate a commit message in the project's style (look at recent commits for language/format).
-6. Stage all changed files: `git add -A`
-7. Commit with the generated message.
-8. Push: `git push origin <branch>`
-9. Report what was done: branch name, commit message, wiki pages updated, push result.
+6. Run the coding checklists before commit — both: global (`~/.claude/rules/coding-style.md`, раздел «Перед коммитом — проверь») и project (`.claude/rules/coding-style.md`, раздел «Перед коммитом — проектные проверки», если файл существует). Нашёл нарушение — исправь код до коммита.
+7. Stage all changed files: `git add -A`
+8. Commit with the generated message.
+9. Push: `git push origin <branch>`
+10. Report what was done: branch name, commit message, wiki pages updated, push result.
 
 Important:
 - If there are no changes to commit, stop and tell the user.
@@ -56,7 +57,7 @@ Important:
 5. Обновить `.llm-wiki/wiki/index.md` (записи для всех затронутых статей)
 6. Добавить запись в `.llm-wiki/wiki/log.md` в формате `## [YYYY-MM-DD] ingest | <статья>`
 
-Не редактировать wiki-файлы произвольно в обход этого процесса — сохраняется схема `raw/` → `wiki/` с индексом и логом. Wiki-файлы должны попасть в staging (шаг 6 выше, `git add -A`) и войти в тот же коммит, что и код.
+Не редактировать wiki-файлы произвольно в обход этого процесса — сохраняется схема `raw/` → `wiki/` с индексом и логом. Wiki-файлы должны попасть в staging (шаг 7 выше, `git add -A`) и войти в тот же коммит, что и код.
 
 ## Синхронизация ADR при изменениях кода
 
@@ -66,4 +67,4 @@ Important:
 - Изменения косметические (форматирование, комментарии, опечатки) или не меняют поведение системы (зависимости без логики, фронтенд без бизнес-логики).
 - ADR по этим изменениям уже создан/изменён в ходе текущей работы — файлы ADR уже есть в списке изменений (`git status`), повторный вопрос не нужен.
 
-**Как обновлять** (после подтверждения пользователя): правила ведения — глобальное правило `adr.md` и `documentations/adr/README.md`. Новый ADR — следующий свободный номер по порядку, файл по шаблону `0000-template.md`; изменение существующего — правка содержимого (при замене решения — статус `Superseded` в старом). Обновить индексы: таблицу в `documentations/adr/README.md` и таблицу «Решения (ADR)» в `CLAUDE.md`. ADR-файлы должны попасть в staging (шаг 6) и войти в тот же коммит, что и код.
+**Как обновлять** (после подтверждения пользователя): правила ведения — глобальное правило `adr.md` и README каталога ADR проекта (обычно `documentations/adr/`). Новый ADR — следующий свободный номер по порядку, файл по шаблону каталога (обычно `0000-template.md`); изменение существующего — правка содержимого (при замене решения — статус `Superseded` в старом). Обновить индексы: таблицу в README каталога ADR и таблицу решений в карте проекта (CLAUDE.md). ADR-файлы должны попасть в staging (шаг 7) и войти в тот же коммит, что и код.

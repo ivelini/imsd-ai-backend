@@ -47,7 +47,7 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 ## Аутентификация и доступ
 
 - Клиенты: Sanctum-токены (email + password).
-- Администраторы: Sanctum-токены (email + password).
+- Администраторы: Sanctum-токены для admin API (живут до зачистки — волна 4 миграции на Filament) + session-guard `admin` для Filament-панели `/panel`; доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
 - Гости: `device_id` в заголовке (генерируется на фронте — для корзины/избранного/сравнения).
 - Rate limit: 60 req/min публичные, 120 — авторизованные.
 - API без версионирования (`/api`, не `/api/v1`) — обратная совместимость при изменениях.
@@ -69,6 +69,7 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 | `OrderState` | pending, paid, processing, shipped, delivered, cancelled, refunded |
 | `WeekDay` | 0–6 |
 | `ImportType` | Tire, Wheel, Point, Model |
+| `AdminRoleCode` | super-admin, content-manager, order-manager, warehouse-manager |
 
 ## Response — что выбрать
 
@@ -87,6 +88,7 @@ Resource — только маппинг полей: никаких вычисл
 
 ## See Also
 
+- [Админ-панель на Filament](admin-panel-filament.md)
 - [Бизнес-модель](business-model.md)
 - [Заказ: жизненный цикл](order-lifecycle.md)
 - [Каталог: ценообразование](catalog-pricing.md)
