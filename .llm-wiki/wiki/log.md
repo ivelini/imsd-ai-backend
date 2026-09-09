@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-09] ingest | Волна 2a: TireProductResource
+- Updated: Админ-панель на Filament (TireDataComposer, волна 2)
+
 ## [2026-09-09] ingest | Волна 1c: ProductModel (волна 1 закрыта)
 - Updated: Админ-панель на Filament (ProductModelObserver, составной unique slug, итог волны 1)
 

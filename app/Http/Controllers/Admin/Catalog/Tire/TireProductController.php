@@ -8,8 +8,7 @@ use App\Http\Requests\Admin\Catalog\Tire\TireProductRequest;
 use App\Http\Requests\Admin\Catalog\Tire\TireProductShowRequest;
 use App\Http\Resources\Admin\Catalog\Tire\TireProductResource;
 use App\Models\Catalog\Tire\TireProduct;
-use App\Services\Catalog\DisplayNameResolver;
-use App\Services\Catalog\ProductSlugService;
+use App\Services\Catalog\TireDataComposer;
 use App\Services\Delivery\DeliveryInfoService;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
@@ -26,8 +25,7 @@ final readonly class TireProductController
     public function __construct(
         private GetTireProductList $getTireProductList,
         private DeliveryInfoService $deliveryInfo,
-        private DisplayNameResolver $displayName,
-        private ProductSlugService $slugService,
+        private TireDataComposer $tireComposer,
     ) {}
 
     /** Список шин. */
@@ -56,8 +54,7 @@ final readonly class TireProductController
     /** Создать шину. */
     public function store(TireProductRequest $request): JsonResponse
     {
-        $data = $this->displayName->resolve($request->validated());
-        $data['slug'] = $this->slugFrom($data);
+        $data = $this->tireComposer->compose($request->validated());
 
         $tire = TireProduct::create($data);
 
@@ -69,8 +66,7 @@ final readonly class TireProductController
     {
         $tire = TireProduct::findOrFail($id);
 
-        $data = $this->displayName->resolve($request->validated());
-        $data['slug'] = $this->slugFrom($data, $id);
+        $data = $this->tireComposer->compose($request->validated(), $id);
 
         $tire->update($data);
 
@@ -83,22 +79,5 @@ final readonly class TireProductController
         TireProduct::findOrFail($id)->delete();
 
         return response()->json(null, 204);
-    }
-
-    /** @param  array<string, mixed>  $data */
-    private function slugFrom(array $data, ?int $ignoreId = null): string
-    {
-        return $this->slugService->tire(
-            brandId: (int) $data['brand_id'],
-            modelId: (int) $data['model_id'],
-            width: isset($data['width']) ? (int) $data['width'] : null,
-            profile: isset($data['profile']) ? (int) $data['profile'] : null,
-            diameter: $data['diameter'] ?? null,
-            loadIndex: $data['load_index'] ?? null,
-            speedIndex: $data['speed_index'] ?? null,
-            isStudded: (bool) ($data['is_studded'] ?? false),
-            isRunflat: (bool) ($data['is_runflat'] ?? false),
-            ignoreId: $ignoreId,
-        );
     }
 }

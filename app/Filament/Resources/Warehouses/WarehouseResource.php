@@ -20,6 +20,8 @@ class WarehouseResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Склады поставщиков';
+
     public static function form(Schema $schema): Schema
     {
         return WarehouseForm::configure($schema);
