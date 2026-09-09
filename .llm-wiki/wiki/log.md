@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-09] ingest | Волна 1a: BrandResource + снос API брендов
+- Updated: Админ-панель на Filament (волна 1, политика delete через Precondition)
+
 ## [2026-09-09] ingest | Админ-панель на Filament (апгрейд 4.13.1 → 5.8.1)
 - Updated: Админ-панель на Filament (Filament 5.x)
 

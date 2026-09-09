@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\Catalog\Brand\BrandController;
 use App\Http\Controllers\Admin\Catalog\CatalogProductController;
 use App\Http\Controllers\Admin\Catalog\Country\CountryController;
 use App\Http\Controllers\Admin\Catalog\Image\ImageController;
@@ -38,8 +37,6 @@ Route::prefix('/import')->group(function () {
     Route::post('/geo-points', [ImportPointController::class, 'store']);
     Route::post('/models', [ImportModelController::class, 'store']);
 });
-
-Route::apiResource('/brands', BrandController::class);
 
 Route::prefix('/tires')->group(function () {
     Route::get('/dimensions', GetTireDimensionsController::class);

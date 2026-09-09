@@ -20,6 +20,12 @@
 - Запись доменных сущностей — только через существующие Actions, Preconditions — перед мутацией.
 - Прямой Eloquent-записи ресурсами нет: иначе ломаются SEO-slug, пересчёт `catalog_prices`, инвалидация кеша Observer'ами.
 
+## Волна 1 — справочники (в работе)
+
+Экран переносится: Filament-ресурс (форма/таблица) → приёмка → снос API-среза (маршрут, контроллер, Request/Resource, Action чтения; Precondition переиспользуется панелью; Observer остаётся — инвалидация срабатывает на записи из формы). Bulk-delete не используется там, где удаление под Precondition (массовое удаление обходило бы проверку).
+
+**1a — Brand (готово):** `BrandResource`; delete через `EnsureBrandHasNoProducts` (danger-нотификация); срезаны маршрут/контроллер/Request/Resource/GetBrandList. `BrandBriefResource` живёт до волны 2 (вложен в API Tire/Wheel). Тесты: BrandResourceTest (7) + BrandApiRemovalTest (404).
+
 ## See Also
 
 - [Архитектура приложения: слои и путь запроса](architecture-layers.md)
