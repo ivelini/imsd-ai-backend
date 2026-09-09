@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-09] ingest | Волна 1c: ProductModel (волна 1 закрыта)
+- Updated: Админ-панель на Filament (ProductModelObserver, составной unique slug, итог волны 1)
+
 ## [2026-09-09] ingest | Волна 1b: партия справочников на Filament
 - Updated: Админ-панель на Filament (7 ресурсов, read-only Cities/Countries, снос 7 API-срезов)
 

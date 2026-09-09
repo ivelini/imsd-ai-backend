@@ -63,6 +63,11 @@ class DirectoryApiRemovalTest extends TestCase
         $this->authGetJson('/api/admin/catalog/countries')->assertNotFound();
     }
 
+    public function test_models_routes_removed(): void
+    {
+        $this->authGetJson('/api/admin/catalog/models')->assertNotFound();
+    }
+
     private function authGetJson(string $uri)
     {
         return $this->actingAs($this->admin, 'sanctum')->getJson($uri);

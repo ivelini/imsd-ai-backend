@@ -20,6 +20,8 @@ class WarehouseMarkupRuleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Наценка от поставщика';
+
     public static function form(Schema $schema): Schema
     {
         return WarehouseMarkupRuleForm::configure($schema);

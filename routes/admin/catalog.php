@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\Catalog\Import\ImportStatusController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportTireController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportVehicleController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportWheelController;
-use App\Http\Controllers\Admin\Catalog\Model\ProductModelController;
 use App\Http\Controllers\Admin\Catalog\Promotion\PromotionController;
 use App\Http\Controllers\Admin\Catalog\Tire\GetTireDimensionsController;
 use App\Http\Controllers\Admin\Catalog\Tire\TireProductController;
@@ -60,11 +59,5 @@ Route::get('/wheels/{id}', [WheelProductController::class, 'show']);
 Route::put('/wheels/{id}', [WheelProductController::class, 'update']);
 Route::delete('/wheels/{id}', [WheelProductController::class, 'destroy']);
 Route::get('/wheels/{wheel}/warehouse-stock', WheelWarehouseStockController::class);
-
-Route::get('/models', [ProductModelController::class, 'index']);
-Route::post('/models', [ProductModelController::class, 'store']);
-Route::get('/models/{id}', [ProductModelController::class, 'show']);
-Route::put('/models/{id}', [ProductModelController::class, 'update']);
-Route::delete('/models/{id}', [ProductModelController::class, 'destroy']);
 
 Route::get('/references', GetReferencesController::class);

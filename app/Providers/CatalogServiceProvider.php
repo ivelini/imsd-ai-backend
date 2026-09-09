@@ -11,6 +11,7 @@ use App\Http\Controllers\Catalog\GetWheelListController;
 use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
+use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Wheel\WheelProduct;
@@ -21,6 +22,7 @@ use App\Observers\BrandObserver;
 use App\Observers\CityDeliveryTimeObserver;
 use App\Observers\CityPriceRuleObserver;
 use App\Observers\DeliveryScheduleObserver;
+use App\Observers\ProductModelObserver;
 use App\Observers\StockObserver;
 use App\Observers\TireProductObserver;
 use App\Observers\WarehouseMarkupRuleObserver;
@@ -113,6 +115,7 @@ class CatalogServiceProvider extends ServiceProvider
         ]);
 
         Brand::observe(BrandObserver::class);
+        ProductModel::observe(ProductModelObserver::class);
 
         TireProduct::observe(TireProductObserver::class);
         WheelProduct::observe(WheelProductObserver::class);

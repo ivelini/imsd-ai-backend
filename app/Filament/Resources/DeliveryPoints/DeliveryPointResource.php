@@ -20,6 +20,8 @@ class DeliveryPointResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Точки выдачи';
+
     public static function form(Schema $schema): Schema
     {
         return DeliveryPointForm::configure($schema);
