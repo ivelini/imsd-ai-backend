@@ -3,12 +3,14 @@
         "claude_code"
     ],
     "cloud": false,
-    "guidelines": false,
-    "mcp": true,
-    "nightwatch": false,
-    "sail": false,
+    "packages": [
+        "filament/filament"
+    ],
     "skills": [
         "infer-conventions",
-        "laravel-best-practices"
+        "laravel-best-practices",
+        "tailwindcss-development",
+        "filament-development",
+        "deploying-laravel-cloud"
     ]
 }

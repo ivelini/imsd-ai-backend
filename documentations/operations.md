@@ -19,6 +19,8 @@ make docs          # сгенерировать документацию API (Sc
 
 Artisan — только через контейнер: `docker compose exec backend-app php artisan ...`
 
+Filament-панель `/panel`: ассеты (css/js/шрифты) публикуются в `public/` автоматически при старте контейнера `backend-app` (`php artisan filament:assets` в entrypoint.sh) — при пересборке образа или после `composer update` панель без них отдаётся без стилей. Разово вручную: `docker compose exec backend-app php artisan filament:assets`.
+
 ## Переменные окружения
 
 Значимые (помимо стандартных Laravel: APP_*, DB_*, CACHE_*):

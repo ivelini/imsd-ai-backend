@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Admins\Schemas;
 
-use App\Models\Auth\AdminRole;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -28,12 +27,11 @@ class AdminForm
                     ->required(fn (string $operation): bool => $operation === 'create'),
                 Select::make('admin_role_id')
                     ->label('Роль')
-                    ->options(fn (): array => AdminRole::pluck('name', 'id')->all())
+                    ->relationship('role', 'name')
                     ->required(),
                 Toggle::make('is_active')
                     ->label('Активен')
-                    ->default(true)
-                    ->required(),
+                    ->default(true),
             ]);
     }
 }

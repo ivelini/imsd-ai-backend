@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-09] ingest | Админ-панель на Filament (апгрейд 4.13.1 → 5.8.1)
+- Updated: Админ-панель на Filament (Filament 5.x)
+
 ## [2026-09-09] ingest | Админ-панель на Filament
 - Created: Админ-панель на Filament
 - Updated: Архитектура приложения: слои и путь запроса (аутентификация админов: session-guard + /panel, AdminRoleCode)

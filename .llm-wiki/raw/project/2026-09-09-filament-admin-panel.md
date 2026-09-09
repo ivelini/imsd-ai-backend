@@ -10,7 +10,7 @@
 
 ## Волна 0 (реализовано)
 
-- Filament 4.13.1; панель `/panel` (id `admin`), `AdminPanelProvider` в `app/Providers/Filament/`.
+- Filament **5.8.1** (изначально ошибочно поставлен ^4.0 без сверки актуальной версии — исправлено апгрейдом; код совместим без правок); панель `/panel` (id `admin`), `AdminPanelProvider` в `app/Providers/Filament/`.
 - Guard `admin` (session, provider `admins` → `App\Models\Auth\Admin`) добавлен в `config/auth.php`; Sanctum-токены у Admin остаются, пока жив admin API.
 - `Admin implements FilamentUser`: `canAccessPanel()` — доступ только активным (`is_active`).
 - Роли: enum `App\Enums\Auth\AdminRoleCode` (super-admin, content-manager, order-manager, warehouse-manager); `AdminSeeder` переведён на enum; политика `App\Policies\AdminPolicy` — управление администраторами только у super-admin (удаление себя запрещено). spatie/laravel-permission не вводится (согласовано).
