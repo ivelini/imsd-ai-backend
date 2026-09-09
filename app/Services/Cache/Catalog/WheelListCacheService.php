@@ -35,7 +35,8 @@ final readonly class WheelListCacheService
         ksort($filters);
 
         // v2: origin — происхождение товара в элементе листинга
-        $key = 'wheel-list:v2:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
+        // v3: delivery_min/delivery_max убраны из payload — блок delivery считается вне кеша
+        $key = 'wheel-list:v3:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
 
         /** @var array $data */
         $data = $this->cache->remember($key, $this->ttl, $query);

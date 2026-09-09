@@ -30,6 +30,7 @@ use App\Services\Cache\Catalog\TireFilterValuesCacheService;
 use App\Services\Cache\Catalog\TireListCacheService;
 use App\Services\Cache\Catalog\WheelFilterValuesCacheService;
 use App\Services\Cache\Catalog\WheelListCacheService;
+use App\Services\Delivery\DeliveryStockSelector;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -73,6 +74,10 @@ class CatalogServiceProvider extends ServiceProvider
                 (int) config('cache_ttl.wheel_list'),
             );
         });
+
+        $this->app->when(DeliveryStockSelector::class)
+            ->needs('$minQuantity')
+            ->giveConfig('shop.delivery_min_quantity');
 
         $this->app->when(GetTireFilterValuesController::class)
             ->needs('$defaultCityName')

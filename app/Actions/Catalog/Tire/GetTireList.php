@@ -62,7 +62,7 @@ final readonly class GetTireList
         $query->orderBy('tire_products.id', 'desc');
     }
 
-    /** Цены/сроки города для страницы одним запросом → transient-атрибуты моделей. */
+    /** Цены города для страницы одним запросом → transient-атрибут модели. */
     private function enrichCityPrices(LengthAwarePaginator $paginator, int $cityId): void
     {
         $ids = collect($paginator->items())->pluck('id');
@@ -79,18 +79,13 @@ final readonly class GetTireList
             ->where('catalog_prices.city_id', $cityId)
             ->whereNotNull('catalog_prices.price')
             ->groupBy('stocks.stockable_id')
-            ->selectRaw(
-                'stocks.stockable_id as id, MIN(catalog_prices.price) as price, '
-                .'MIN(catalog_prices.delivery_min) as delivery_min, MAX(catalog_prices.delivery_max) as delivery_max'
-            )
+            ->selectRaw('stocks.stockable_id as id, MIN(catalog_prices.price) as price')
             ->get()
             ->keyBy('id');
 
         foreach ($paginator->items() as $tire) {
             $row = $rows->get($tire->id);
             $tire->setAttribute('city_price', $row !== null ? (float) $row->price : null);
-            $tire->setAttribute('city_delivery_min', $row?->delivery_min);
-            $tire->setAttribute('city_delivery_max', $row?->delivery_max);
         }
     }
 

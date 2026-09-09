@@ -11,9 +11,11 @@ use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
+use App\Models\Delivery\DeliverySchedule;
 use App\Models\Delivery\Region;
 use App\Services\Cache\Catalog\WheelListCacheService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -34,9 +36,18 @@ class GetWheelListTest extends TestCase
     {
         parent::setUp();
 
+        // Фиксация времени: до cutoff расписаний (детерминизм order_day_of_week)
+        Carbon::setTestNow(now()->startOfDay()->addHours(10));
+
         $this->region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
         $this->defaultCity = $this->createCity('Челябинск');
         $this->otherCity = $this->createCity('Екатеринбург');
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 
     public function test_returns_paginated_shape(): void
@@ -58,7 +69,7 @@ class GetWheelListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'delivery_min', 'delivery_max', 'images'],
+            ['id', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($wheel->id, $response->json('data.0.id'));
@@ -163,7 +174,7 @@ class GetWheelListTest extends TestCase
         $this->assertSame($published->id, $response->json('data.0.id'));
     }
 
-    public function test_aggregates_price_and_delivery_across_stocks(): void
+    public function test_price_is_min_across_stocks(): void
     {
         $wheel = WheelProduct::factory()->create();
         $this->createCatalogPrice($this->createStock($wheel), $this->defaultCity, price: 5000, deliveryMin: 2);
@@ -171,9 +182,9 @@ class GetWheelListTest extends TestCase
 
         $item = $this->getJson(self::PATH)->json('data.0');
 
+        // Цена — min по стокам; delivery — от склада с минимальной ценой, но без расписания → блок отсутствует
         $this->assertEquals(3000.0, $item['price']);
-        $this->assertSame(2, $item['delivery_min']);
-        $this->assertSame(5, $item['delivery_max']);
+        $this->assertArrayNotHasKey('delivery', $item);
     }
 
     public function test_uses_requested_city_price(): void
@@ -258,9 +269,10 @@ class GetWheelListTest extends TestCase
         $this->getJson(self::PATH)->assertOk();
         DB::flushQueryLog();
 
+        // Кеш-hit: тяжёлый листинг не пересчитывается — delivery считается вне кеша лёгкими запросами
         $response = $this->getJson(self::PATH);
 
-        $this->assertSame(0, count(DB::getQueryLog()));
+        $this->assertStringNotContainsString('from "wheel_products"', collect(DB::getQueryLog())->implode('query'));
         $response->assertOk()->assertJsonPath('data.0.id', $wheel->id);
     }
 
@@ -286,9 +298,116 @@ class GetWheelListTest extends TestCase
         $this->getJson(self::PATH.'?delivery=between1and3days')->assertStatus(422);
     }
 
+    public function test_delivery_block_from_cheapest_warehouse_with_min_quantity(): void
+    {
+        // Дешёвый склад с quantity < 4 не участвует: delivery от склада с ценой 100 (qty 10)
+        $wheel = WheelProduct::factory()->create();
+        $cheapLowQty = $this->createStock($wheel, ['quantity' => 2, 'price' => 90]);
+        $this->createCatalogPrice($cheapLowQty, $this->defaultCity, price: 90, deliveryMin: 1);
+        $selected = $this->createStock($wheel, ['quantity' => 10, 'price' => 100]);
+        $this->createCatalogPrice($selected, $this->defaultCity, price: 100, deliveryMin: 6, deliveryMax: 8);
+        $this->createScheduleForToday($selected->warehouse, daysBefore: 3, daysAfter: 5);
+
+        $item = $this->getJson(self::PATH)->json('data.0');
+
+        // Цена — min по стокам; delivery — только от выбранного склада, плоских полей нет
+        $this->assertEquals(90.0, $item['price']);
+        $this->assertSame(
+            ['delivery_min' => 6, 'delivery_max' => 8, 'order_day_of_week' => now()->dayOfWeekIso - 1],
+            $item['delivery'],
+        );
+        $this->assertArrayNotHasKey('delivery_min', $item);
+        $this->assertArrayNotHasKey('delivery_max', $item);
+    }
+
+    public function test_delivery_skips_warehouse_below_min_quantity(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+        $below = $this->createStock($wheel, ['quantity' => 3, 'price' => 100]);
+        $this->createCatalogPrice($below, $this->defaultCity, price: 100, deliveryMin: 1, deliveryMax: 2);
+        $this->createScheduleForToday($below->warehouse);
+
+        $selected = $this->createStock($wheel, ['quantity' => 6, 'price' => 110]);
+        $this->createCatalogPrice($selected, $this->defaultCity, price: 110, deliveryMin: 5, deliveryMax: 7);
+        $this->createScheduleForToday($selected->warehouse);
+
+        $delivery = $this->getJson(self::PATH)->json('data.0.delivery');
+
+        $this->assertSame(5, $delivery['delivery_min']);
+        $this->assertSame(7, $delivery['delivery_max']);
+    }
+
+    public function test_delivery_absent_without_warehouse_min_quantity(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($wheel, ['quantity' => 3]), $this->defaultCity);
+
+        $item = $this->getJson(self::PATH)->json('data.0');
+
+        $this->assertArrayNotHasKey('delivery', $item);
+    }
+
+    public function test_delivery_absent_when_warehouse_has_no_schedule(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+        $this->createCatalogPrice($this->createStock($wheel, ['quantity' => 5]), $this->defaultCity);
+
+        $item = $this->getJson(self::PATH)->json('data.0');
+
+        $this->assertArrayNotHasKey('delivery', $item);
+    }
+
+    public function test_delivery_recalculated_on_cache_hit(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+        $stock = $this->createStock($wheel);
+        $this->createCatalogPrice($stock, $this->defaultCity, deliveryMin: 6, deliveryMax: 8);
+        $schedule = $this->createScheduleForToday($stock->warehouse);
+
+        $first = $this->getJson(self::PATH)->json('data.0.delivery.order_day_of_week');
+
+        // Смена расписания мимо Eloquent-событий — кеш листинга жив, delivery считается из БД
+        $newDow = (now()->dayOfWeekIso - 1 + 3) % 7;
+        DB::table('delivery_schedules')->where('id', $schedule->id)->update(['day_of_week' => $newDow]);
+
+        $second = $this->getJson(self::PATH)->json('data.0.delivery.order_day_of_week');
+
+        $this->assertSame($newDow, $second);
+        $this->assertNotSame($first, $second);
+    }
+
+    public function test_delivery_uses_request_city_price(): void
+    {
+        $wheel = WheelProduct::factory()->create();
+
+        $stockA = $this->createStock($wheel);
+        $this->createCatalogPrice($stockA, $this->defaultCity, price: 100, deliveryMin: 2);
+        $this->createCatalogPrice($stockA, $this->otherCity, price: 300, deliveryMin: 2);
+        $this->createScheduleForToday($stockA->warehouse);
+
+        $stockB = $this->createStock($wheel);
+        $this->createCatalogPrice($stockB, $this->defaultCity, price: 200, deliveryMin: 5);
+        $this->createCatalogPrice($stockB, $this->otherCity, price: 150, deliveryMin: 5);
+        $this->createScheduleForToday($stockB->warehouse);
+
+        $this->assertSame(2, $this->getJson(self::PATH)->json('data.0.delivery.delivery_min'));
+        $this->assertSame(5, $this->getJson(self::PATH.'?city_id='.$this->otherCity->id)->json('data.0.delivery.delivery_min'));
+    }
+
     private function createCity(string $name): City
     {
         return City::create(['region_id' => $this->region->id, 'name' => $name, 'sort' => 1]);
+    }
+
+    private function createScheduleForToday(Warehouse $warehouse, int $daysBefore = 2, int $daysAfter = 5): DeliverySchedule
+    {
+        return DeliverySchedule::create([
+            'warehouse_id' => $warehouse->id,
+            'day_of_week' => now()->dayOfWeekIso - 1,
+            'cutoff_time' => '18:00',
+            'days_before' => $daysBefore,
+            'days_after' => $daysAfter,
+        ]);
     }
 
     /** @param  array<string, mixed>  $overrides */

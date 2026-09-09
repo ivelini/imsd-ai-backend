@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Карта БД: все таблицы по доменам</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;   /* white-smoke */
+      --color-ink:     #2d3142;   /* jet-black */
+      --color-muted:   #4f5d75;   /* blue-slate */
+      --color-accent:  #eb6c36;   /* atomic-tangerine */
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1240px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      color: var(--color-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 960px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Database map · PostgreSQL</p>
+    <h1>Карта БД: все таблицы по доменам</h1>
+    <p class="subtitle">Обзор: 39 таблиц · 7 доменов · без колонок и FK-связей</p>
+
+    <svg viewBox="0 0 1000 1120" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="db-map-title db-map-desc">
+      <title id="db-map-title">Карта БД: все таблицы по доменам</title>
+      <desc id="db-map-desc">Обзорная карта всех 39 таблиц PostgreSQL, сгруппированных в семь доменных зон: каталог, цены и склады, гео, заказы, авто-подбор, админка и инфраструктура</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- ============ ZONE 1: КАТАЛОГ (8) ============ -->
+      <rect x="24" y="64" width="456" height="264" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="44" y="56" width="64" height="16" fill="#f5f5f5"/>
+      <text x="48" y="68" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">КАТАЛОГ</text>
+      <text x="464" y="78" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">8 таблиц</text>
+
+      <rect x="40" y="100" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="116" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">tire_products</text>
+      <text x="52" y="132" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">шины · размеры · EAN</text>
+
+      <rect x="260" y="100" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="116" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">wheel_products</text>
+      <text x="272" y="132" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">диски · зеркало шин</text>
+
+      <rect x="40" y="156" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="172" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">product_models</text>
+      <text x="52" y="188" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">модель · описание (ADR 0007)</text>
+
+      <rect x="260" y="156" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="172" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">product_origins</text>
+      <text x="272" y="188" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">происхождение · jsonb</text>
+
+      <rect x="40" y="212" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="228" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">brands</text>
+      <text x="52" y="244" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">бренды шин и дисков</text>
+
+      <rect x="260" y="212" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="228" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">countries</text>
+      <text x="272" y="244" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">страны производства</text>
+
+      <rect x="40" y="268" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="284" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">images</text>
+      <text x="52" y="300" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">полиморф · imageable</text>
+
+      <rect x="260" y="268" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="284" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">product_imports</text>
+      <text x="272" y="300" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">импорт XLSX · статусы</text>
+
+      <!-- ============ ZONE 2: ЦЕНЫ И СКЛАДЫ (4) ============ -->
+      <rect x="520" y="64" width="456" height="152" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="540" y="56" width="108" height="16" fill="#f5f5f5"/>
+      <text x="544" y="68" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ЦЕНЫ И СКЛАДЫ</text>
+      <text x="960" y="78" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">4 таблицы</text>
+
+      <rect x="536" y="100" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="116" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">stocks</text>
+      <text x="548" y="132" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">остатки · полиморф</text>
+
+      <rect x="756" y="100" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="768" y="116" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">catalog_prices</text>
+      <text x="768" y="132" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">цена города (ADR 0002)</text>
+
+      <rect x="536" y="156" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="172" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">warehouses</text>
+      <text x="548" y="188" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">склады</text>
+
+      <rect x="756" y="156" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="768" y="172" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">warehouse_markup_rules</text>
+      <text x="768" y="188" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">наценки склада</text>
+
+      <!-- ============ ZONE 3: ГЕО (6) ============ -->
+      <rect x="24" y="352" width="456" height="208" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="44" y="344" width="40" height="16" fill="#f5f5f5"/>
+      <text x="48" y="356" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ГЕО</text>
+      <text x="464" y="366" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">6 таблиц</text>
+
+      <rect x="40" y="388" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="404" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">regions</text>
+      <text x="52" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">регионы</text>
+
+      <rect x="260" y="388" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="404" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">cities</text>
+      <text x="272" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">города · сортировка</text>
+
+      <rect x="40" y="444" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="460" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">city_delivery_times</text>
+      <text x="52" y="476" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">сроки доставки</text>
+
+      <rect x="260" y="444" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="460" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">city_price_rules</text>
+      <text x="272" y="476" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">правила цены города</text>
+
+      <rect x="40" y="500" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="516" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">delivery_points</text>
+      <text x="52" y="532" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">пункты выдачи</text>
+
+      <rect x="260" y="500" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="516" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">delivery_schedules</text>
+      <text x="272" y="532" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">график отгрузки</text>
+
+      <!-- ============ ZONE 4: ЗАКАЗЫ · КЛИЕНТЫ (5) ============ -->
+      <rect x="520" y="352" width="456" height="208" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="540" y="344" width="124" height="16" fill="#f5f5f5"/>
+      <text x="544" y="356" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ЗАКАЗЫ · КЛИЕНТЫ</text>
+      <text x="960" y="366" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">5 таблиц</text>
+
+      <rect x="536" y="388" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="404" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">users</text>
+      <text x="548" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">клиенты</text>
+
+      <rect x="756" y="388" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="768" y="404" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">orders</text>
+      <text x="768" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">заказы</text>
+
+      <rect x="536" y="444" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="460" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">order_items</text>
+      <text x="548" y="476" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">позиции · полиморф</text>
+
+      <rect x="756" y="444" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="768" y="460" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">promotions</text>
+      <text x="768" y="476" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">акции · полиморф</text>
+
+      <rect x="536" y="500" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="516" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">notifications</text>
+      <text x="548" y="532" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">уведомления</text>
+
+      <!-- ============ ZONE 5: АВТО-ПОДБОР (5) ============ -->
+      <rect x="24" y="584" width="456" height="208" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="44" y="576" width="92" height="16" fill="#f5f5f5"/>
+      <text x="48" y="588" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">АВТО-ПОДБОР</text>
+      <text x="464" y="598" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">5 таблиц</text>
+
+      <rect x="40" y="620" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="636" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">vehicle_makes</text>
+      <text x="52" y="652" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">марки</text>
+
+      <rect x="260" y="620" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="636" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">vehicle_models</text>
+      <text x="272" y="652" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">модели · поколения</text>
+
+      <rect x="40" y="676" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="692" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">vehicle_modifications</text>
+      <text x="52" y="708" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">модификации</text>
+
+      <rect x="260" y="676" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="272" y="692" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">vehicle_tire_sizes</text>
+      <text x="272" y="708" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">штатные размеры шин</text>
+
+      <rect x="40" y="732" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="748" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">vehicle_wheel_specs</text>
+      <text x="52" y="764" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">штатные параметры дисков</text>
+
+      <!-- ============ ZONE 6: АДМИНКА (2) ============ -->
+      <rect x="520" y="584" width="456" height="96" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <rect x="540" y="576" width="72" height="16" fill="#f5f5f5"/>
+      <text x="544" y="588" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">АДМИНКА</text>
+      <text x="960" y="598" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">2 таблицы</text>
+
+      <rect x="536" y="620" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="548" y="636" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">admins</text>
+      <text x="548" y="652" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">администраторы</text>
+
+      <rect x="756" y="620" width="204" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="768" y="636" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">admin_roles</text>
+      <text x="768" y="652" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">роли доступа</text>
+
+      <!-- ============ ZONE 7: ИНФРАСТРУКТУРА (9, footer-style) ============ -->
+      <rect x="24" y="816" width="952" height="208" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.18)" stroke-width="0.8"/>
+      <rect x="44" y="808" width="116" height="16" fill="#f5f5f5"/>
+      <text x="48" y="820" fill="rgba(45,49,66,0.40)" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ИНФРАСТРУКТУРА</text>
+      <text x="960" y="830" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="end">9 таблиц</text>
+
+      <rect x="40" y="852" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="868" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">personal_access_tokens</text>
+      <text x="52" y="884" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">санктум · auth</text>
+
+      <rect x="272" y="852" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="284" y="868" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">sessions</text>
+      <text x="284" y="884" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">сессии</text>
+
+      <rect x="504" y="852" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="516" y="868" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">jobs</text>
+      <text x="516" y="884" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">очередь</text>
+
+      <rect x="736" y="852" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="748" y="868" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">job_batches</text>
+      <text x="748" y="884" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">батчи импорта</text>
+
+      <rect x="40" y="908" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="924" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">failed_jobs</text>
+      <text x="52" y="940" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">упавшие задания</text>
+
+      <rect x="272" y="908" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="284" y="924" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">cache</text>
+      <text x="284" y="940" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">кеш-ключи</text>
+
+      <rect x="504" y="908" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="516" y="924" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">cache_locks</text>
+      <text x="516" y="940" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">локи кеша</text>
+
+      <rect x="736" y="908" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="748" y="924" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">migrations</text>
+      <text x="748" y="940" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">миграции</text>
+
+      <rect x="40" y="964" width="216" height="44" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="52" y="980" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">password_reset_tokens</text>
+      <text x="52" y="996" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">сброс пароля</text>
+
+      <!-- Legend -->
+      <line x1="24" y1="1048" x2="976" y2="1048" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="24" y="1064" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+      <rect x="24" y="1080" width="20" height="12" rx="2" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="52" y="1088" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Домен</text>
+
+      <rect x="140" y="1080" width="20" height="12" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="168" y="1088" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Таблица</text>
+
+      <rect x="256" y="1080" width="20" height="12" rx="2" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.18)" stroke-width="0.8"/>
+      <text x="284" y="1088" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Инфраструктура (Laravel)</text>
+
+      <!-- Caption -->
+      <text x="24" y="1112" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">ВСЕГО</text>
+      <text x="112" y="1112" fill="#4f5d75" font-size="8" font-family="'Geist', sans-serif" font-style="italic">39 таблиц · 7 доменов. FK-связи и колонки — в детальных схемах: catalog-schema-diagram.html.</text>
+    </svg>
+  </div>
+</body>
+</html>

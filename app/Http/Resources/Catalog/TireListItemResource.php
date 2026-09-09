@@ -33,8 +33,6 @@ final class TireListItemResource extends JsonResource
             'is_studded' => $tire->is_studded,
             'euro_label' => $tire->euro_label,
             'price' => $tire->city_price,
-            'delivery_min' => $tire->city_delivery_min,
-            'delivery_max' => $tire->city_delivery_max,
             'images' => $this->whenLoaded('images', fn () => ImageResource::collection($tire->images)),
         ];
     }

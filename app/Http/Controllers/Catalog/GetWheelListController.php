@@ -7,9 +7,11 @@ use App\Actions\Catalog\Wheel\GetWheelList;
 use App\DTOs\Catalog\Wheel\WheelListInput;
 use App\Http\Requests\Catalog\WheelListRequest;
 use App\Http\Resources\Catalog\WheelListItemResource;
+use App\Models\Catalog\Wheel\WheelProduct;
 use App\Models\Delivery\City;
 use App\Preconditions\Geo\EnsureCityExists;
 use App\Services\Cache\Catalog\WheelListCacheService;
+use App\Services\Delivery\DeliveryStockSelector;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -23,6 +25,7 @@ final readonly class GetWheelListController
         private GetWheelList $getWheelList,
         private GetCatalogListSeo $getCatalogListSeo,
         private EnsureCityExists $ensureCityExists,
+        private DeliveryStockSelector $deliveryStockSelector,
         private string $defaultCityName,
     ) {}
 
@@ -32,7 +35,7 @@ final readonly class GetWheelListController
      * Фильтры каталога, пагинация, сортировка по цене города.
      */
     #[Group('Каталог', weight: 10)]
-    #[Response(type: 'array{data: list<array{id: int, name: string, slug: string, brand: array{id: int, name: string, slug: string}, model: array{id: int, name: string, slug: string}|null, origin: array{vendor: array{badge: string, description: string|null}|null, manufacture_country: array{badge: string, description: string|null}|null, manufacture_year: array{badge: string, description: string|null}|null}|null, width: string|null, diameter: int|null, pcd: string|null, et: string|null, hub_diameter: string|null, type: array{label: string, value: string}|null, color: string|null, price: float|null, delivery_min: int|null, delivery_max: int|null, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int, seo: array{title: string, description: string|null}}}')]
+    #[Response(type: 'array{data: list<array{id: int, name: string, slug: string, brand: array{id: int, name: string, slug: string}, model: array{id: int, name: string, slug: string}|null, origin: array{vendor: array{badge: string, description: string|null}|null, manufacture_country: array{badge: string, description: string|null}|null, manufacture_year: array{badge: string, description: string|null}|null}|null, width: string|null, diameter: int|null, pcd: string|null, et: string|null, hub_diameter: string|null, type: array{label: string, value: string}|null, color: string|null, price: float|null, delivery?: array{delivery_min: int, delivery_max: int, order_day_of_week: int}, images: list<array{id: int, url: string}>}>, meta: array{current_page: int, last_page: int, per_page: int, total: int, seo: array{title: string, description: string|null}}}')]
     public function __invoke(WheelListRequest $request): JsonResponse
     {
         $cityId = $request->validated('city_id');
@@ -69,7 +72,57 @@ final readonly class GetWheelListController
             return $this->buildPayload($paginator, $seo);
         }, $resolvedCityId, $filters, $page, $perPage, $sortBy, $sortDir);
 
+        // Delivery считается вне кеша: order_day_of_week зависит от текущего момента
+        // и в payload устаревал бы до TTL. В кеше — только стабильные поля.
+        $payload = $this->enrichDelivery($payload, $resolvedCityId);
+
         return response()->json($payload);
+    }
+
+    /**
+     * Блок delivery для товаров страницы: склад с минимальной ценой города (quantity >= minQuantity),
+     * его стабильный диапазон min/max из catalog_prices и день недели ближайшей отгрузки.
+     *
+     * @param  array{data: list<array<string, mixed>>, meta: array<string, mixed>}  $payload
+     * @return array{data: list<array<string, mixed>>, meta: array<string, mixed>}
+     */
+    private function enrichDelivery(array $payload, ?int $resolvedCityId): array
+    {
+        if ($resolvedCityId === null) {
+            // Город по умолчанию резолвится по имени (как EnsureCityExists при промахе кеша);
+            // при хите precondition не вызывается — при отсутствии города тихо пропускаем.
+            $resolvedCityId = City::where('name', $this->defaultCityName)->value('id');
+        }
+
+        if ($resolvedCityId === null || $payload['data'] === []) {
+            return $payload;
+        }
+
+        $deliveries = $this->deliveryStockSelector->deliveryByProduct(
+            array_column($payload['data'], 'id'),
+            $resolvedCityId,
+            (new WheelProduct)->getMorphClass(),
+        );
+
+        foreach ($payload['data'] as $i => $item) {
+            $delivery = $deliveries[$item['id']] ?? null;
+
+            // Блок присутствует только при полном наборе: склад выбран, есть расписание
+            // и посчитанный диапазон (иначе min/max и day_of_week были бы согласованно null)
+            if ($delivery !== null
+                && $delivery['delivery_min'] !== null
+                && $delivery['delivery_max'] !== null
+                && $delivery['day_of_week'] !== null
+            ) {
+                $payload['data'][$i]['delivery'] = [
+                    'delivery_min' => $delivery['delivery_min'],
+                    'delivery_max' => $delivery['delivery_max'],
+                    'order_day_of_week' => $delivery['day_of_week'],
+                ];
+            }
+        }
+
+        return $payload;
     }
 
     /** @param  array{title: string, description: string|null}  $seo

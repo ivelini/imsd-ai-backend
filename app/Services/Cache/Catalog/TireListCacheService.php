@@ -40,7 +40,8 @@ final readonly class TireListCacheService
         // v4: season — объект {label, value} вместо строки
         // v5: meta.seo — SEO-мета листинга
         // v6: origin — происхождение товара в элементе листинга
-        $key = 'tire-list:v6:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
+        // v7: delivery_min/delivery_max убраны из payload — блок delivery считается вне кеша
+        $key = 'tire-list:v7:'.($cityId ?? 'default').':'.md5(serialize([$filters, $page, $perPage, $sortBy, $sortDir]));
 
         /** @var array $data */
         $data = $this->cache->remember($key, $this->ttl, $query);

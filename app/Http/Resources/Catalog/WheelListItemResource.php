@@ -33,8 +33,6 @@ final class WheelListItemResource extends JsonResource
                 : null,
             'color' => $wheel->color,
             'price' => $wheel->city_price,
-            'delivery_min' => $wheel->city_delivery_min,
-            'delivery_max' => $wheel->city_delivery_max,
             'images' => $this->whenLoaded('images', fn () => ImageResource::collection($wheel->images)),
         ];
     }

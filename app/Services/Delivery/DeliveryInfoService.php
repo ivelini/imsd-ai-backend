@@ -119,8 +119,11 @@ final class DeliveryInfoService
         return $rule !== null ? (float) $rule['markup'] : null;
     }
 
-    /** Расчёт ближайшего срока отгрузки со склада от текущего момента (без города). */
-    public static function nextShipmentDays(?Collection $schedules): ?int
+    /**
+     * Ближайшая отгрузка со склада от текущего момента (без города):
+     * days — дней до отгрузки, day_of_week — день недели этой отгрузки (0=Mon … 6=Sun).
+     */
+    public static function nextShipment(?Collection $schedules): ?array
     {
         if ($schedules === null || $schedules->isEmpty()) {
             return null;
@@ -154,6 +157,15 @@ final class DeliveryInfoService
             ? $schedule->days_after
             : $schedule->days_before;
 
-        return $processing + $offset;
+        return [
+            'days' => $processing + $offset,
+            'day_of_week' => ($todayDow + $offset) % 7,
+        ];
+    }
+
+    /** Расчёт ближайшего срока отгрузки со склада от текущего момента (без города). */
+    public static function nextShipmentDays(?Collection $schedules): ?int
+    {
+        return self::nextShipment($schedules)['days'] ?? null;
     }
 }

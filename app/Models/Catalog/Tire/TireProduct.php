@@ -53,8 +53,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read ProductOrigin|null $origin
  * @property-read Country|null $country
  * @property float|null $city_price Цена города из catalog_prices (transient, ставит GetTireList)
- * @property int|null $city_delivery_min Срок доставки города (transient, ставит GetTireList)
- * @property int|null $city_delivery_max Срок доставки города (transient, ставит GetTireList)
  */
 class TireProduct extends Model
 {
