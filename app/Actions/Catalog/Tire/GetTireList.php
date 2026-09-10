@@ -79,13 +79,20 @@ final readonly class GetTireList
             ->where('catalog_prices.city_id', $cityId)
             ->whereNotNull('catalog_prices.price')
             ->groupBy('stocks.stockable_id')
-            ->selectRaw('stocks.stockable_id as id, MIN(catalog_prices.price) as price')
+            ->selectRaw('stocks.stockable_id as id, MIN(catalog_prices.price) as price, MAX(catalog_prices.base_price) as base_price')
             ->get()
             ->keyBy('id');
 
         foreach ($paginator->items() as $tire) {
             $row = $rows->get($tire->id);
-            $tire->setAttribute('city_price', $row !== null ? (float) $row->price : null);
+            $price = $row !== null ? (float) $row->price : null;
+            // Базовая цена и признак акции сопоставляются по строке с минимальной ценой города
+            $basePrice = $row?->base_price !== null ? (float) $row->base_price : null;
+            $hasPromotion = $price !== null && $basePrice !== null && $basePrice > $price;
+
+            $tire->setAttribute('city_price', $price);
+            $tire->setAttribute('city_old_price', $hasPromotion ? $basePrice : null);
+            $tire->setAttribute('city_promotion', $hasPromotion);
         }
     }
 

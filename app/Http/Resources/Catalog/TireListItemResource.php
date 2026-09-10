@@ -33,6 +33,9 @@ final class TireListItemResource extends JsonResource
             'is_studded' => $tire->is_studded,
             'euro_label' => $tire->euro_label,
             'price' => $tire->city_price,
+            // Цена без скидки — фронт показывает её зачёркнутой рядом с акционной
+            'old_price' => $tire->city_old_price,
+            'promotion' => $tire->city_promotion,
             'images' => $this->whenLoaded('images', fn () => ImageResource::collection($tire->images)),
         ];
     }

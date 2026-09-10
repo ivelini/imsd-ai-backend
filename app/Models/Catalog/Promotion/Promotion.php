@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog\Promotion;
 
+use App\Enums\Promotion\PromotionType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $id
  * @property string $name
  * @property string|null $description
- * @property string $type
+ * @property PromotionType $type
  * @property string|null $value
  * @property Carbon $starts_at
  * @property Carbon $ends_at
@@ -39,6 +40,7 @@ class Promotion extends Model
     protected function casts(): array
     {
         return [
+            'type' => PromotionType::class,
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
         ];

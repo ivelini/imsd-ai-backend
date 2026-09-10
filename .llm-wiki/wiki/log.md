@@ -1,5 +1,9 @@
 # Wiki Log
 
+## [2026-09-10] ingest | Волна 2d (часть 3): акции на панели + применение скидок
+- Updated: Админ-панель на Filament (PromotionResource, снос API акций, остаток admin API)
+- Updated: Каталог: ценообразование (скидка в price, base_price, PromotionMatcher, promotions:sync)
+
 ## [2026-09-10] ingest | Волна 2d (часть 1): страница импорта + снос Import API
 - Updated: Админ-панель на Filament (ImportProducts, снос Import API, адрес уведомления)
 - Updated: Импорт каталога из XLSX (точка входа — страница панели)

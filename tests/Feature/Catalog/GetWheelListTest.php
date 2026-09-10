@@ -69,7 +69,7 @@ class GetWheelListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'images'],
+            ['id', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'diameter', 'pcd', 'et', 'hub_diameter', 'type', 'color', 'price', 'old_price', 'promotion', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($wheel->id, $response->json('data.0.id'));

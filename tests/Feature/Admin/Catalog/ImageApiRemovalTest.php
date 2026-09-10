@@ -47,7 +47,7 @@ class ImageApiRemovalTest extends TestCase
 
     public function test_unmigrated_route_still_works(): void
     {
-        $this->authGetJson('/api/admin/catalog/promotions')->assertOk();
+        $this->authGetJson('/api/admin/catalog/references')->assertOk();
     }
 
     private function authGetJson(string $uri)

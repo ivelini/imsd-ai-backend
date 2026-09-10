@@ -4,6 +4,7 @@ namespace App\Actions\Catalog;
 
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\Catalog\RecalcContext;
+use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
@@ -11,11 +12,15 @@ use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;
 use App\Services\Catalog\MarkupRuleMatcher;
+use App\Services\Catalog\PromotionDiscount;
+use App\Services\Catalog\PromotionMatcher;
 use App\Services\Delivery\DeliveryTimeCalculator;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 /**
- * Пересчёт catalog_prices: наценка города поверх готовой stocks.price, стабильный диапазон доставки.
+ * Пересчёт catalog_prices: наценка города поверх готовой stocks.price, скидка активной акции,
+ * стабильный диапазон доставки.
  *
  * Наценка склада уже применена при записи остатка (импорт — UpsertStock, панель — StocksRelationManager),
  * поэтому повторно из purchase_price она не считается: ручная продажная цена не затирается (FR ADM-4.1.3).
@@ -31,6 +36,8 @@ final readonly class PopulateCatalogPrices
             cityRules: $this->loadCityRules(),
             deliveryByWarehouse: $this->loadDeliveryByWarehouse(),
             cityDeliveryDays: CityDeliveryTime::pluck('delivery_days', 'city_id'),
+            promotions: $this->loadPromotions(),
+            brandIdsByProduct: $this->loadBrandIdsByProduct($stocks),
         );
 
         foreach ($stocks->chunk(50) as $stocksChunk) {
@@ -66,6 +73,55 @@ final readonly class PopulateCatalogPrices
             ->map(fn (Collection $schedules) => DeliveryTimeCalculator::deliveryRange($schedules));
     }
 
+    /**
+     * Акции для пересчёта — один раз, до цикла по остаткам.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function loadPromotions(): array
+    {
+        return Promotion::query()
+            ->get()
+            ->map(fn (Promotion $promotion): array => [
+                'type' => $promotion->type->value,
+                'value' => $promotion->value,
+                'promotable_type' => $promotion->promotable_type,
+                'promotable_id' => $promotion->promotable_id,
+                'starts_at' => $promotion->starts_at,
+                'ends_at' => $promotion->ends_at,
+            ])
+            ->all();
+    }
+
+    /**
+     * brand_id по ключу «morph-тип:id» — для привязки акций к бренду.
+     *
+     * @param  Collection<int, Stock>  $stocks
+     * @return array<string, int|null>
+     */
+    private function loadBrandIdsByProduct(Collection $stocks): array
+    {
+        $map = [];
+
+        foreach ($stocks->groupBy('stockable_type') as $type => $group) {
+            $model = Relation::getMorphedModel((string) $type) ?? (string) $type;
+
+            if (! class_exists($model)) {
+                continue;
+            }
+
+            $brandIds = $model::query()
+                ->whereIn('id', $group->pluck('stockable_id')->unique())
+                ->pluck('brand_id', 'id');
+
+            foreach ($brandIds as $id => $brandId) {
+                $map["{$type}:{$id}"] = $brandId !== null ? (int) $brandId : null;
+            }
+        }
+
+        return $map;
+    }
+
     /** @param  Collection<int, Stock>  $stocksChunk */
     private function recalculateChunk(Collection $stocksChunk, Collection $cityIds, RecalcContext $recalc): void
     {
@@ -83,7 +139,7 @@ final readonly class PopulateCatalogPrices
             CatalogPrice::upsert(
                 $chunk,
                 ['stock_id', 'city_id'],
-                ['price', 'delivery_min', 'delivery_max', 'updated_at'],
+                ['price', 'base_price', 'delivery_min', 'delivery_max', 'updated_at'],
             );
         }
     }
@@ -97,6 +153,10 @@ final readonly class PopulateCatalogPrices
 
         $records = [];
         foreach ($cityIds as $cityId) {
+            // Базовая цена города без акции, затем скидка выбранной акции (ADR 0010).
+            $basePrice = $this->priceForCity($stockPrice, $cityId, $recalc->cityRules);
+            $promotion = $this->promotionFor($stock, $basePrice, $recalc);
+
             $deliveryDays = $recalc->cityDeliveryDays->get($cityId);
             $deliveryRange = $delivery !== null && $deliveryDays !== null
                 ? ['min' => $delivery['min'] + $deliveryDays, 'max' => $delivery['max'] + $deliveryDays]
@@ -105,7 +165,10 @@ final readonly class PopulateCatalogPrices
             $records[] = [
                 'stock_id' => $stock->id,
                 'city_id' => $cityId,
-                'price' => $this->priceForCity($stockPrice, $cityId, $recalc->cityRules),
+                'price' => $promotion !== null
+                    ? PromotionDiscount::apply($basePrice, (string) $promotion['type'], $promotion['value'] !== null ? (float) $promotion['value'] : null)
+                    : $basePrice,
+                'base_price' => $basePrice,
                 'delivery_min' => $deliveryRange['min'] ?? null,
                 'delivery_max' => $deliveryRange['max'] ?? null,
                 'created_at' => now(),
@@ -114,6 +177,23 @@ final readonly class PopulateCatalogPrices
         }
 
         return $records;
+    }
+
+    /** @return array<string, mixed>|null */
+    private function promotionFor(Stock $stock, float $basePrice, RecalcContext $recalc): ?array
+    {
+        if ($recalc->promotions === []) {
+            return null;
+        }
+
+        return PromotionMatcher::match(
+            basePrice: $basePrice,
+            promotions: $recalc->promotions,
+            productType: $stock->stockable_type,
+            productId: (int) $stock->stockable_id,
+            brandId: $recalc->brandIdsByProduct["{$stock->stockable_type}:{$stock->stockable_id}"] ?? null,
+            now: now(),
+        );
     }
 
     /** @param  Collection<array-key, Collection<int, array<string, float>>>  $cityRules */

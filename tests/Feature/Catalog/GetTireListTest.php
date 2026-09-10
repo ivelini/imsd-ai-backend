@@ -73,7 +73,7 @@ class GetTireListTest extends TestCase
             $response->json('meta'),
         );
         $this->assertEqualsCanonicalizing(
-            ['id', 'ean', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'profile', 'diameter', 'season', 'is_studded', 'euro_label', 'price', 'images'],
+            ['id', 'ean', 'name', 'slug', 'brand', 'model', 'origin', 'width', 'profile', 'diameter', 'season', 'is_studded', 'euro_label', 'price', 'old_price', 'promotion', 'images'],
             array_keys($response->json('data.0')),
         );
         $this->assertSame($tire->id, $response->json('data.0.id'));

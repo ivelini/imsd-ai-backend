@@ -1,7 +1,7 @@
 # Каталог: ценообразование — полная цена города
 
-> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19; правка остатков и источник цены пересчёта 2026-09-10
-> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md)
+> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19; правка остатков и источник цены пересчёта 2026-09-10; применение акций 2026-09-10
+> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md); [2026-09-10-filament-wave2d-promotions.md](../../raw/project/2026-09-10-filament-wave2d-promotions.md)
 
 ## Overview
 
@@ -27,7 +27,9 @@ purchase_price (прайс склада, импорт) или правка в п
 
 ## Акции
 
-Акция активна по датам (`starts_at ≤ now ≤ ends_at`), статусов нет. Привязка полиморфная: конкретный товар (`tire_product`/`wheel_product`) > бренд (`brand`) > весь каталог (`all`); внутри категории — большая скидка. Типы: percent / fixed / gift / special (`PromotionType`).
+Акция активна по датам (`starts_at ≤ now ≤ ends_at`), статусов нет. Привязка полиморфная по морф-карте проекта: товар (`tire`/`wheel`) > бренд (`brand`) > весь каталог (пусто); внутри уровня — большая скидка. Типы: percent / fixed / gift / special (`PromotionType`).
+
+Скидка **входит в `catalog_prices.price`** (ADR 0010), рядом хранится `base_price` — цена без скидки. Выбор акции — `PromotionMatcher`, формула — `PromotionDiscount` (обе чистые функции); применяются при пересчёте. Правка акции в панели пересчитывает цены сразу; наступление дат — плановая задача `promotions:sync` (каждые 5 минут). В листингах `price` — со скидкой, `old_price` — без (только при акции), `promotion` — признак.
 
 ## Пересчёт catalog_prices
 

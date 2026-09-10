@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $stock_id
  * @property int $city_id
- * @property float $price
+ * @property float $price Цена со скидкой активной акции
+ * @property float|null $base_price Цена без скидки (для показа старой цены)
  * @property int|null $delivery_min
  * @property int|null $delivery_max
  * @property Carbon $created_at
@@ -27,6 +28,7 @@ class CatalogPrice extends Model
         'stock_id',
         'city_id',
         'price',
+        'base_price',
         'delivery_min',
         'delivery_max',
     ];
@@ -35,6 +37,7 @@ class CatalogPrice extends Model
     {
         return [
             'price' => 'float',
+            'base_price' => 'float',
             'delivery_min' => 'integer',
             'delivery_max' => 'integer',
         ];

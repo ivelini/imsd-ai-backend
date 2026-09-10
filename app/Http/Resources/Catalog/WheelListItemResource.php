@@ -33,6 +33,9 @@ final class WheelListItemResource extends JsonResource
                 : null,
             'color' => $wheel->color,
             'price' => $wheel->city_price,
+            // Цена без скидки — фронт показывает её зачёркнутой рядом с акционной
+            'old_price' => $wheel->city_old_price,
+            'promotion' => $wheel->city_promotion,
             'images' => $this->whenLoaded('images', fn () => ImageResource::collection($wheel->images)),
         ];
     }

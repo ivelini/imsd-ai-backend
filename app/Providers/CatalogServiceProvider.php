@@ -12,6 +12,7 @@ use App\Models\Article;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Model\ProductModel;
+use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Catalog\Wheel\WheelProduct;
@@ -23,6 +24,7 @@ use App\Observers\CityDeliveryTimeObserver;
 use App\Observers\CityPriceRuleObserver;
 use App\Observers\DeliveryScheduleObserver;
 use App\Observers\ProductModelObserver;
+use App\Observers\PromotionObserver;
 use App\Observers\StockObserver;
 use App\Observers\TireProductObserver;
 use App\Observers\WarehouseMarkupRuleObserver;
@@ -112,6 +114,8 @@ class CatalogServiceProvider extends ServiceProvider
             'tire' => TireProduct::class,
             'wheel' => WheelProduct::class,
             'article' => Article::class,
+            // Бренд участвует в morph-связи акций (promotable) — единственный потребитель
+            'brand' => Brand::class,
         ]);
 
         Brand::observe(BrandObserver::class);
@@ -124,5 +128,6 @@ class CatalogServiceProvider extends ServiceProvider
         CityDeliveryTime::observe(CityDeliveryTimeObserver::class);
         CityPriceRule::observe(CityPriceRuleObserver::class);
         WarehouseMarkupRule::observe(WarehouseMarkupRuleObserver::class);
+        Promotion::observe(PromotionObserver::class);
     }
 }
