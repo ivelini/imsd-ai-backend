@@ -1,7 +1,7 @@
 # Эксплуатация: команды, окружение, очереди, runbooks
 
-> Sources: Проект (operations.md), 2026-08-19; Код (app/Jobs), 2026-08-19
-> Raw: [operations.md](../../raw/project/operations.md)
+> Sources: Проект (operations.md), 2026-08-19; Код (app/Jobs), 2026-08-19; диагностика env_file и локали, 2026-09-10
+> Raw: [operations.md](../../raw/project/operations.md); [2026-09-10-env-locale-recreate.md](../../raw/project/2026-09-10-env-locale-recreate.md)
 
 ## Overview
 
@@ -24,6 +24,8 @@
 
 Секреты в репозиторий не коммитятся — только имена.
 
+**Правка `.env` требует пересоздания контейнеров.** `backend/.env` подключён через `env_file` (backend-app, backend-queue, backend-scheduler, reverb): значения попадают в переменные процесса при создании контейнера и там замораживаются, а Laravel переменные процесса не перезаписывает из файла. Поэтому правка без `docker compose up -d` (или `--force-recreate` для этих сервисов) не действует — симптом: `docker compose exec backend-app env | grep APP_...` показывает старое значение. Локаль интерфейса — `APP_LOCALE=ru`; переводы Filament берутся из `vendor/filament/*/resources/lang/ru`, своего каталога `lang/` в проекте нет.
+
 ## Очереди и импорты (фактические классы)
 
 | Job | Что делает |
@@ -42,6 +44,7 @@
 - **Кеш справочников устарел** — TTL 1 час; инвалидация Observer'ами при изменении справочников, вручную — `php artisan cache:clear`.
 - **Цены не пересчитались** — `PopulateCatalogPrices` вызывается после импорта (ImportMasterJob/PointImportJob); отдельной команды нет.
 - **Уведомления не приходят** — проверить Reverb и `BROADCAST_CONNECTION`; уведомления пишутся в БД (`notifications`), websocket — реальное время.
+- **Правка в `.env` не применилась** — контейнер держит старые переменные процесса: пересоздать `docker compose up -d` (см. «Окружение»).
 
 ## See Also
 

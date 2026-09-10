@@ -14,7 +14,7 @@
 | [Сроки доставки](concepts/delivery-times.md) | Графики отгрузки, delivery_min/max, расчёт срока на лету, фильтрация по бакетам | 2026-08-19 |
 | [Публичный API каталога](concepts/public-catalog-filter-api.md) | Справочник городов (/api/reference/city) + фасеты и листинг шин (/api/reference/filter/tire, /api/catalog/tires) и дисков (/api/reference/filter/wheel, /api/catalog/wheels): контракт фильтров, учёт города, meta.seo, euro_label, origin, агрегация цены, кеш с индексом ключей и JSON-roundtrip (ADR 0004) | 2026-08-21 |
 | [Импорт каталога из XLSX](concepts/xlsx-import-pipeline.md) | Пайплайн upload → ImportMasterJob → чанки → ChunkJob, маппинг XLSX → БД (description на модель, origin-колонки, евро-лейбл, SEO-формулы name/slug), инвалидация; точка входа — страница панели /panel/catalog/import | 2026-09-10 |
-| [Эксплуатация](concepts/operations.md) | Команды Makefile, окружение, очередь и импорты (фактические Job'ы), runbooks | 2026-08-19 |
+| [Эксплуатация](concepts/operations.md) | Команды Makefile, окружение (правка .env требует пересоздания контейнеров; локаль APP_LOCALE=ru), очередь и импорты (фактические Job'ы), runbooks | 2026-09-10 |
 | [Кеширование](concepts/caching.md) | Cache Service до Action, Observer-инвалидация (шины и диски), TTL, индекс ключей, JSON-roundtrip сериализация (ADR 0004) | 2026-08-21 |
 
 ## entities
