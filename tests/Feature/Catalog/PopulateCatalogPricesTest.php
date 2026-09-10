@@ -22,15 +22,9 @@ class PopulateCatalogPricesTest extends TestCase
 {
     use CreatesCity, RefreshDatabase;
 
-    public function test_execute_populates_prices_with_markup(): void
+    public function test_execute_populates_prices_from_stock_price(): void
     {
         $warehouse = Warehouse::factory()->create();
-        WarehouseMarkupRule::create([
-            'warehouse_id' => $warehouse->id,
-            'price_from' => 0,
-            'price_to' => 200,
-            'coefficient' => 1.5,
-        ]);
 
         $tire = TireProduct::factory()->create();
         Stock::create([
@@ -39,6 +33,7 @@ class PopulateCatalogPricesTest extends TestCase
             'warehouse_id' => $warehouse->id,
             'quantity' => 5,
             'purchase_price' => 100,
+            'price' => 150,
         ]);
 
         $city = $this->createCity();
@@ -54,6 +49,39 @@ class PopulateCatalogPricesTest extends TestCase
         );
     }
 
+    public function test_manual_sale_price_survives_recalc(): void
+    {
+        // Наценка склада дала бы 150, но админ задал продажную вручную (FR ADM-4.1.3) —
+        // пересчёт обязан брать stocks.price, а не пересчитывать её из закупочной.
+        $warehouse = Warehouse::factory()->create();
+        WarehouseMarkupRule::create([
+            'warehouse_id' => $warehouse->id,
+            'price_from' => 0,
+            'price_to' => 500,
+            'coefficient' => 1.5,
+        ]);
+        $city = $this->createCity();
+        $stock = $this->createStock($warehouse, 100, price: 999);
+
+        app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
+
+        $this->assertSame(999.0, $this->priceOf($stock, $city));
+    }
+
+    public function test_city_rule_matched_against_stock_price_not_purchase_price(): void
+    {
+        // Правило города покрывает 100 (закупочная), но не 900 (продажная):
+        // матчинг идёт по stocks.price (FR ADM-10.2.2/10.2.3) — наценки быть не должно.
+        $warehouse = Warehouse::factory()->create();
+        $city = $this->createCity();
+        CityPriceRule::create(['city_id' => $city->id, 'price_from' => 0, 'price_to' => 200, 'markup' => 50]);
+        $stock = $this->createStock($warehouse, 100, price: 900);
+
+        app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
+
+        $this->assertSame(900.0, $this->priceOf($stock, $city));
+    }
+
     public function test_selective_recalc_updates_only_given_stocks(): void
     {
         $warehouseA = Warehouse::factory()->create();
@@ -67,8 +95,8 @@ class PopulateCatalogPricesTest extends TestCase
         $this->assertSame(100.0, $this->priceOf($stockA, $city));
         $this->assertSame(200.0, $this->priceOf($stockB, $city));
 
-        $stockA->update(['purchase_price' => 300]);
-        $stockB->update(['purchase_price' => 400]);
+        $stockA->update(['price' => 300]);
+        $stockB->update(['price' => 400]);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput(stockIds: [$stockA->id]));
 
@@ -95,11 +123,8 @@ class PopulateCatalogPricesTest extends TestCase
     {
         $warehouse = Warehouse::factory()->create();
         $this->createWeeklySchedule($warehouse);
-        WarehouseMarkupRule::create([
-            'warehouse_id' => $warehouse->id, 'price_from' => 0, 'price_to' => 500, 'coefficient' => 1.5,
-        ]);
         $city = $this->createCity();
-        $stock = $this->createStock($warehouse, 100);
+        $stock = $this->createStock($warehouse, 100, price: 150);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
@@ -146,12 +171,9 @@ class PopulateCatalogPricesTest extends TestCase
     public function test_price_includes_city_markup(): void
     {
         $warehouse = Warehouse::factory()->create();
-        WarehouseMarkupRule::create([
-            'warehouse_id' => $warehouse->id, 'price_from' => 0, 'price_to' => 500, 'coefficient' => 1.5,
-        ]);
         $city = $this->createCity();
         CityPriceRule::create(['city_id' => $city->id, 'price_from' => 0, 'price_to' => 200, 'markup' => 50]);
-        $stock = $this->createStock($warehouse, 100);
+        $stock = $this->createStock($warehouse, 100, price: 150);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
@@ -165,9 +187,9 @@ class PopulateCatalogPricesTest extends TestCase
             'warehouse_id' => $warehouse->id, 'price_from' => 0, 'price_to' => 500, 'coefficient' => 1.5,
         ]);
         $city = $this->createCity();
-        // Покрывает 150 (финальная), но не 100 (закупочная)
+        // Покрывает 150 (продажная), но не 100 (закупочная)
         CityPriceRule::create(['city_id' => $city->id, 'price_from' => 120, 'price_to' => 170, 'markup' => 50]);
-        $stock = $this->createStock($warehouse, 100);
+        $stock = $this->createStock($warehouse, 100, price: 150);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
@@ -177,18 +199,15 @@ class PopulateCatalogPricesTest extends TestCase
     public function test_price_without_city_markup_when_no_rule(): void
     {
         $warehouse = Warehouse::factory()->create();
-        WarehouseMarkupRule::create([
-            'warehouse_id' => $warehouse->id, 'price_from' => 0, 'price_to' => 500, 'coefficient' => 1.5,
-        ]);
         $city = $this->createCity();
-        $stock = $this->createStock($warehouse, 100);
+        $stock = $this->createStock($warehouse, 100, price: 150);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
         $this->assertSame(150.0, $this->priceOf($stock, $city));
     }
 
-    private function createStock(Warehouse $warehouse, float $purchasePrice): Stock
+    private function createStock(Warehouse $warehouse, float $purchasePrice, ?float $price = null): Stock
     {
         $tire = TireProduct::factory()->create();
 
@@ -198,6 +217,8 @@ class PopulateCatalogPricesTest extends TestCase
             'warehouse_id' => $warehouse->id,
             'quantity' => 5,
             'purchase_price' => $purchasePrice,
+            // По умолчанию продажная = закупочной (наценки склада в этих кейсах нет).
+            'price' => $price ?? $purchasePrice,
         ]);
     }
 

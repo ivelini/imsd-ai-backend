@@ -4,7 +4,6 @@ namespace App\Actions\Catalog;
 
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
 use App\DTOs\Catalog\RecalcContext;
-use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Delivery\CatalogPrice;
 use App\Models\Delivery\City;
@@ -12,24 +11,23 @@ use App\Models\Delivery\CityDeliveryTime;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\DeliverySchedule;
 use App\Services\Catalog\MarkupRuleMatcher;
-use App\Services\Catalog\PriceCalculator;
 use App\Services\Delivery\DeliveryTimeCalculator;
 use Illuminate\Support\Collection;
 
-/** Пересчёт catalog_prices: наценки склада + города, стабильный диапазон доставки. */
+/**
+ * Пересчёт catalog_prices: наценка города поверх готовой stocks.price, стабильный диапазон доставки.
+ *
+ * Наценка склада уже применена при записи остатка (импорт — UpsertStock, панель — StocksRelationManager),
+ * поэтому повторно из purchase_price она не считается: ручная продажная цена не затирается (FR ADM-4.1.3).
+ */
 final readonly class PopulateCatalogPrices
 {
-    public function __construct(
-        private PriceCalculator $priceCalculator,
-    ) {}
-
     public function execute(PopulateCatalogPricesInput $input): void
     {
         $stocks = $this->loadStocks($input->stockIds);
         $cityIds = City::pluck('id');
 
         $recalc = new RecalcContext(
-            warehouseRules: $this->loadWarehouseRules(),
             cityRules: $this->loadCityRules(),
             deliveryByWarehouse: $this->loadDeliveryByWarehouse(),
             cityDeliveryDays: CityDeliveryTime::pluck('delivery_days', 'city_id'),
@@ -46,18 +44,6 @@ final readonly class PopulateCatalogPrices
         return Stock::query()
             ->when($stockIds !== null, fn ($query) => $query->whereIn('id', $stockIds))
             ->get();
-    }
-
-    /** Правила склада сериализуются в массивы — сервис не знает о БД. */
-    private function loadWarehouseRules(): Collection
-    {
-        return WarehouseMarkupRule::all()
-            ->groupBy('warehouse_id')
-            ->map(fn (Collection $group) => $group->map(fn (WarehouseMarkupRule $r) => [
-                'price_from' => $r->price_from,
-                'price_to' => $r->price_to,
-                'coefficient' => $r->coefficient,
-            ])->values());
     }
 
     /** Наценки города (стоимость доставки до города) — в том же формате, что складские. */
@@ -86,7 +72,7 @@ final readonly class PopulateCatalogPrices
         $records = [];
 
         foreach ($stocksChunk as $stock) {
-            if ($stock->purchase_price === null) {
+            if ($stock->price === null) {
                 continue;
             }
 
@@ -105,11 +91,8 @@ final readonly class PopulateCatalogPrices
     /** @return list<array<string, mixed>> */
     private function recordsForStock(Stock $stock, Collection $cityIds, RecalcContext $recalc): array
     {
-        $finalPrice = $this->priceCalculator->calculateFinalPrice(
-            (float) $stock->purchase_price,
-            $stock->warehouse_id,
-            $recalc->warehouseRules,
-        );
+        // Источник наценки города — готовая цена продажи остатка (FR ADM-10.2.2/10.2.3).
+        $stockPrice = (float) $stock->price;
         $delivery = $recalc->deliveryByWarehouse->get($stock->warehouse_id);
 
         $records = [];
@@ -122,7 +105,7 @@ final readonly class PopulateCatalogPrices
             $records[] = [
                 'stock_id' => $stock->id,
                 'city_id' => $cityId,
-                'price' => $this->priceForCity($finalPrice, $cityId, $recalc->cityRules),
+                'price' => $this->priceForCity($stockPrice, $cityId, $recalc->cityRules),
                 'delivery_min' => $deliveryRange['min'] ?? null,
                 'delivery_max' => $deliveryRange['max'] ?? null,
                 'created_at' => now(),

@@ -20,10 +20,7 @@ final readonly class UpsertStock
         $warehouse = $this->referenceResolver->resolveWarehouse($input->warehouseName);
 
         $price = $input->purchasePrice !== null
-            ? $this->priceCalculator->applyRule(
-                $input->purchasePrice,
-                $this->priceCalculator->findRule($input->purchasePrice, $warehouse->id),
-            )
+            ? $this->priceCalculator->calculateForWarehouse($input->purchasePrice, $warehouse->id)
             : null;
 
         return Stock::updateOrCreate(

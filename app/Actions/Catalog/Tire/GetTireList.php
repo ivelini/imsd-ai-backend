@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
  * Пагинированный список опубликованных шин с ценой выбранного города.
  *
  * БД-обвязка: фильтры через скоупы TireProductBuilder, цены города — одним
- * батч-запросом по стокам страницы (паттерн GetWarehouseStock).
+ * батч-запросом по стокам страницы.
  */
 final readonly class GetTireList
 {

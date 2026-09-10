@@ -1,7 +1,7 @@
 # Админ-панель на Filament
 
-> Sources: Проект, 2026-09-09; снос admin API товаров, изображений и импорта 2026-09-10
-> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2c-images.md](../../raw/project/2026-09-10-filament-wave2c-images.md); [2026-09-10-filament-wave2d-import.md](../../raw/project/2026-09-10-filament-wave2d-import.md)
+> Sources: Проект, 2026-09-09; снос admin API товаров, изображений, импорта и остатков 2026-09-10
+> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2c-images.md](../../raw/project/2026-09-10-filament-wave2c-images.md); [2026-09-10-filament-wave2d-import.md](../../raw/project/2026-09-10-filament-wave2d-import.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md)
 
 ## Решение
 
@@ -45,6 +45,8 @@
 Фикс дефекта: `DeleteImage` удалял только запись в `images` — файл оставался на public-диске (сироты); теперь снимается и файл.
 
 **2d (часть 1) — импорт (готово):** страница панели `/panel/import` (`ImportProducts`, реализует `HasTable`) — форма «тип + файл» (MIME-типы зависят от типа: XLSX для шин/дисков/моделей/точек, CSV для автомобилей) → `EnsureNoActiveImport` → `StartProductImport`; ниже таблица истории импортов с фильтром по типу и `poll('5s')`. **Пайплайн (Jobs, чанки, парсеры) не менялся** — сменилась только точка входа. Снесён Import API: 7 маршрутов, 7 контроллеров, 2 Request'а, `ProductImportResource`. Адрес уведомления о завершении переведён с `/admin/imports/{id}` (React-админка) на `/panel/import`.
+
+**2d (часть 2) — остатки складов (готово):** `StocksRelationManager` (общий для Tire/Wheel) — таблица остатков товара по складам и правка количества/закупочной/продажной цены (FR ADM-4.1.2/4.1.3; в старом API был только GET). Ввод закупочной пересчитывает продажную по правилу наценки склада, её можно перебить вручную; после сохранения — `PopulateCatalogPrices` для затронутого остатка; удаление снимает зависимые `catalog_prices`. Попутно починен `PopulateCatalogPrices`: он считал наценку склада заново из `purchase_price` и затирал ручную продажную — теперь берёт готовую `stocks.price` (FR ADM-10.2.2/10.2.3). Снесены осиротевшие `GetWarehouseStock` (+DTO/Resource), `PriceCalculator::calculateFinalPrice`, `DeliveryTimeCalculator::calculate/calculateAll`.
 
 **Осталось в admin API:** промоакции, references, auth/notifications.
 

@@ -64,8 +64,7 @@ class ImportProducts extends Page implements HasTable
                         ->mapWithKeys(fn (ImportType $type): array => [$type->value => $type->label()])
                         ->all())
                     ->required()
-                    ->live()
-                    ->default(ImportType::Tire->value),
+                    ->live(),
                 FileUpload::make('file')
                     ->label('Файл')
                     ->storeFiles(false)

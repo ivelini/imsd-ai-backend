@@ -78,6 +78,7 @@ class ChunkJobTest extends TestCase
             'warehouse_id' => Warehouse::factory()->create()->id,
             'quantity' => 1,
             'purchase_price' => 500,
+            'price' => 500,
         ]);
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);

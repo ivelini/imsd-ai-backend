@@ -1,7 +1,7 @@
 # Каталог: ценообразование — полная цена города
 
-> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19
-> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md)
+> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19; правка остатков и источник цены пересчёта 2026-09-10
+> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md)
 
 ## Overview
 
@@ -10,8 +10,9 @@
 ## Цепочка формирования цены
 
 ```
-purchase_price (прайс склада, импорт)
+purchase_price (прайс склада, импорт) или правка в панели
   → × коэффициент склада (warehouse_markup_rules)  → stocks.price — единая базовая цена
+    (пересчитывается при вводе закупочной; админ может задать вручную)
   → + наценка города (city_price_rules)            → базовая цена города
   → − скидка по активной акции                     → цена со скидкой
   → округление до ближайших 100 ₽                  → catalog_prices.price
@@ -22,6 +23,7 @@ purchase_price (прайс склада, импорт)
 - **Склад** (`warehouse_markup_rules`): по `warehouse_id`, диапазон `price_from ≤ purchase_price ≤ price_to` → `coefficient`. Пересечения: правило с наименьшим `price_from`, затем наименьшим `price_to`.
 - **Город** (`city_price_rules`): по `city_id`, диапазон по `stocks.price` → фиксированный `markup` в рублях. Тот же принцип выбора при пересечениях.
 - Оба матчинга — одна чистая функция `MarkupRuleMatcher` (Unit-тесты), которой делегируют все пути: массовый пересчёт, карточка товара, сервисы.
+- Наценка склада применяется **один раз — при записи остатка** (`PriceCalculator::calculateForWarehouse()`: импорт `UpsertStock` и панель `StocksRelationManager`). Пересчёт `catalog_prices` берёт готовую `stocks.price` и наценку склада повторно не считает — иначе ручная продажная цена затиралась бы (FR ADM-4.1.3/10.2).
 
 ## Акции
 
