@@ -2,12 +2,13 @@
 
 namespace Tests\Feature\Admin\Catalog\Vehicle;
 
+use App\Actions\Import\StartProductImport;
+use App\DTOs\Import\StartImportInput;
 use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\System\ProductImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
@@ -26,49 +27,6 @@ class VehicleImportTest extends TestCase
         $this->admin = $this->createAdmin();
     }
 
-    public function test_store_requires_authentication(): void
-    {
-        $this->postJson('/api/admin/catalog/import/vehicle')
-            ->assertUnauthorized();
-    }
-
-    public function test_store_validates_file_required(): void
-    {
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', [])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['file']);
-    }
-
-    public function test_store_validates_csv_format(): void
-    {
-        $file = UploadedFile::fake()->create('test.xlsx', 100);
-
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['file']);
-    }
-
-    public function test_store_accepts_csv_and_returns_import_id(): void
-    {
-        Bus::fake();
-        Storage::fake('local');
-
-        $file = UploadedFile::fake()->create('vehicle.csv', 100);
-
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202)
-            ->assertJsonStructure(['data' => ['import_id']]);
-
-        $this->assertDatabaseHas('product_imports', [
-            'id' => 1,
-            'type' => ImportType::Vehicle->value,
-            'status' => 'pending',
-        ]);
-    }
-
     /** @group slow */
     public function test_import_creates_full_hierarchy(): void
     {
@@ -83,9 +41,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseHas('vehicle_makes', ['name' => 'Acura']);
         $this->assertDatabaseHas('vehicle_models', ['name' => 'CDX', 'generation' => 'CDX']);
@@ -135,14 +91,10 @@ class VehicleImportTest extends TestCase
         ])."\n";
 
         $file1 = UploadedFile::fake()->createWithContent('vehicle1.csv', $csv);
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file1])
-            ->assertStatus(202);
+        $this->importVehicle($file1);
 
         $file2 = UploadedFile::fake()->createWithContent('vehicle2.csv', $csv);
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file2])
-            ->assertStatus(202);
+        $this->importVehicle($file2);
 
         $this->assertDatabaseCount('vehicle_makes', 1);
         $this->assertDatabaseCount('vehicle_models', 1);
@@ -164,9 +116,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseHas('vehicle_tire_sizes', [
             'type' => 'optional',
@@ -199,9 +149,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseHas('vehicle_wheel_specs', [
             'type' => 'optional',
@@ -236,9 +184,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseCount('vehicle_tire_sizes', 2);
     }
@@ -264,9 +210,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $import = ProductImport::latest('id')->first();
         $this->assertNotNull($import);
@@ -288,9 +232,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseCount('vehicle_tire_sizes', 1);
         $this->assertDatabaseCount('vehicle_wheel_specs', 0);
@@ -309,9 +251,7 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseHas('product_imports', [
             'status' => 'completed',
@@ -343,14 +283,21 @@ class VehicleImportTest extends TestCase
 
         $file = UploadedFile::fake()->createWithContent('vehicle.csv', $csv);
 
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/vehicle', ['file' => $file])
-            ->assertStatus(202);
+        $this->importVehicle($file);
 
         $this->assertDatabaseCount('vehicle_makes', 1);
         $this->assertDatabaseCount('vehicle_models', 1);
         $this->assertDatabaseCount('vehicle_modifications', 2);
         $this->assertDatabaseHas('vehicle_modifications', ['year' => 2016]);
         $this->assertDatabaseHas('vehicle_modifications', ['year' => 2017]);
+    }
+
+    /** Запуск импорта Vehicle напрямую, минуя снесённый HTTP-слой. */
+    private function importVehicle(UploadedFile $file): void
+    {
+        app(StartProductImport::class)->execute(new StartImportInput(
+            file: $file,
+            type: ImportType::Vehicle,
+        ));
     }
 }

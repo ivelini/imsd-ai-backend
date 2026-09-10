@@ -1,24 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\Catalog\Import\ImportController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportModelController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportPointController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportStatusController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportTireController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportVehicleController;
-use App\Http\Controllers\Admin\Catalog\Import\ImportWheelController;
 use App\Http\Controllers\Admin\Catalog\Promotion\PromotionController;
 use App\Http\Controllers\Admin\GetReferencesController;
-
-Route::prefix('/import')->group(function () {
-    Route::get('/status', ImportStatusController::class);
-    Route::get('/status/{id}', [ImportController::class, 'show']);
-    Route::post('/tires', [ImportTireController::class, 'store']);
-    Route::post('/vehicle', [ImportVehicleController::class, 'store']);
-    Route::post('/wheels', [ImportWheelController::class, 'store']);
-    Route::post('/geo-points', [ImportPointController::class, 'store']);
-    Route::post('/models', [ImportModelController::class, 'store']);
-});
 
 Route::get('/promotions', [PromotionController::class, 'index']);
 Route::post('/promotions', [PromotionController::class, 'store']);

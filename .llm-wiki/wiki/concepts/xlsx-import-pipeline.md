@@ -1,7 +1,7 @@
 # Импорт каталога из XLSX: пайплайн
 
-> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21; origin и перенос description 2026-08-21; снос товарного admin API 2026-09-10
-> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md); [2026-08-21-product-origin-description-move.md](../../raw/project/2026-08-21-product-origin-description-move.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md)
+> Sources: Проект (db-schema.md), 2026-08-19; Memory-заметка, 2026-07-04; описания и евро-лейбл 2026-08-21; SEO-формулы name/slug 2026-08-21; origin и перенос description 2026-08-21; снос admin API товаров и импорта 2026-09-10
+> Raw: [db-schema.md](../../raw/project/db-schema.md); [2026-08-21-tire-euro-label.md](../../raw/project/2026-08-21-tire-euro-label.md); [2026-08-21-tire-name-slug-format.md](../../raw/project/2026-08-21-tire-name-slug-format.md); [2026-08-21-product-origin-description-move.md](../../raw/project/2026-08-21-product-origin-description-move.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2d-import.md](../../raw/project/2026-09-10-filament-wave2d-import.md)
 
 ## Overview
 
@@ -10,8 +10,8 @@
 ## Конвейер
 
 ```
-POST /api/admin/catalog/import/tires (auth:sanctum, xlsx ≤50MB)
-  → Controller: файл на диск → dispatch ImportMasterJob → 202
+Страница панели /panel/import (ImportProducts): форма «тип + файл» → EnsureNoActiveImport
+  → StartProductImport: файл на диск → ProductImport::create → Job::dispatch
 CatalogImport\ImportMasterJob (тонкий оркестратор)
   → Preconditions: FileExists, FileColumnsValid
   → Action ParseImportFile: чтение XLSX, валидация колонок, JSON-чанки на диск (config: chunk_size 500)
@@ -21,7 +21,7 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 
 Чанки пишутся как JSON на диск, а не в очередь — для дебаггабильности и экономии места в jobs table.
 
-Точка входа — admin API (`POST /api/admin/catalog/import/*`); CRUD товаров снесён 2026-09-10 (волна 2b миграции на Filament), сам пайплайн от него не зависит. Перенос загрузки на Livewire-страницу панели — волна 2d, Jobs и чанки при этом не меняются.
+Точка входа с 2026-09-10 — страница панели `/panel/import` (волна 2d миграции на Filament); admin API импорта снесён. Пайплайн (Jobs, чанки, парсеры, Upsert*) при переносе не менялся — сменилась только точка входа.
 
 ## Маппинг (XLSX → БД)
 

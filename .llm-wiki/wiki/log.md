@@ -1,5 +1,9 @@
 # Wiki Log
 
+## [2026-09-10] ingest | Волна 2d (часть 1): страница импорта + снос Import API
+- Updated: Админ-панель на Filament (ImportProducts, снос Import API, адрес уведомления)
+- Updated: Импорт каталога из XLSX (точка входа — страница панели)
+
 ## [2026-09-10] ingest | Волна 2c: изображения товара + снос Image API
 - Updated: Админ-панель на Filament (ImagesRelationManager, PanelAction, фикс DeleteImage, снос Image API)
 

@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Admin;
 
+use App\Filament\Pages\ImportProducts;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -47,7 +48,7 @@ class ImportCompletedNotification extends Notification
                 $errorCount,
             ),
             'icon' => $icon,
-            'action_url' => sprintf('/admin/imports/%d', $import->id),
+            'action_url' => ImportProducts::getUrl(),
             'type' => 'import.completed',
         ];
     }

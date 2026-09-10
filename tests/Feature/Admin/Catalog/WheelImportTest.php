@@ -9,16 +9,12 @@ use App\DTOs\TireImport\ParseImportFileInput;
 use App\DTOs\TireImport\UpsertStockInput;
 use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
-use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\ProductSlugService;
 use App\Services\Import\OriginResolver;
 use App\Services\TireImport\ReferenceResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
@@ -34,26 +30,6 @@ class WheelImportTest extends TestCase
         parent::setUp();
 
         $this->admin = $this->createAdmin();
-    }
-
-    public function test_upload_requires_auth(): void
-    {
-        $this->postJson('/api/admin/catalog/import/wheels')->assertUnauthorized();
-    }
-
-    public function test_upload_returns_202(): void
-    {
-        Bus::fake();
-        Storage::fake('local');
-
-        $file = UploadedFile::fake()->create('wheels.xlsx', 100);
-
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/wheels', ['file' => $file])
-            ->assertStatus(202)
-            ->assertJsonStructure(['data' => ['import_id']]);
-
-        $this->assertDatabaseHas('product_imports', ['type' => ImportType::Wheel->value, 'status' => 'pending']);
     }
 
     public function test_parse_wheels_xlsx(): void

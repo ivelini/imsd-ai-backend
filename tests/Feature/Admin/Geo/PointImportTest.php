@@ -2,16 +2,12 @@
 
 namespace Tests\Feature\Admin\Geo;
 
-use App\Enums\Import\ImportType;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\Auth\Admin;
 use App\Models\Delivery\City;
 use App\Models\Delivery\Region;
 use App\Services\Import\ColumnDetector;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
 use OpenSpout\Reader\XLSX\Reader;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
@@ -28,26 +24,6 @@ class PointImportTest extends TestCase
         parent::setUp();
 
         $this->admin = $this->createAdmin();
-    }
-
-    public function test_requires_auth(): void
-    {
-        $this->postJson('/api/admin/catalog/import/geo-points')->assertUnauthorized();
-    }
-
-    public function test_upload_returns_202(): void
-    {
-        Bus::fake();
-        Storage::fake('local');
-
-        $file = UploadedFile::fake()->create('points.xlsx', 100);
-
-        $this->actingAs($this->admin, 'sanctum')
-            ->postJson('/api/admin/catalog/import/geo-points', ['file' => $file])
-            ->assertStatus(202)
-            ->assertJsonStructure(['data' => ['import_id']]);
-
-        $this->assertDatabaseHas('product_imports', ['type' => ImportType::Point->value, 'status' => 'pending']);
     }
 
     public function test_parse_points_xlsx(): void
