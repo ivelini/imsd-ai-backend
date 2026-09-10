@@ -1,5 +1,10 @@
 # Wiki Log
 
+## [2026-09-10] ingest | Волна 2b: WheelProductResource + снос admin API товаров
+- Updated: Админ-панель на Filament (WheelDataComposer, снос Tire/Wheel/Products API, состав остатка admin API)
+- Updated: Архитектура приложения: слои и путь запроса (аутентификация админов — панель как основной вход)
+- Updated: Импорт каталога из XLSX (статус точки входа, путь /api/admin/catalog/import/tires)
+
 ## [2026-09-09] ingest | Волна 2a: TireProductResource
 - Updated: Админ-панель на Filament (TireDataComposer, волна 2)
 

@@ -3,9 +3,10 @@
 namespace Tests\Feature\Warehouse;
 
 use App\Actions\Catalog\PopulateCatalogPrices;
+use App\Actions\Warehouse\GetWarehouseStock;
+use App\DTOs\Catalog\GetWarehouseStockInput;
 use App\DTOs\Catalog\PopulateCatalogPricesInput;
-use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
+use App\Http\Resources\Admin\Catalog\Warehouse\WarehouseStockRowResource;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
@@ -16,23 +17,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\CreatesCity;
 use Tests\TestCase;
 
-/** Эндпоинт остатков товара на складах: цена с доставкой, без delivery_cost. */
+/** Остатки товара на складах: цена с доставкой, без delivery_cost (HTTP-эндпоинт снесён, вернётся RelationManager'ом). */
 class GetWarehouseStockTest extends TestCase
 {
     use CreatesCity, RefreshDatabase;
-
-    private Admin $admin;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin', 'email' => 'admin@test.ru',
-            'password' => bcrypt('password'), 'admin_role_id' => $role->id, 'is_active' => true,
-        ]);
-    }
 
     public function test_response_has_final_price_without_delivery_cost(): void
     {
@@ -43,7 +31,7 @@ class GetWarehouseStockTest extends TestCase
         ]);
 
         $tire = TireProduct::factory()->create();
-        $stock = Stock::create([
+        Stock::create([
             'stockable_type' => $tire->getMorphClass(),
             'stockable_id' => $tire->id,
             'warehouse_id' => $warehouse->id,
@@ -57,11 +45,12 @@ class GetWarehouseStockTest extends TestCase
 
         app(PopulateCatalogPrices::class)->execute(new PopulateCatalogPricesInput);
 
-        $response = $this->actingAs($this->admin, 'sanctum')
-            ->getJson("/api/admin/catalog/tires/{$tire->id}/warehouse-stock?city_id={$city->id}")
-            ->assertOk();
+        $result = app(GetWarehouseStock::class)->execute(
+            new GetWarehouseStockInput('tire', $tire->id, $city->id),
+        );
 
-        $row = $response->json('data.0');
+        $row = WarehouseStockRowResource::collection($result->rows)->resolve()[0];
+
         $this->assertSame(200.0, (float) $row['final_price']);
         $this->assertArrayNotHasKey('delivery_cost', $row);
         $this->assertArrayHasKey('delivery_days', $row);

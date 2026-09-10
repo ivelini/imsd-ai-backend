@@ -1,7 +1,7 @@
 # Архитектура приложения: слои и путь запроса
 
-> Sources: Проект, 2026-08-19; Memory-заметка, 2026-08-07
-> Raw: [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md)
+> Sources: Проект, 2026-08-19; Memory-заметка, 2026-08-07; снос admin API товаров 2026-09-10
+> Raw: [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md)
 
 ## Overview
 
@@ -47,7 +47,7 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 ## Аутентификация и доступ
 
 - Клиенты: Sanctum-токены (email + password).
-- Администраторы: Sanctum-токены для admin API (живут до зачистки — волна 4 миграции на Filament) + session-guard `admin` для Filament-панели `/panel`; доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
+- Администраторы: session-guard `admin` для Filament-панели `/panel` (основной вход; разделы справочников и товаров перенесены с admin API); Sanctum-токены остаются для ещё не перенесённых разделов admin API — импорт, изображения, промоакции, references, auth/notifications (умрут на волне 4). Доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
 - Гости: `device_id` в заголовке (генерируется на фронте — для корзины/избранного/сравнения).
 - Rate limit: 60 req/min публичные, 120 — авторизованные.
 - API без версионирования (`/api`, не `/api/v1`) — обратная совместимость при изменениях.

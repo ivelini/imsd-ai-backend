@@ -1,7 +1,7 @@
 # Админ-панель на Filament
 
-> Sources: Проект, 2026-09-09
-> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md)
+> Sources: Проект, 2026-09-09; снос admin API товаров 2026-09-10
+> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md)
 
 ## Решение
 
@@ -20,21 +20,25 @@
 - Запись доменных сущностей — только через существующие Actions, Preconditions — перед мутацией.
 - Прямой Eloquent-записи ресурсами нет: иначе ломаются SEO-slug, пересчёт `catalog_prices`, инвалидация кеша Observer'ами.
 
-## Волна 1 — справочники (в работе)
+## Волна 1 — справочники (закрыта)
 
 Экран переносится: Filament-ресурс (форма/таблица) → приёмка → снос API-среза (маршрут, контроллер, Request/Resource, Action чтения; Precondition переиспользуется панелью; Observer остаётся — инвалидация срабатывает на записи из формы). Bulk-delete не используется там, где удаление под Precondition (массовое удаление обходило бы проверку).
 
-**1a — Brand (готово):** `BrandResource`; delete через `EnsureBrandHasNoProducts` (danger-нотификация); срезаны маршрут/контроллер/Request/Resource/GetBrandList. `BrandBriefResource` живёт до волны 2 (вложен в API Tire/Wheel). Тесты: BrandResourceTest (7) + BrandApiRemovalTest (404).
+**1a — Brand (готово):** `BrandResource`; delete через `EnsureBrandHasNoProducts` (danger-нотификация); срезаны маршрут/контроллер/Request/Resource/GetBrandList. `BrandBriefResource` прожил до волны 2b — вложен в API Tire/Wheel (снесён вместе с ними). Тесты: BrandResourceTest (7) + BrandApiRemovalTest (404).
 
-**1b — партия справочников (готово):** Warehouses, WarehouseMarkupRules, DeliverySchedules, CityPriceRules, DeliveryPoints (CRUD) + Cities, Countries (read-only: `canCreate/canEdit/canDelete = false`, только List). Детали: день недели — Select со скалярными значениями `WeekDay` (модель кастует integer), `TimePicker->seconds(false)` ('H:i' в БД); `WeekDay::label()` добавлен. Удаление партии — стандартный DeleteAction (Precondition'ов нет). Снесены маршруты/контроллеры/Request'ы/Resources/Actions чтения 7 разделов; `StockResource`/`GetWarehouseStock` живут до волны 2. Тесты: 19 ресурсных + DirectoryApiRemovalTest (7 × 404).
+**1b — партия справочников (готово):** Warehouses, WarehouseMarkupRules, DeliverySchedules, CityPriceRules, DeliveryPoints (CRUD) + Cities, Countries (read-only: `canCreate/canEdit/canDelete = false`, только List). Детали: день недели — Select со скалярными значениями `WeekDay` (модель кастует integer), `TimePicker->seconds(false)` ('H:i' в БД); `WeekDay::label()` добавлен. Удаление партии — стандартный DeleteAction (Precondition'ов нет). Снесены маршруты/контроллеры/Request'ы/Resources/Actions чтения 7 разделов. Тесты: 19 ресурсных + DirectoryApiRemovalTest (7 × 404).
 
-**1c — ProductModel (готово, волна 1 закрыта):** slug unique в рамках brand_id (`modifyRuleUsing → where('brand_id', …)`); type — скалярные опции (модель без enum-каста); image FileUpload; delete с `EnsureModelHasNoProducts`. Инвалидация references вынесена из контроллера в **ProductModelObserver** (saved/deleted) — единый механизм с BrandObserver. Снесён API-срез /models. `ProductModelBriefResource` живёт до волны 2.
+**1c — ProductModel (готово, волна 1 закрыта):** slug unique в рамках brand_id (`modifyRuleUsing → where('brand_id', …)`); type — скалярные опции (модель без enum-каста); image FileUpload; delete с `EnsureModelHasNoProducts`. Инвалидация references вынесена из контроллера в **ProductModelObserver** (saved/deleted) — единый механизм с BrandObserver. Снесён API-срез /models. `ProductModelBriefResource` прожил до волны 2b.
 
-**Итог волны 1:** 9 справочников на Filament; admin API справочников снесён полностью. В админ-API остались товары (Tire/Wheel), products, изображения, промоакции, импорт, references.
+**Итог волны 1:** 9 справочников на Filament; admin API справочников снесён полностью.
 
-## Волна 2 — товары (в работе)
+## Волна 2 — товары
 
-**2a — Tire (готово):** TireProductResource (форма по TireProductRequest; model_id — только type=tire; Section/Grid из Filament\Schemas\Components); подготовка данных вынесена в **TireDataComposer** (name из модели + SEO-slug) — единая реализация для хуков страниц и контроллера. slug/euro_label/origin_id не редактируются. Снос Tire API — после переноса Wheel и Image (ImageController общий на оба товара).
+**2a — Tire (готово):** TireProductResource (форма по TireProductRequest; model_id — только type=tire; Section/Grid из Filament\Schemas\Components); подготовка данных вынесена в **TireDataComposer** (name из модели + SEO-slug) — единая реализация для хуков страниц и контроллера. slug/euro_label/origin_id не редактируются.
+
+**2b — Wheel + снос API товаров (готово):** WheelProductResource — зеркало Tire (model_id только type=wheel, `type` — Select WheelType со скалярными опциями через string-каст, геометрия width/diameter/pcd/et/hub_diameter с шагом 0.1 под `decimal:1`), подготовка данных — **WheelDataComposer** (name из модели + `ProductSlugService::wheel`). admin API товаров снесён целиком одной волной: маршруты `/tires*`, `/wheels*`, `/products`; 7 контроллеров; 9 Request'ов + концерны `ValidatesTireFilters`/`ValidatesWheelFilters`; 5 Resources — включая `BrandBriefResource`/`ProductModelBriefResource` (их единственными потребителями были Tire/Wheel API) и `CatalogProductResource`; Action'ы `GetTireDimensions`/`GetWheelDimensions`/`GetTireProductList`/`GetWheelProductList`/`GetCatalogProducts` с DTO. Панель — два раздельных ресурса вместо агрегированного `/products`. `GetWarehouseStock` (+Input/Result/`WarehouseStockRowResource`) сохранён без HTTP-потребителя: нужен волне 2d (RelationManager остатков), тест переведён на прямой вызов Action. Тесты: WheelResourceTest (9), TireWheelApiRemovalTest (6 × 404 + страж), кейс коллизии slug перенесён в TireResourceTest.
+
+**Осталось в admin API:** импорт (5 потоков), изображения (`ImageController`, общий для Tire/Wheel — волна 2c), промоакции, references, auth/notifications.
 
 ## See Also
 

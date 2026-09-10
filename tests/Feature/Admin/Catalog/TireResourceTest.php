@@ -165,6 +165,34 @@ class TireResourceTest extends TestCase
         $this->assertDatabaseHas('tire_products', ['id' => $tire->id, 'slug' => 'nokian-hakka-215-60-r16']);
     }
 
+    public function test_create_tire_gets_suffix_on_slug_collision(): void
+    {
+        TireProduct::factory()->create([
+            'brand_id' => $this->brand->id,
+            'model_id' => $this->tireModel->id,
+            'ean' => 'EXISTING-TIRE',
+            'season' => 'summer',
+            'slug' => 'nokian-hakka-215-60-r16',
+            'width' => 215,
+            'profile' => 60,
+            'diameter' => '16',
+        ]);
+
+        Livewire::test(CreateTireProduct::class)
+            ->fillForm([
+                'brand_id' => $this->brand->id,
+                'model_id' => $this->tireModel->id,
+                'season' => 'summer',
+                'width' => 215,
+                'profile' => 60,
+                'diameter' => '16',
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('tire_products', ['slug' => 'nokian-hakka-215-60-r16-2']);
+    }
+
     public function test_delete_tire_removes_record(): void
     {
         $tire = TireProduct::factory()->create(['brand_id' => $this->brand->id]);

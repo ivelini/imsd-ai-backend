@@ -6,14 +6,14 @@
 
 | Article | Summary | Updated |
 |---------|---------|---------|
-| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа, аутентификация, enums, корзина | 2026-09-09 |
-| [Админ-панель на Filament](concepts/admin-panel-filament.md) | Решение о переходе с React SPA на Filament; каркас: панель /panel, session-guard admin, FilamentUser (is_active), AdminRoleCode + policies, нативные уведомления; политика слоёв (запись через Actions); волны миграции | 2026-09-09 |
+| [Архитектура приложения: слои и путь запроса](concepts/architecture-layers.md) | Слои (FormRequest → Controller → Cache → Preconditions → Action → Response), принципы, домены, морф-мапа, аутентификация (панель для перенесённых разделов, sanctum — для остатка admin API), enums, корзина | 2026-09-10 |
+| [Админ-панель на Filament](concepts/admin-panel-filament.md) | Решение о переходе с React SPA на Filament; каркас: панель /panel, session-guard admin, FilamentUser (is_active), AdminRoleCode + policies, нативные уведомления; политика слоёв (запись через Actions); волны 0–2b: справочники, товары (Tire/Wheel) и снос их admin API | 2026-09-10 |
 | [Бизнес-модель: цепочка движения товара](concepts/business-model.md) | Завод → склад → компания → точка выдачи/курьер; сущности и их видимость клиенту | 2026-08-19 |
 | [Заказ: жизненный цикл](concepts/order-lifecycle.md) | Статусная машина заказа (pending → paid → … → delivered), отмена и возврат, кто меняет статусы | 2026-08-19 |
 | [Каталог: ценообразование](concepts/catalog-pricing.md) | Полная цена города: цепочка наценок, MarkupRuleMatcher, акции, пересчёт catalog_prices, округление | 2026-08-19 |
 | [Сроки доставки](concepts/delivery-times.md) | Графики отгрузки, delivery_min/max, расчёт срока на лету, фильтрация по бакетам | 2026-08-19 |
 | [Публичный API каталога](concepts/public-catalog-filter-api.md) | Справочник городов (/api/reference/city) + фасеты и листинг шин (/api/reference/filter/tire, /api/catalog/tires) и дисков (/api/reference/filter/wheel, /api/catalog/wheels): контракт фильтров, учёт города, meta.seo, euro_label, origin, агрегация цены, кеш с индексом ключей и JSON-roundtrip (ADR 0004) | 2026-08-21 |
-| [Импорт каталога из XLSX](concepts/xlsx-import-pipeline.md) | Пайплайн upload → ImportMasterJob → чанки → ChunkJob, маппинг XLSX → БД (description на модель, origin-колонки, евро-лейбл, SEO-формулы name/slug), инвалидация | 2026-08-21 |
+| [Импорт каталога из XLSX](concepts/xlsx-import-pipeline.md) | Пайплайн upload → ImportMasterJob → чанки → ChunkJob, маппинг XLSX → БД (description на модель, origin-колонки, евро-лейбл, SEO-формулы name/slug), инвалидация; точка входа — admin API, перенос на панель — волна 2d | 2026-09-10 |
 | [Эксплуатация](concepts/operations.md) | Команды Makefile, окружение, очередь и импорты (фактические Job'ы), runbooks | 2026-08-19 |
 | [Кеширование](concepts/caching.md) | Cache Service до Action, Observer-инвалидация (шины и диски), TTL, индекс ключей, JSON-roundtrip сериализация (ADR 0004) | 2026-08-21 |
 
