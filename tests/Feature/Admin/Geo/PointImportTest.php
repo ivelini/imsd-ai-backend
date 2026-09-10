@@ -5,7 +5,6 @@ namespace Tests\Feature\Admin\Geo;
 use App\Enums\Import\ImportType;
 use App\Jobs\GeoImport\PointImportJob;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Delivery\City;
 use App\Models\Delivery\Region;
 use App\Services\Import\ColumnDetector;
@@ -14,12 +13,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use OpenSpout\Reader\XLSX\Reader;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** HTTP-слой импорта точек выдачи. */
 class PointImportTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -27,11 +27,7 @@ class PointImportTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin', 'email' => 'admin@test.ru',
-            'password' => bcrypt('password'), 'admin_role_id' => $role->id, 'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
     }
 
     public function test_requires_auth(): void

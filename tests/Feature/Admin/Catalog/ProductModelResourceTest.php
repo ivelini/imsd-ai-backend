@@ -6,7 +6,6 @@ use App\Filament\Resources\ProductModels\Pages\CreateProductModel;
 use App\Filament\Resources\ProductModels\Pages\EditProductModel;
 use App\Filament\Resources\ProductModels\Pages\ListProductModels;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Tire\TireProduct;
@@ -15,12 +14,13 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** ProductModelResource панели: CRUD моделей, кеш-инвалидация references, delete с Precondition. */
 class ProductModelResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -30,14 +30,7 @@ class ProductModelResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
 
         $this->brand = Brand::factory()->create(['name' => 'Brand', 'type' => 'both']);
 

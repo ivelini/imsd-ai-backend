@@ -6,17 +6,17 @@ use App\Filament\Resources\DeliverySchedules\Pages\CreateDeliverySchedule;
 use App\Filament\Resources\DeliverySchedules\Pages\EditDeliverySchedule;
 use App\Filament\Resources\DeliverySchedules\Pages\ListDeliverySchedules;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\DeliverySchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** DeliveryScheduleResource панели: CRUD графиков отгрузки. */
 class DeliveryScheduleResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -26,14 +26,7 @@ class DeliveryScheduleResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
 
         $this->warehouse = Warehouse::factory()->create(['name' => 'Склад']);
 

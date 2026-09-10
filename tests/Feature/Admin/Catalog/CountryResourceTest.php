@@ -3,30 +3,22 @@
 namespace Tests\Feature\Admin\Catalog;
 
 use App\Filament\Resources\Countries\Pages\ListCountries;
-use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Country\Country;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** CountryResource панели: read-only список стран. */
 class CountryResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $admin = $this->createAdmin();
 
         $this->actingAs($admin, 'admin');
     }

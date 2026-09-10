@@ -6,16 +6,16 @@ use App\Filament\Resources\Warehouses\Pages\CreateWarehouse;
 use App\Filament\Resources\Warehouses\Pages\EditWarehouse;
 use App\Filament\Resources\Warehouses\Pages\ListWarehouses;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** WarehouseResource панели: CRUD складов. */
 class WarehouseResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -23,14 +23,7 @@ class WarehouseResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
 
         $this->actingAs($this->admin, 'admin');
     }

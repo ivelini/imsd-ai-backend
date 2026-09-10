@@ -6,18 +6,18 @@ use App\Filament\Resources\CityPriceRules\Pages\CreateCityPriceRule;
 use App\Filament\Resources\CityPriceRules\Pages\EditCityPriceRule;
 use App\Filament\Resources\CityPriceRules\Pages\ListCityPriceRules;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Delivery\City;
 use App\Models\Delivery\CityPriceRule;
 use App\Models\Delivery\Region;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** CityPriceRuleResource панели: CRUD наценок по городам. */
 class CityPriceRuleResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -27,14 +27,7 @@ class CityPriceRuleResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
 
         $region = Region::create(['code' => '74', 'name' => 'Челябинская область']);
         $this->city = City::create(['region_id' => $region->id, 'name' => 'Челябинск']);

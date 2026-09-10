@@ -11,7 +11,6 @@ use App\DTOs\WheelImport\UpsertWheelProductInput;
 use App\Enums\Catalog\WheelType;
 use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Wheel\WheelProduct;
 use App\Services\Catalog\ProductSlugService;
 use App\Services\Import\OriginResolver;
@@ -20,12 +19,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** Импорт дисков. */
 class WheelImportTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -33,11 +33,7 @@ class WheelImportTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin', 'email' => 'admin@test.ru',
-            'password' => bcrypt('password'), 'admin_role_id' => $role->id, 'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
     }
 
     public function test_upload_requires_auth(): void

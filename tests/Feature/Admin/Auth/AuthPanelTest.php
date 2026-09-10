@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** Доступ к Filament-панели: session-guard admin, canAccessPanel по is_active. */
 class AuthPanelTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     public function test_guest_redirected_to_login(): void
     {
@@ -33,18 +32,5 @@ class AuthPanelTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get('/panel')
             ->assertForbidden();
-    }
-
-    private function createAdmin(bool $isActive): Admin
-    {
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-
-        return Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => $isActive,
-        ]);
     }
 }

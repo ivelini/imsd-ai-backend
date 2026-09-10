@@ -6,18 +6,18 @@ use App\Filament\Resources\WheelProducts\Pages\CreateWheelProduct;
 use App\Filament\Resources\WheelProducts\Pages\EditWheelProduct;
 use App\Filament\Resources\WheelProducts\Pages\ListWheelProducts;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
 use App\Models\Catalog\Wheel\WheelProduct;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** WheelProductResource панели: CRUD дисков, автогенерация name/slug (SEO-формула, ADR 0006). */
 class WheelResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -31,14 +31,7 @@ class WheelResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
 
         $this->brand = Brand::factory()->create(['name' => 'Nokian', 'slug' => 'nokian']);
         $this->wheelModel = ProductModel::create([

@@ -2,19 +2,19 @@
 
 namespace Tests\Feature\Admin\Auth;
 
-use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
+use App\Enums\Auth\AdminRoleCode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** Политика доступа к ресурсам панели по коду роли (admin_roles.code). */
 class AdminRolePolicyTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     public function test_role_without_access_forbidden(): void
     {
-        $admin = $this->createAdmin('manager');
+        $admin = $this->createAdmin(AdminRoleCode::ContentManager);
 
         $this->actingAs($admin, 'admin')
             ->get('/panel/admins')
@@ -23,23 +23,10 @@ class AdminRolePolicyTest extends TestCase
 
     public function test_super_admin_has_full_access(): void
     {
-        $admin = $this->createAdmin('super-admin');
+        $admin = $this->createAdmin();
 
         $this->actingAs($admin, 'admin')
             ->get('/panel/admins')
             ->assertOk();
-    }
-
-    private function createAdmin(string $roleCode): Admin
-    {
-        $role = AdminRole::create(['name' => 'Менеджер', 'code' => $roleCode]);
-
-        return Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
     }
 }

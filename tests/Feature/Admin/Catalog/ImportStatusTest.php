@@ -7,14 +7,14 @@ namespace Tests\Feature\Admin\Catalog;
 use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use App\Models\System\ProductImport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 final class ImportStatusTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -22,13 +22,7 @@ final class ImportStatusTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Super Admin', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Test Admin',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-        ]);
+        $this->admin = $this->createAdmin();
     }
 
     public function test_status_requires_auth(): void

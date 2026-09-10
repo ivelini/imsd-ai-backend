@@ -4,17 +4,17 @@ namespace Tests\Feature\Admin;
 
 use App\Filament\Resources\NotificationResource\Pages\ListNotifications;
 use App\Models\Auth\Admin;
-use App\Models\Auth\AdminRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
 /** NotificationResource панели: список уведомлений админа и действие markAsRead. */
 class NotificationResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use CreatesAdmin, RefreshDatabase;
 
     private Admin $admin;
 
@@ -22,14 +22,7 @@ class NotificationResourceTest extends TestCase
     {
         parent::setUp();
 
-        $role = AdminRole::create(['name' => 'Главный администратор', 'code' => 'super-admin']);
-        $this->admin = Admin::create([
-            'name' => 'Admin',
-            'email' => 'admin@test.ru',
-            'password' => bcrypt('password'),
-            'admin_role_id' => $role->id,
-            'is_active' => true,
-        ]);
+        $this->admin = $this->createAdmin();
     }
 
     public function test_mark_as_read_updates_read_at(): void
