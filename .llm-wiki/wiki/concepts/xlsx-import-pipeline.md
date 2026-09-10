@@ -10,7 +10,7 @@
 ## Конвейер
 
 ```
-Страница панели /panel/import (ImportProducts): форма «тип + файл» → EnsureNoActiveImport
+Страница панели /panel/catalog/import (ImportProducts, кластер «Каталог»): форма «тип + файл» → EnsureNoActiveImport
   → StartProductImport: файл на диск → ProductImport::create → Job::dispatch
 CatalogImport\ImportMasterJob (тонкий оркестратор)
   → Preconditions: FileExists, FileColumnsValid
@@ -21,7 +21,7 @@ CatalogImport\ChunkJob → upsert товаров/остатков (updateOrCreat
 
 Чанки пишутся как JSON на диск, а не в очередь — для дебаггабильности и экономии места в jobs table.
 
-Точка входа с 2026-09-10 — страница панели `/panel/import` (волна 2d миграции на Filament); admin API импорта снесён. Пайплайн (Jobs, чанки, парсеры, Upsert*) при переносе не менялся — сменилась только точка входа.
+Точка входа с 2026-09-10 — страница панели `/panel/catalog/import` (волна 2d миграции на Filament; URL получил префикс кластера при кластеризации навигации); admin API импорта снесён. Пайплайн (Jobs, чанки, парсеры, Upsert*) при переносе не менялся — сменилась только точка входа.
 
 ## Маппинг (XLSX → БД)
 

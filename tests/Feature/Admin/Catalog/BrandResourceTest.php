@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\Brands\Pages\CreateBrand;
-use App\Filament\Resources\Brands\Pages\EditBrand;
-use App\Filament\Resources\Brands\Pages\ListBrands;
+use App\Filament\Clusters\Catalog\Resources\Brands\Pages\CreateBrand;
+use App\Filament\Clusters\Catalog\Resources\Brands\Pages\EditBrand;
+use App\Filament\Clusters\Catalog\Resources\Brands\Pages\ListBrands;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Tire\TireProduct;

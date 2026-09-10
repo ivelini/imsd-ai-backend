@@ -111,3 +111,7 @@
 ## [2026-08-21] ingest | Origin в публичных листингах /api/catalog/tires и /api/catalog/wheels
 - Updated: Публичный API каталога — origin в структуре элемента
 - Updated: Происхождение товара (ProductOrigin) — вывод в API, версии кеша
+
+## [2026-09-10] ingest | Админ-панель на Filament: навигация-кластеры
+- Updated: Архитектура приложения — список разделов панели и остатка admin API
+- Updated: Импорт каталога из XLSX — URL страницы импорта

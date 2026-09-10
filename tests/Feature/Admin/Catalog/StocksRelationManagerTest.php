@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\Products\RelationManagers\StocksRelationManager;
-use App\Filament\Resources\TireProducts\Pages\EditTireProduct;
-use App\Filament\Resources\WheelProducts\Pages\EditWheelProduct;
+use App\Filament\Clusters\Catalog\Resources\Products\RelationManagers\StocksRelationManager;
+use App\Filament\Clusters\Catalog\Resources\TireProducts\Pages\EditTireProduct;
+use App\Filament\Clusters\Catalog\Resources\WheelProducts\Pages\EditWheelProduct;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Tire\TireProduct;

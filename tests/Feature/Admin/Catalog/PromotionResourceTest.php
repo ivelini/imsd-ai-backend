@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\Promotions\Pages\CreatePromotion;
-use App\Filament\Resources\Promotions\Pages\ListPromotions;
+use App\Filament\Clusters\Catalog\Resources\Promotions\Pages\CreatePromotion;
+use App\Filament\Clusters\Catalog\Resources\Promotions\Pages\ListPromotions;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Promotion\Promotion;
 use App\Models\Catalog\Tire\TireProduct;

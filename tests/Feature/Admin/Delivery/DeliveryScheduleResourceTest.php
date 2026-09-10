@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Delivery;
 
-use App\Filament\Resources\DeliverySchedules\Pages\CreateDeliverySchedule;
-use App\Filament\Resources\DeliverySchedules\Pages\EditDeliverySchedule;
-use App\Filament\Resources\DeliverySchedules\Pages\ListDeliverySchedules;
+use App\Filament\Clusters\Catalog\Resources\DeliverySchedules\Pages\CreateDeliverySchedule;
+use App\Filament\Clusters\Catalog\Resources\DeliverySchedules\Pages\EditDeliverySchedule;
+use App\Filament\Clusters\Catalog\Resources\DeliverySchedules\Pages\ListDeliverySchedules;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Warehouse\Warehouse;
 use App\Models\Delivery\DeliverySchedule;

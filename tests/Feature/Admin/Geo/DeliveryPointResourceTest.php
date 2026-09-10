@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Geo;
 
-use App\Filament\Resources\DeliveryPoints\Pages\CreateDeliveryPoint;
-use App\Filament\Resources\DeliveryPoints\Pages\EditDeliveryPoint;
-use App\Filament\Resources\DeliveryPoints\Pages\ListDeliveryPoints;
+use App\Filament\Clusters\Catalog\Resources\DeliveryPoints\Pages\CreateDeliveryPoint;
+use App\Filament\Clusters\Catalog\Resources\DeliveryPoints\Pages\EditDeliveryPoint;
+use App\Filament\Clusters\Catalog\Resources\DeliveryPoints\Pages\ListDeliveryPoints;
 use App\Models\Auth\Admin;
 use App\Models\Delivery\City;
 use App\Models\Delivery\DeliveryPoint;

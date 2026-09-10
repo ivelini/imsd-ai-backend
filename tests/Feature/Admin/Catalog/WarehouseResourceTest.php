@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\Warehouses\Pages\CreateWarehouse;
-use App\Filament\Resources\Warehouses\Pages\EditWarehouse;
-use App\Filament\Resources\Warehouses\Pages\ListWarehouses;
+use App\Filament\Clusters\Catalog\Resources\Warehouses\Pages\CreateWarehouse;
+use App\Filament\Clusters\Catalog\Resources\Warehouses\Pages\EditWarehouse;
+use App\Filament\Clusters\Catalog\Resources\Warehouses\Pages\ListWarehouses;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Warehouse\Warehouse;
 use Illuminate\Foundation\Testing\RefreshDatabase;

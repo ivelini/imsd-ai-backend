@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\WarehouseMarkupRules\Pages\CreateWarehouseMarkupRule;
-use App\Filament\Resources\WarehouseMarkupRules\Pages\EditWarehouseMarkupRule;
-use App\Filament\Resources\WarehouseMarkupRules\Pages\ListWarehouseMarkupRules;
+use App\Filament\Clusters\Catalog\Resources\WarehouseMarkupRules\Pages\CreateWarehouseMarkupRule;
+use App\Filament\Clusters\Catalog\Resources\WarehouseMarkupRules\Pages\EditWarehouseMarkupRule;
+use App\Filament\Clusters\Catalog\Resources\WarehouseMarkupRules\Pages\ListWarehouseMarkupRules;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\MarkupRule\WarehouseMarkupRule;
 use App\Models\Catalog\Warehouse\Warehouse;

@@ -2,7 +2,7 @@
 
 namespace App\Notifications\Admin;
 
-use App\Filament\Pages\ImportProducts;
+use App\Filament\Clusters\Catalog\Pages\ImportProducts;
 use App\Models\System\ProductImport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;

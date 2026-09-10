@@ -47,7 +47,7 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 ## Аутентификация и доступ
 
 - Клиенты: Sanctum-токены (email + password).
-- Администраторы: session-guard `admin` для Filament-панели `/panel` (основной вход; разделы справочников и товаров перенесены с admin API); Sanctum-токены остаются для ещё не перенесённых разделов admin API — импорт, изображения, промоакции, references, auth/notifications (умрут на волне 4). Доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
+- Администраторы: session-guard `admin` для Filament-панели `/panel` (основной вход; перенесены справочники, товары, изображения, импорт, остатки, акции — внутри кластера «Каталог»); Sanctum-токены остаются для ещё не перенесённых разделов admin API — references, auth/notifications (умрут на волне 4). Доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
 - Гости: `device_id` в заголовке (генерируется на фронте — для корзины/избранного/сравнения).
 - Rate limit: 60 req/min публичные, 120 — авторизованные.
 - API без версионирования (`/api`, не `/api/v1`) — обратная совместимость при изменениях.

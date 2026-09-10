@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\WheelProducts\Pages\CreateWheelProduct;
-use App\Filament\Resources\WheelProducts\Pages\EditWheelProduct;
-use App\Filament\Resources\WheelProducts\Pages\ListWheelProducts;
+use App\Filament\Clusters\Catalog\Resources\WheelProducts\Pages\CreateWheelProduct;
+use App\Filament\Clusters\Catalog\Resources\WheelProducts\Pages\EditWheelProduct;
+use App\Filament\Clusters\Catalog\Resources\WheelProducts\Pages\ListWheelProducts;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;

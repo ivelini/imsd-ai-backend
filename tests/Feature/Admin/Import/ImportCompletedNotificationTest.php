@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Import;
 
-use App\Filament\Pages\ImportProducts;
+use App\Filament\Clusters\Catalog\Pages\ImportProducts;
 use App\Models\System\ProductImport;
 use App\Notifications\Admin\ImportCompletedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;

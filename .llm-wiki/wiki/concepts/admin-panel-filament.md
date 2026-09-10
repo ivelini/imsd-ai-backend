@@ -1,7 +1,7 @@
 # Админ-панель на Filament
 
-> Sources: Проект, 2026-09-09; снос admin API товаров, изображений, импорта, остатков и акций 2026-09-10
-> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2c-images.md](../../raw/project/2026-09-10-filament-wave2c-images.md); [2026-09-10-filament-wave2d-import.md](../../raw/project/2026-09-10-filament-wave2d-import.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md); [2026-09-10-filament-wave2d-promotions.md](../../raw/project/2026-09-10-filament-wave2d-promotions.md)
+> Sources: Проект, 2026-09-09; снос admin API товаров, изображений, импорта, остатков и акций 2026-09-10; навигация-кластеры 2026-09-10
+> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2c-images.md](../../raw/project/2026-09-10-filament-wave2c-images.md); [2026-09-10-filament-wave2d-import.md](../../raw/project/2026-09-10-filament-wave2d-import.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md); [2026-09-10-filament-wave2d-promotions.md](../../raw/project/2026-09-10-filament-wave2d-promotions.md); [2026-09-10-filament-navigation-clusters.md](../../raw/project/2026-09-10-filament-navigation-clusters.md)
 
 ## Решение
 
@@ -51,6 +51,14 @@
 **2d (часть 3) — акции (готово):** `PromotionResource` (`/panel/promotions`) — CRUD акций с привязкой «шина / диск / бренд / весь каталог». Попутно реализовано **применение скидок** (до волны акции создавались, но нигде не применялись): `PromotionDiscount` (percent/fixed/special меняют цену, gift — нет) и `PromotionMatcher` (приоритет товар → бренд → каталог, внутри — большая скидка) — обе чистые функции; скидка входит в `catalog_prices.price`, рядом хранится `base_price`. Границы действия акций закрывает плановая задача `promotions:sync` (каждые 5 минут; первая задача проекта). Листинги отдают `old_price` и `promotion`. Снесён API акций (5 маршрутов). ADR 0010.
 
 **Осталось в admin API:** references, auth/notifications.
+
+## Навигация (кластеры + группы)
+
+Разделы группируются **кластером** — `app/Filament/Clusters/<Раздел>/`: кластер даёт один пункт верхнего уровня и поднавигацию внутри. Кластер «Каталог» (`CatalogCluster`) собрал 10 ресурсов и страницу импорта; внутри — группы поднавигации из `CatalogGroupEnum`: «Продукция» (Brands, TireProducts, WheelProducts, ProductModels), «Склады» (Warehouses, WarehouseMarkupRules, DeliverySchedules), «Точки выдачи» (CityPriceRules, DeliveryPoints). Панель — с верхним меню (`topNavigation()`).
+
+**Принадлежность к кластеру задаётся явно свойством `$cluster` на каждом ресурсе/странице.** Filament не выводит её из расположения файла — каталог `Clusters/…` задаёт только размещение кода. Перенос файлов без `$cluster` даёт обратный эффект: кластер пуст и не виден (`canAccessClusteredComponents()` = false), а ресурсы остаются плоским списком. Кластеризация меняет URL разделов (префикс `/panel/catalog/...`) — ссылки строить только через `getUrl()`.
+
+Экраны Cities и Countries из панели удалены (в кластер не переносились). ADR 0008 (обновлён).
 
 ## See Also
 

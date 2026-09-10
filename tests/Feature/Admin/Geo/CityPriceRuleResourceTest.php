@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Geo;
 
-use App\Filament\Resources\CityPriceRules\Pages\CreateCityPriceRule;
-use App\Filament\Resources\CityPriceRules\Pages\EditCityPriceRule;
-use App\Filament\Resources\CityPriceRules\Pages\ListCityPriceRules;
+use App\Filament\Clusters\Catalog\Resources\CityPriceRules\Pages\CreateCityPriceRule;
+use App\Filament\Clusters\Catalog\Resources\CityPriceRules\Pages\EditCityPriceRule;
+use App\Filament\Clusters\Catalog\Resources\CityPriceRules\Pages\ListCityPriceRules;
 use App\Models\Auth\Admin;
 use App\Models\Delivery\City;
 use App\Models\Delivery\CityPriceRule;

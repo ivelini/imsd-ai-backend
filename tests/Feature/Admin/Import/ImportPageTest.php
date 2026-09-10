@@ -4,7 +4,7 @@ namespace Tests\Feature\Admin\Import;
 
 use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
-use App\Filament\Pages\ImportProducts;
+use App\Filament\Clusters\Catalog\Pages\ImportProducts;
 use App\Jobs\CatalogImport\ImportMasterJob;
 use App\Jobs\VehicleImport\VehicleImportMasterJob;
 use App\Models\System\ProductImport;
@@ -174,7 +174,7 @@ class ImportPageTest extends TestCase
     {
         auth('admin')->logout();
 
-        $this->get('/panel/import')->assertRedirect('/panel/login');
+        $this->get(ImportProducts::getUrl())->assertRedirect('/panel/login');
     }
 
     private function createImport(ImportType $type, string $filename): ProductImport

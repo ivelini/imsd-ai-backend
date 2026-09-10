@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Admin\Catalog;
 
-use App\Filament\Resources\ProductModels\Pages\CreateProductModel;
-use App\Filament\Resources\ProductModels\Pages\EditProductModel;
-use App\Filament\Resources\ProductModels\Pages\ListProductModels;
+use App\Filament\Clusters\Catalog\Resources\ProductModels\Pages\CreateProductModel;
+use App\Filament\Clusters\Catalog\Resources\ProductModels\Pages\EditProductModel;
+use App\Filament\Clusters\Catalog\Resources\ProductModels\Pages\ListProductModels;
 use App\Models\Auth\Admin;
 use App\Models\Catalog\Brand\Brand;
 use App\Models\Catalog\Model\ProductModel;
