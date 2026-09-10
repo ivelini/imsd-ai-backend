@@ -3,12 +3,11 @@
 namespace App\Filament\Resources\Brands\Tables;
 
 use App\Enums\Catalog\BrandType;
+use App\Filament\Support\PanelAction;
 use App\Models\Catalog\Brand\Brand;
 use App\Preconditions\Catalog\EnsureBrandHasNoProducts;
-use DomainException;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -50,13 +49,10 @@ class BrandsTable
                     ->action(function (Brand $record, EnsureBrandHasNoProducts $ensure): void {
                         $brand = Brand::withCount(['tireProducts', 'wheelProducts'])->findOrFail($record->id);
 
-                        try {
+                        PanelAction::run('Бренд удалён', function () use ($ensure, $brand): void {
                             $ensure->ensure($brand);
                             $brand->delete();
-                            Notification::make()->success()->title('Бренд удалён')->send();
-                        } catch (DomainException $e) {
-                            Notification::make()->danger()->title($e->getMessage())->send();
-                        }
+                        });
                     }),
             ]);
     }

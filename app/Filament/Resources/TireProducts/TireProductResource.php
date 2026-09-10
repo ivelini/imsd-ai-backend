@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TireProducts;
 
+use App\Filament\Resources\Products\RelationManagers\ImagesRelationManager;
 use App\Filament\Resources\TireProducts\Pages\CreateTireProduct;
 use App\Filament\Resources\TireProducts\Pages\EditTireProduct;
 use App\Filament\Resources\TireProducts\Pages\ListTireProducts;
@@ -33,7 +34,7 @@ class TireProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ImagesRelationManager::class,
         ];
     }
 

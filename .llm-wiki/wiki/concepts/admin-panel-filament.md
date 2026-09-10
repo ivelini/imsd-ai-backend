@@ -1,7 +1,7 @@
 # Админ-панель на Filament
 
-> Sources: Проект, 2026-09-09; снос admin API товаров 2026-09-10
-> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md)
+> Sources: Проект, 2026-09-09; снос admin API товаров и изображений 2026-09-10
+> Raw: [2026-09-09-filament-admin-panel.md](../../raw/project/2026-09-09-filament-admin-panel.md); [2026-09-09-filament-wave1a-brand.md](../../raw/project/2026-09-09-filament-wave1a-brand.md); [2026-09-09-filament-wave1b-directories.md](../../raw/project/2026-09-09-filament-wave1b-directories.md); [2026-09-09-filament-wave1c-model.md](../../raw/project/2026-09-09-filament-wave1c-model.md); [2026-09-09-filament-wave2a-tire.md](../../raw/project/2026-09-09-filament-wave2a-tire.md); [2026-09-10-filament-wave2b-wheel.md](../../raw/project/2026-09-10-filament-wave2b-wheel.md); [2026-09-10-filament-wave2c-images.md](../../raw/project/2026-09-10-filament-wave2c-images.md)
 
 ## Решение
 
@@ -38,7 +38,13 @@
 
 **2b — Wheel + снос API товаров (готово):** WheelProductResource — зеркало Tire (model_id только type=wheel, `type` — Select WheelType со скалярными опциями через string-каст, геометрия width/diameter/pcd/et/hub_diameter с шагом 0.1 под `decimal:1`), подготовка данных — **WheelDataComposer** (name из модели + `ProductSlugService::wheel`). admin API товаров снесён целиком одной волной: маршруты `/tires*`, `/wheels*`, `/products`; 7 контроллеров; 9 Request'ов + концерны `ValidatesTireFilters`/`ValidatesWheelFilters`; 5 Resources — включая `BrandBriefResource`/`ProductModelBriefResource` (их единственными потребителями были Tire/Wheel API) и `CatalogProductResource`; Action'ы `GetTireDimensions`/`GetWheelDimensions`/`GetTireProductList`/`GetWheelProductList`/`GetCatalogProducts` с DTO. Панель — два раздельных ресурса вместо агрегированного `/products`. `GetWarehouseStock` (+Input/Result/`WarehouseStockRowResource`) сохранён без HTTP-потребителя: нужен волне 2d (RelationManager остатков), тест переведён на прямой вызов Action. Тесты: WheelResourceTest (9), TireWheelApiRemovalTest (6 × 404 + страж), кейс коллизии slug перенесён в TireResourceTest.
 
-**Осталось в admin API:** импорт (5 потоков), изображения (`ImageController`, общий для Tire/Wheel — волна 2c), промоакции, references, auth/notifications.
+**2c — изображения (готово):** один `ImagesRelationManager` на оба товара (связь `images` морфная и идентична; зарегистрирован в `getRelations()` Tire и Wheel). FileUpload с `storeFiles(false)` — файл приходит `TemporaryUploadedFile` и сохраняется **доменным Action** `UploadImage`, не Filament'ом; порядок перетаскиванием — `ReorderImages` через хук `afterReordering` (встроенная SQL-запись Filament обошла бы слой). Прочие actions: `SetMainImage`, `DeleteImage`. Снесён Image API: 5 маршрутов, контроллер, 3 Request'а, admin-`ImageResource`, `ListImages`; удалён мёртвый `ImageService::getNextMainImageId`.
+
+**PanelAction** (`app/Filament/Support/PanelAction.php`) — общий хелпер панельных действий: `PanelAction::run('Что сделано', fn () => ...)` — success-нотификация при успехе, danger с текстом `DomainException` при провале (Precondition). Введён по правилу «обобщай на третий раз» (Brands, ProductModels, изображения); те используются через него.
+
+Фикс дефекта: `DeleteImage` удалял только запись в `images` — файл оставался на public-диске (сироты); теперь снимается и файл.
+
+**Осталось в admin API:** импорт (5 потоков), промоакции, references, auth/notifications.
 
 ## See Also
 

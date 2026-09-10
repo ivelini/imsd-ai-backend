@@ -36,13 +36,4 @@ final class ImageService
             );
         }
     }
-
-    public function getNextMainImageId(bool $wasMain, array $siblingIds): ?int
-    {
-        if (! $wasMain || empty($siblingIds)) {
-            return null;
-        }
-
-        return $siblingIds[0];
-    }
 }

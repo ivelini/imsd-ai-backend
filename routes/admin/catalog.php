@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\Catalog\Image\ImageController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportModelController;
 use App\Http\Controllers\Admin\Catalog\Import\ImportPointController;
@@ -20,12 +19,6 @@ Route::prefix('/import')->group(function () {
     Route::post('/geo-points', [ImportPointController::class, 'store']);
     Route::post('/models', [ImportModelController::class, 'store']);
 });
-
-Route::get('/images', [ImageController::class, 'index']);
-Route::post('/images', [ImageController::class, 'store']);
-Route::delete('/images/{id}', [ImageController::class, 'destroy']);
-Route::put('/images/{id}/main', [ImageController::class, 'setMain']);
-Route::put('/images/reorder', [ImageController::class, 'reorder']);
 
 Route::get('/promotions', [PromotionController::class, 'index']);
 Route::post('/promotions', [PromotionController::class, 'store']);

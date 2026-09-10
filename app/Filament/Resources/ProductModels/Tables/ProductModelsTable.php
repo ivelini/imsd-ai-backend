@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources\ProductModels\Tables;
 
+use App\Filament\Support\PanelAction;
 use App\Models\Catalog\Model\ProductModel;
 use App\Preconditions\Catalog\EnsureModelHasNoProducts;
-use DomainException;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -55,13 +54,10 @@ class ProductModelsTable
                     ->action(function (ProductModel $record, EnsureModelHasNoProducts $ensure): void {
                         $model = ProductModel::withCount(['tireProducts', 'wheelProducts'])->findOrFail($record->id);
 
-                        try {
+                        PanelAction::run('Модель удалена', function () use ($ensure, $model): void {
                             $ensure->ensure($model);
                             $model->delete();
-                            Notification::make()->success()->title('Модель удалена')->send();
-                        } catch (DomainException $e) {
-                            Notification::make()->danger()->title($e->getMessage())->send();
-                        }
+                        });
                     }),
             ]);
     }

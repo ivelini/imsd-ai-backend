@@ -53,19 +53,4 @@ class ImageServiceTest extends TestCase
 
         $this->service->ensureImageLimit(10);
     }
-
-    public function test_get_next_main_image_returns_null_when_not_main(): void
-    {
-        $this->assertNull($this->service->getNextMainImageId(false, [1, 2, 3]));
-    }
-
-    public function test_get_next_main_image_returns_null_when_no_siblings(): void
-    {
-        $this->assertNull($this->service->getNextMainImageId(true, []));
-    }
-
-    public function test_get_next_main_image_returns_first_sibling(): void
-    {
-        $this->assertSame(5, $this->service->getNextMainImageId(true, [5, 6, 7]));
-    }
 }

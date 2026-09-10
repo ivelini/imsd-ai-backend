@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\WheelProducts;
 
+use App\Filament\Resources\Products\RelationManagers\ImagesRelationManager;
 use App\Filament\Resources\WheelProducts\Pages\CreateWheelProduct;
 use App\Filament\Resources\WheelProducts\Pages\EditWheelProduct;
 use App\Filament\Resources\WheelProducts\Pages\ListWheelProducts;
@@ -33,7 +34,7 @@ class WheelProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ImagesRelationManager::class,
         ];
     }
 

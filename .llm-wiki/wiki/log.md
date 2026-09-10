@@ -1,5 +1,8 @@
 # Wiki Log
 
+## [2026-09-10] ingest | Волна 2c: изображения товара + снос Image API
+- Updated: Админ-панель на Filament (ImagesRelationManager, PanelAction, фикс DeleteImage, снос Image API)
+
 ## [2026-09-10] ingest | Волна 2b: WheelProductResource + снос admin API товаров
 - Updated: Админ-панель на Filament (WheelDataComposer, снос Tire/Wheel/Products API, состав остатка admin API)
 - Updated: Архитектура приложения: слои и путь запроса (аутентификация админов — панель как основной вход)
