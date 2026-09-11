@@ -5,7 +5,7 @@
 
 ## Overview
 
-Laravel-монолит (PHP 8.5, PostgreSQL 17, Redis 7, Docker) — e-commerce шин и дисков. Код строго разделён на слои: HTTP-обвязка → бизнес-проверки → бизнес-логика → сериализация. Полный путь запроса: `Middleware → FormRequest → Controller → Cache Service? → Preconditions → Action → Response`.
+Laravel-монолит (PHP 8.5, PostgreSQL 17, Redis 7, Docker) — e-commerce шин и дисков + запись на шиномонтаж (домен Booking, ADR 0012). Код строго разделён на слои: HTTP-обвязка → бизнес-проверки → бизнес-логика → сериализация. Полный путь запроса: `Middleware → FormRequest → Controller → Cache Service? → Preconditions → Action → Response`.
 
 ## Полный путь запроса
 
@@ -38,7 +38,7 @@ HTTP → Middleware → FormRequest → Controller → Cache Service? → Precon
 
 ## Домены и структура
 
-Директории Models (и зеркально — Actions/, Preconditions/, DTOs/, Http/*, Enums/, Services/): `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`.
+Директории Models (и зеркально — Actions/, Preconditions/, DTOs/, Http/*, Enums/, Services/): `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012).
 
 Морф-мапа (AppServiceProvider): `tire → TireProduct`, `wheel → WheelProduct`, `article → Article`.
 
@@ -46,7 +46,7 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 
 ## Аутентификация и доступ
 
-- Клиенты: Sanctum-токены (email + password).
+- Клиенты: Sanctum-токены (email + password). Клиент записи на шиномонтаж — телефон-first: `users.phone` (unique), поиск при записи — `firstOrCreate` по телефону, email/password необязательны (ADR 0012).
 - Администраторы: session-guard `admin` для Filament-панели `/panel` (основной вход; перенесены справочники, товары, изображения, импорт, остатки, акции — внутри кластера «Каталог»); Sanctum-токены остаются для ещё не перенесённых разделов admin API — references, auth/notifications (умрут на волне 4). Доступ в панель — только активным (`is_active`, `FilamentUser::canAccessPanel`), к ресурсам — policies по `AdminRoleCode`. См. [Админ-панель на Filament](admin-panel-filament.md).
 - Гости: `device_id` в заголовке (генерируется на фронте — для корзины/избранного/сравнения).
 - Rate limit: 60 req/min публичные, 120 — авторизованные.
@@ -70,6 +70,13 @@ API: `/api/admin` — `auth:sanctum`; `/api` — публичные + клиен
 | `WeekDay` | 0–6 |
 | `ImportType` | Tire, Wheel, Point, Model |
 | `AdminRoleCode` | super-admin, content-manager, order-manager, warehouse-manager |
+| `BookingStatus` | confirmed, arrived, done, cancelled, no_show |
+| `BookingSource` | site, admin |
+| `CarType` | passenger, crossover, suv, truck (bookable — без truck) |
+| `ServiceCategory` | tire, storage, other |
+| `WheelRadius` | R13–R21 |
+| `CodeStatus` | valid, used, expired, invalid |
+| `SettingKeyEnum` | reservation_timeout_min, min_lead_time_h, booking_horizon_days |
 
 ## Response — что выбрать
 
@@ -97,3 +104,4 @@ Resource — только маппинг полей: никаких вычисл
 - [Кеширование](caching.md)
 - [Шина (TireProduct)](../entities/tire-product.md)
 - [Диск (WheelProduct)](../entities/wheel-product.md)
+- [Запись на шиномонтаж: домен Booking](booking-domain.md)

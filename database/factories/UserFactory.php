@@ -42,4 +42,14 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /** Клиент записи на шиномонтаж: телефон вместо почты, без пароля. */
+    public function bookingClient(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'phone' => '79'.fake()->unique()->numerify('#########'),
+            'email' => null,
+            'password' => null,
+        ]);
+    }
 }
