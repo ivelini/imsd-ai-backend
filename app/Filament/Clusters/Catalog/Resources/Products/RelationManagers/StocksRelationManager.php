@@ -25,6 +25,8 @@ class StocksRelationManager extends RelationManager
 {
     protected static string $relationship = 'stocks';
 
+    protected static ?string $title = 'Склады';
+
     public function table(Table $table): Table
     {
         return $table

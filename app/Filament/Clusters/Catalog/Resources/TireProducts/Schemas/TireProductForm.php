@@ -17,42 +17,43 @@ class TireProductForm
     {
         return $schema
             ->components([
-                Grid::make(2)->schema([
-                    Select::make('brand_id')
-                        ->label('Бренд')
-                        ->relationship('brand', 'name')
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->live(),
-                    Select::make('model_id')
-                        ->label('Модель')
-                        ->relationship(
-                            'model',
-                            'name',
-                            modifyQueryUsing: fn ($query) => $query->where('type', 'tire'),
-                        )
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->rules([Rule::exists('product_models', 'id')->where('type', 'tire')]),
-                    Select::make('season')
-                        ->label('Сезон')
-                        ->options(Season::class)
-                        ->required(),
-                    TextInput::make('name')
-                        ->label('Название')
-                        ->helperText('Пусто — подставится название модели')
-                        ->maxLength(255),
-                    TextInput::make('ean')
-                        ->label('EAN')
-                        ->maxLength(50)
-                        ->unique(ignoreRecord: true),
-                    Select::make('country_id')
-                        ->label('Страна')
-                        ->relationship('country', 'name')
-                        ->searchable()
-                        ->preload(),
+                Section::make('Описание')->schema([
+                    Grid::make(2)->schema([
+                        Select::make('brand_id')
+                            ->label('Бренд')
+                            ->relationship('brand', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->live(),
+                        Select::make('model_id')
+                            ->label('Модель')
+                            ->relationship(
+                                'model',
+                                'name',
+                                modifyQueryUsing: fn ($query) => $query->where('type', 'tire'),
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->rules([Rule::exists('product_models', 'id')->where('type', 'tire')]),
+                        Select::make('season')
+                            ->label('Сезон')
+                            ->options(Season::class)
+                            ->required(),
+                        TextInput::make('name')
+                            ->label('Название')
+                            ->maxLength(255),
+                        TextInput::make('ean')
+                            ->label('EAN')
+                            ->maxLength(50)
+                            ->unique(ignoreRecord: true),
+                        Select::make('country_id')
+                            ->label('Страна')
+                            ->relationship('country', 'name')
+                            ->searchable()
+                            ->preload(),
+                    ]),
                 ]),
                 Section::make('Размеры и индексы')->schema([
                     Grid::make(4)->schema([
@@ -75,11 +76,6 @@ class TireProductForm
                         TextInput::make('speed_index')
                             ->label('Индекс скорости')
                             ->maxLength(5),
-                        TextInput::make('year')
-                            ->label('Год выпуска')
-                            ->numeric()
-                            ->minValue(2000)
-                            ->maxValue(2030),
                     ]),
                 ]),
                 Section::make('Характеристики')->schema([

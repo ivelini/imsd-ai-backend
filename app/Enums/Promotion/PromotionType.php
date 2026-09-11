@@ -2,9 +2,14 @@
 
 namespace App\Enums\Promotion;
 
+use App\Enums\Concerns\HasFilamentLabel;
+use Filament\Support\Contracts\HasLabel;
+
 /** Тип акции: процент, фиксированная сумма, подарок, спеццена. */
-enum PromotionType: string
+enum PromotionType: string implements HasLabel
 {
+    use HasFilamentLabel;
+
     case Percent = 'percent';
     case Fixed = 'fixed';
     case Gift = 'gift';

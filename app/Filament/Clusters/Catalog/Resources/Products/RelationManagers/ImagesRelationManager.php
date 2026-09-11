@@ -27,6 +27,8 @@ class ImagesRelationManager extends RelationManager
 {
     protected static string $relationship = 'images';
 
+    protected static ?string $title = 'Изображения';
+
     public function table(Table $table): Table
     {
         return $table

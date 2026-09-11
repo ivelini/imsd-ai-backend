@@ -1,7 +1,7 @@
 # Каталог: ценообразование — полная цена города
 
-> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19; правка остатков и источник цены пересчёта 2026-09-10; применение акций 2026-09-10
-> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md); [2026-09-10-filament-wave2d-promotions.md](../../raw/project/2026-09-10-filament-wave2d-promotions.md)
+> Sources: ADR 0002, 2026-08-13; Проект (architecture.md §9), 2026-08-19; правка остатков и источник цены пересчёта 2026-09-10; применение акций 2026-09-10; чтение снимка панелью 2026-09-11
+> Raw: [adr-0002-catalog-prices.md](../../raw/project/adr-0002-catalog-prices.md); [architecture.md](../../raw/project/architecture.md); [db-schema.md](../../raw/project/db-schema.md); [2026-09-10-filament-wave2d-stocks.md](../../raw/project/2026-09-10-filament-wave2d-stocks.md); [2026-09-10-filament-wave2d-promotions.md](../../raw/project/2026-09-10-filament-wave2d-promotions.md); [2026-09-11-filament-tire-city-price.md](../../raw/project/2026-09-11-filament-tire-city-price.md)
 
 ## Overview
 
@@ -24,6 +24,15 @@ purchase_price (прайс склада, импорт) или правка в п
 - **Город** (`city_price_rules`): по `city_id`, диапазон по `stocks.price` → фиксированный `markup` в рублях. Тот же принцип выбора при пересечениях.
 - Оба матчинга — одна чистая функция `MarkupRuleMatcher` (Unit-тесты), которой делегируют все пути: массовый пересчёт, карточка товара, сервисы.
 - Наценка склада применяется **один раз — при записи остатка** (`PriceCalculator::calculateForWarehouse()`: импорт `UpsertStock` и панель `StocksRelationManager`). Пересчёт `catalog_prices` берёт готовую `stocks.price` и наценку склада повторно не считает — иначе ручная продажная цена затиралась бы (FR ADM-4.1.3/10.2).
+
+## Снимок и расчёт на лету: граница (ADR 0011)
+
+`catalog_prices` — источник **цены**; срок доставки в системе живёт в двух видах, и это осознанное разделение:
+
+- **Снимок** (`price`, `base_price`, `delivery_min/max`) — для листингов и фильтрации: цена города, признак акции (`base_price > price`) и стабильный диапазон срока.
+- **Расчёт на текущий момент** (`DeliveryInfoService::nextShipmentDays` + `city_delivery_times`) — конкретный срок: дни до ближайшей отгрузки по расписанию склада с учётом времени отсечки плюс дни города (FR-1.3.3/1.4). Диапазон из снимка для этого не годится — после полуночи он устаревает.
+
+Панель (список шин) показывает клиентскую картину целиком: цену и наценку берёт из снимка (наценка — разница `base_price` и `stocks.price` той же строки), срок — считает на лету тем же сервисом, что и карточка. Своей цепочки цены панель не заводит (подробности — [Админ-панель на Filament](admin-panel-filament.md)).
 
 ## Акции
 

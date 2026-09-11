@@ -2,9 +2,14 @@
 
 namespace App\Enums\Catalog;
 
+use App\Enums\Concerns\HasFilamentLabel;
+use Filament\Support\Contracts\HasLabel;
+
 /** Тип бренда: выпускает шины, диски или оба вида товаров. */
-enum BrandType: string
+enum BrandType: string implements HasLabel
 {
+    use HasFilamentLabel;
+
     case Tire = 'tire';
     case Wheel = 'wheel';
     case Both = 'both';

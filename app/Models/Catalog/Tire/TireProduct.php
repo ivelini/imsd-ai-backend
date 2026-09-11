@@ -102,6 +102,8 @@ class TireProduct extends Model
         ];
     }
 
+    protected $hidden = ['euro_label'];
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
@@ -128,6 +130,7 @@ class TireProduct extends Model
         return $this->belongsTo(Country::class);
     }
 
+    /** @return MorphMany<Stock, $this> */
     public function stocks(): MorphMany
     {
         return $this->morphMany(Stock::class, 'stockable');

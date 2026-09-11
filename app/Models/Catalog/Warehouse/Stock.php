@@ -54,6 +54,7 @@ class Stock extends Model
         return $this->belongsTo(Warehouse::class);
     }
 
+    /** @return HasMany<CatalogPrice, $this> */
     public function catalogPrices(): HasMany
     {
         return $this->hasMany(CatalogPrice::class);

@@ -46,7 +46,7 @@ class TireNameBuilderTest extends TestCase
     public function test_build_all_season_lowercase(): void
     {
         $this->assertSame(
-            'Шина всесезон Gislaved Soft Frost 200 195/55 R16',
+            'Шина всесезонная Gislaved Soft Frost 200 195/55 R16',
             TireNameBuilder::build(
                 season: Season::AllSeason,
                 brandName: 'Gislaved',

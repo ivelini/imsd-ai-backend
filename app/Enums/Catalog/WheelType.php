@@ -2,9 +2,14 @@
 
 namespace App\Enums\Catalog;
 
+use App\Enums\Concerns\HasFilamentLabel;
+use Filament\Support\Contracts\HasLabel;
+
 /** Материал диска: литой, штампованный, кованый. */
-enum WheelType: string
+enum WheelType: string implements HasLabel
 {
+    use HasFilamentLabel;
+
     case Alloy = 'alloy';
     case Steel = 'steel';
     case Forged = 'forged';

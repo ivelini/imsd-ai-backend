@@ -1,7 +1,7 @@
 # Сроки доставки: графики отгрузки и расчёт
 
-> Sources: Проект (architecture.md §10), 2026-08-19; ADR 0001, 2026-08-07
-> Raw: [architecture.md](../../raw/project/architecture.md); [adr-0001-services.md](../../raw/project/adr-0001-services.md)
+> Sources: Проект (architecture.md §10), 2026-08-19; ADR 0001, 2026-08-07; разделение снимка и расчёта на лету 2026-09-11; контракт `enrichProduct` (связь `delivery` может отсутствовать) 2026-09-11
+> Raw: [architecture.md](../../raw/project/architecture.md); [adr-0001-services.md](../../raw/project/adr-0001-services.md); [2026-09-11-filament-tire-city-price.md](../../raw/project/2026-09-11-filament-tire-city-price.md); [2026-09-11-filament-tire-city-switch.md](../../raw/project/2026-09-11-filament-tire-city-switch.md)
 
 ## Overview
 
@@ -45,7 +45,13 @@ delivery_max = MAX(days_after) + city_delivery_days + max_idle
 
 ## Чистая реализация (ADR 0001)
 
-Алгоритм «ближайший день отгрузки по расписанию» был реализован дважды и разошёлся в деталях. Канон — `DeliveryInfoService::nextShipmentDays()` как чистая функция над коллекцией расписаний; `DeliveryTimeCalculator` (расчёт на лету) делегирует ему. БД-обвязка (предзагрузка расписаний) — снаружи, в Action. Это позволяет Unit-тесты без БД.
+Алгоритм «ближайший день отгрузки по расписанию» был реализован дважды и разошёлся в деталях. Канон — `DeliveryInfoService::nextShipmentDays()` как чистая функция над коллекцией расписаний; БД-обвязка (предзагрузка расписаний) — снаружи, в Action. Это позволяет Unit-тесты без БД.
+
+**Кто что считает (после волны 2d):**
+
+- `DeliveryInfoService::enrichProduct(product, cityId)` — конкретный срок на момент просмотра (`delivery_days` = минимум по остаткам товара: дни до ближайшей отгрузки + дни города) и наценка города. Им пользуются карточка товара и колонка «Цена в городе» в панели (ADR 0011). **Контракт:** связь `delivery` выставляется только когда срок вычислим — если ни у одного остатка нет расписания отгрузки, её нет вовсе; потребитель читает через проверку `relationLoaded('delivery')`, а не через `getRelation()` напрямую (иначе `Undefined array key "delivery"`).
+- `DeliveryStockSelector::deliveryByProduct()` — блок `delivery` листинга: диапазон `delivery_min/max` выбранного оффера (склад с минимальной ценой города среди остатков с `quantity ≥ shop.delivery_min_quantity`) плюс день недели ближайшей отгрузки; оффер выбирает чистая функция `DeliveryStockPicker::pick()`.
+- `DeliveryTimeCalculator::deliveryRange()` — только стабильный диапазон по расписанию для снимка (`catalog_prices.delivery_min/max`); расчёта на лету в нём больше нет (был удалён в волне 2d вместе с мёртвыми потребителями).
 
 ## See Also
 

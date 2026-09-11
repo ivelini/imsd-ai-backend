@@ -35,6 +35,9 @@ artisan:
 fresh:
 	$(MAKE) -C .. fresh
 
+seed:
+	$(MAKE) -C .. seed
+
 cache-clear:
 	$(MAKE) -C .. cache-clear
 
