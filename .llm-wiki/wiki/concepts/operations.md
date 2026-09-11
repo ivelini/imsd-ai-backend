@@ -5,7 +5,7 @@
 
 ## Overview
 
-Всё через Docker (`make ...`); artisan — только через контейнер (`docker compose exec backend-app php artisan ...`). Крона нет (`routes/console.php` пуст) — импорты запускаются через админку и диспатчатся в очередь (database). Реальный состав Job'ов сверен с кодом.
+Всё через Docker (`make ...`); artisan — только через контейнер (`docker compose exec backend-app php artisan ...`). Планировщик (`routes/console.php`): `promotions:sync` каждые 5 минут, `slots:generate` каждые 15 минут (сетка слотов шиномонтажа, withoutOverlapping); импорты запускаются через админку и диспатчатся в очередь (database). Реальный состав Job'ов сверен с кодом.
 
 ## Команды (Makefile)
 
@@ -21,6 +21,9 @@
 | `REVERB_*` | Reverb-сервер (websocket) | — |
 | `TIRE_IMPORT_CHUNK_SIZE` | Строк XLSX на ChunkJob | 500 |
 | `TIRE_IMPORT_DISK` / `POINT_IMPORT_DISK` | Диски JSON-чанков импорта | local |
+| `SMS_STUB` / `SMS_STUB_CODE` | Заглушка SMS: фикс. код вместо провайдера | true / 1234 |
+| `SMS_PROVIDER` | Провайдер SMS (v1 не выбран, заглушка LogSmsSender) | — |
+| `SMS_RESEND_COOLDOWN_SECONDS` | Кулдаун повторной отправки кода | 60 |
 
 Секреты в репозиторий не коммитятся — только имена.
 
@@ -35,6 +38,7 @@
 | `CatalogImport\ModelImportJob` | Импорт моделей товаров |
 | `GeoImport\PointImportJob` | Импорт точек выдачи → пересчёт `catalog_prices` |
 | `VehicleImport\VehicleImportMasterJob` | Импорт автомобилей/совместимости |
+| `Booking\SendBookingCodeSms` | SMS с кодом подтверждения записи (tries 3, backoff 10/60) |
 
 Воркер: `docker compose exec backend-app php artisan queue:work`.
 
@@ -45,6 +49,7 @@
 - **Цены не пересчитались** — `PopulateCatalogPrices` вызывается после импорта (ImportMasterJob/PointImportJob); отдельной команды нет.
 - **Уведомления не приходят** — проверить Reverb и `BROADCAST_CONNECTION`; уведомления пишутся в БД (`notifications`), websocket — реальное время.
 - **Правка в `.env` не применилась** — контейнер держит старые переменные процесса: пересоздать `docker compose up -d` (см. «Окружение»).
+- **Сетка слотов не пополняется** — проверить `slots:generate` в планировщике; вручную — `php artisan slots:generate` (идемпотентна).
 
 ## See Also
 

@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Границы действия акций наступают по времени: цена должна меняться без правок в панели
 Schedule::command('promotions:sync')->everyFiveMinutes()->withoutOverlapping();
+
+// Сетка слотов записи на шиномонтаж держится на горизонт записи (ADR 0001 tireslot)
+Schedule::command('slots:generate')->everyFifteenMinutes()->withoutOverlapping();

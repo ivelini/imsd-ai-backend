@@ -134,3 +134,6 @@
 
 ## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 0)
 - Updated: Архитектура приложения — домен Booking, enums, клиент телефон-first
+
+## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 1)
+- Updated: Эксплуатация — планировщик slots:generate, SMS-env, Job SendBookingCodeSms

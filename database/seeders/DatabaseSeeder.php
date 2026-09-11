@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             $this->call(WarehouseMarkupRuleSeeder::class);
             $this->call(DeliveryScheduleSeeder::class);
             $this->call(CityDeliveryTimeSeeder::class);
+            $this->call(BookingSlotSeeder::class);
+            $this->call(DemoBookingSeeder::class);
         }
     }
 }

@@ -2,12 +2,20 @@
 
 namespace Tests\Feature\Booking;
 
+use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
+use App\Models\Booking\Booking;
 use App\Models\Booking\BookingService;
 use App\Models\Booking\ComplexService;
 use App\Models\Booking\PriceRule;
 use App\Models\Booking\ScheduleTemplate;
+use App\Models\Booking\Slot;
 use App\Models\System\Setting;
+use App\Models\User;
+use Database\Seeders\BookingCatalogSeeder;
+use Database\Seeders\BookingScheduleSeeder;
+use Database\Seeders\BookingSlotSeeder;
+use Database\Seeders\DemoBookingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -81,5 +89,37 @@ class DatabaseSeederTest extends TestCase
 
         $this->assertSame(7, ScheduleTemplate::count());
         $this->assertGreaterThan(0, Setting::count());
+    }
+
+    public function test_seed_demo_slots_and_bookings_around_today(): void
+    {
+        $this->seed([BookingCatalogSeeder::class, BookingScheduleSeeder::class, BookingSlotSeeder::class, DemoBookingSeeder::class]);
+
+        $this->assertGreaterThanOrEqual(100, Slot::count());
+        $this->assertGreaterThanOrEqual(10, Booking::count());
+        $this->assertGreaterThanOrEqual(10, User::count());
+    }
+
+    public function test_seed_bookings_carry_parameters_snapshot(): void
+    {
+        $this->seed([BookingCatalogSeeder::class, BookingScheduleSeeder::class, BookingSlotSeeder::class, DemoBookingSeeder::class]);
+
+        $this->assertGreaterThan(0, Booking::whereNotNull('radius')->whereNotNull('car_type')->count());
+        $this->assertGreaterThan(0, Booking::whereNotNull('plate')->count());
+    }
+
+    public function test_seed_bookings_have_history_and_future(): void
+    {
+        $this->seed([BookingCatalogSeeder::class, BookingScheduleSeeder::class, BookingSlotSeeder::class, DemoBookingSeeder::class]);
+
+        $today = now()->toDateString();
+
+        $this->assertGreaterThan(0, Booking::where('status', BookingStatus::Done)
+            ->whereHas('slot', fn ($q) => $q->whereDate('date', '<', $today))
+            ->count());
+
+        $this->assertGreaterThan(0, Booking::where('status', BookingStatus::Confirmed)
+            ->whereHas('slot', fn ($q) => $q->whereDate('date', '>=', $today))
+            ->count());
     }
 }
