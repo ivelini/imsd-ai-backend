@@ -60,11 +60,11 @@ class DatabaseSeederTest extends TestCase
         $this->assertSame(10, BookingService::count());
 
         $valve = BookingService::where('name', 'Замена вентиля')->firstOrFail();
-        $this->assertSame(5000, $valve->base_price);
+        $this->assertSame(5000, $valve->base_price->toKopecks());
         $this->assertSame(0, $valve->priceRules()->count());
 
         $utilization = BookingService::where('name', 'Утилизация шины')->firstOrFail();
-        $this->assertSame(20000, $utilization->base_price);
+        $this->assertSame(20000, $utilization->base_price->toKopecks());
 
         // комплектные строки прайса («при покупке», «4 колеса») в каталог не заводим
         $this->assertSame(0, BookingService::where('name', 'like', '%при покупке%')->count());

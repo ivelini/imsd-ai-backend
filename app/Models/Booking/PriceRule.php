@@ -2,7 +2,9 @@
 
 namespace App\Models\Booking;
 
+use App\Casts\MoneyCast;
 use App\Enums\Booking\CarType;
+use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $service_id
  * @property int $radius
  * @property CarType $car_type
- * @property int $price
+ * @property Money $price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -33,6 +35,7 @@ class PriceRule extends Model
     {
         return [
             'car_type' => CarType::class,
+            'price' => MoneyCast::class,
         ];
     }
 

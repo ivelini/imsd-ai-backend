@@ -2,7 +2,9 @@
 
 namespace App\DTOs\Booking;
 
-/** Результат расчёта цены набора услуг: строки и итог в копейках. */
+use App\ValueObjects\Money;
+
+/** Результат расчёта цены набора услуг: строки и итог. */
 final readonly class Quote
 {
     /**
@@ -10,6 +12,6 @@ final readonly class Quote
      */
     public function __construct(
         public array $lines,
-        public int $total,
+        public Money $total,
     ) {}
 }

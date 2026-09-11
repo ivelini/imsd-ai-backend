@@ -2,6 +2,8 @@
 
 namespace App\Models\Booking;
 
+use App\Casts\MoneyCast;
+use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $booking_id
  * @property int $service_id
- * @property int $price цена за единицу (снимок)
+ * @property Money $price цена за единицу (снимок)
  * @property int $quantity 1–4
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -27,6 +29,13 @@ class BookingItem extends Model
         'price',
         'quantity',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'price' => MoneyCast::class,
+        ];
+    }
 
     /** @return BelongsTo<Booking, $this> */
     public function booking(): BelongsTo

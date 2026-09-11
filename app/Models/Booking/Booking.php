@@ -2,11 +2,13 @@
 
 namespace App\Models\Booking;
 
+use App\Casts\MoneyCast;
 use App\Enums\Booking\BookingSource;
 use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
 use App\Models\Auth\Admin;
 use App\Models\User;
+use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Database\Factories\Booking\BookingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $radius
  * @property CarType $car_type
  * @property string|null $plate госномер из заявки (снимок)
- * @property int $total_price
+ * @property Money $total_price
  * @property int|null $operator_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -54,6 +56,7 @@ class Booking extends Model
             'status' => BookingStatus::class,
             'source' => BookingSource::class,
             'car_type' => CarType::class,
+            'total_price' => MoneyCast::class,
         ];
     }
 

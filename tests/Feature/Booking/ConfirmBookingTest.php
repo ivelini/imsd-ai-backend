@@ -94,11 +94,11 @@ class ConfirmBookingTest extends TestCase
         $this->assertSame(13, $booking->radius);
         $this->assertSame(CarType::Passenger, $booking->car_type);
         $this->assertSame('А 000 АА 174', $booking->plate);
-        $this->assertSame(60000, $booking->total_price); // 150 × 4
+        $this->assertSame(60000, $booking->total_price->toKopecks()); // 150 × 4
         $this->assertSame('79001234567', $booking->user->phone); // клиент — единая users
 
         $item = $booking->items()->firstOrFail();
-        $this->assertSame(15000, $item->price); // цена за единицу
+        $this->assertSame(15000, $item->price->toKopecks()); // цена за единицу
         $this->assertSame(4, $item->quantity);
 
         // Бронь с сайта занимает час (ФТ-8/ФТ-16 tireslot): слот закрыт и привязан к записи

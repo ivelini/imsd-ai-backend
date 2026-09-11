@@ -1,11 +1,11 @@
 # Запись на шиномонтаж: домен Booking
 
 > Sources: Проект, 2026-09-11
-> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md)
+> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md); [2026-09-11-booking-domain-wave3.md](../../raw/project/2026-09-11-booking-domain-wave3.md)
 
 ## Overview
 
-Домен Booking перенесён из сервиса tireslot в монолит (ADR 0012): запись на шиномонтаж — слот-сетка, визард выбора времени/услуг, подтверждение SMS-кодом. Публичный UI — SPA через `/api/booking` (волна 2, готово), админка — кластер Filament (волна 3). Волна 0 — фундамент: 10 таблиц с префиксом `booking_`, модели `Models/Booking/*`, enum `Enums/Booking/*`, системные настройки (`settings` KV, `Models/System/Setting` + `SettingKeyEnum`). Волна 1 — доменный слой: Services/Actions/Preconditions/DTO, SMS-job, планировщик. Клиент — единая `users` (телефон-first, без пароля/почты для записи).
+Домен Booking перенесён из сервиса tireslot в монолит (ADR 0012): запись на шиномонтаж — слот-сетка, визард выбора времени/услуг, подтверждение SMS-кодом. Публичный UI — SPA через `/api/booking` (волна 2, готово), админка — кластер Filament «Шиномонтаж» (волна 3, готово). Волна 0 — фундамент: 10 таблиц с префиксом `booking_`, модели `Models/Booking/*`, enum `Enums/Booking/*`, системные настройки (`settings` KV, `Models/System/Setting` + `SettingKeyEnum`). Волна 1 — доменный слой: Services/Actions/Preconditions/DTO, SMS-job, планировщик. Волна 3 — Money VO (ADR 0013). Клиент — единая `users` (телефон-first, без пароля/почты для записи).
 
 ## Таблицы
 
@@ -56,6 +56,14 @@
 | POST | `/confirm` {phone, code, name, plate?, date, hour, radius, car_type, service_ids[], quantities{}} | 201 BookingResource; used-код (повторный submit) — 200 существующая; 422/409 |
 
 `BookingResource`: снимок (date, start_time, status, source, radius, car_type, plate, total_price) + `user {id,name,phone}` + `items [{id, service{id,name}, price, quantity}]` (вложенные компактные Resource через whenLoaded). `closeSlot` вне API — с сайта всегда true (слот закрывается с привязкой к записи). Количество 1–4 — константы `PriceCalculator::MIN/MAX/DEFAULT_QUANTITY` (единственный источник, FormRequest и сидеры ссылаются). Ошибки: DomainException → `$e->getCode() ?: 409`.
+
+## Деньги (ADR 0013)
+
+Все денежные поля (`base_price`, `price`, `total_price`, `price` строк) — VO `Money` (копейки внутри) через каст `MoneyCast`. Арифметика — только методы Money (`multiply`/`add`, fail fast на отрицательных); формат — `formatted()` («1 700 ₽»); в БД — копейки, в формах панели — рубли (`formatStateUsing`/`dehydrateStateUsing`), на границах API — `toKopecks()` (контракт не менялся). Livewire-гидратация record — интерфейс `Wireable`. Количество 1–4 — константы `PriceCalculator`.
+
+## Админка (волна 3, кластер «Шиномонтаж»)
+
+Кластер Booking с группами «Услуги» / «Записи» / «Настройки»: ресурсы услуг, прайс-правил (уникальность комбинации), комплексов (состав CheckboxList), расписания недели (WeekDay, TimePicker без секунд), слотов (закр/откр, header-action генерации сетки через GenerateSlotGrid), настроек (key/value). Записи — полный CRUD: создание оператором через `CreateAdminBooking` (транзакция, слот lockForUpdate, клиент firstOrCreate по телефону, серверный пересчёт цены, чекбокс закрывает только свободный слот — закрытие не барьер), правка статуса/причины/снимка, табличные действия arrive/complete/noShow/cancel (причина в модале). Форма — одна схема с `visibleOn('create'|'edit')` (в этой версии Filament `operation()` — только сеттер).
 
 ## Сидеры
 

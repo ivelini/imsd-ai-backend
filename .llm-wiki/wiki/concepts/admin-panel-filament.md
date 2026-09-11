@@ -98,6 +98,8 @@
 
 Экраны Cities и Countries из панели удалены (в кластер не переносились). ADR 0008 (обновлён).
 
+Кластер **«Шиномонтаж»** (`BookingCluster`, ADR 0012) — 7 ресурсов записи на шиномонтаж; группы `BookingGroupEnum`: «Услуги» (BookingServices, PriceRules, ComplexServices), «Записи» (Slots, Bookings), «Настройки» (ScheduleTemplates, Settings). Деньги в формах — рубли через `formatStateUsing`/`dehydrateStateUsing` (`numeric()` не совместим с Money-состоянием — NumberStateCast); record с Money-кастом гидратируется Livewire через `Wireable`. См. [Запись на шиномонтаж: домен Booking](booking-domain.md).
+
 ## See Also
 
 - [Архитектура приложения: слои и путь запроса](architecture-layers.md)

@@ -139,3 +139,6 @@
 - Updated: Эксплуатация — планировщик slots:generate, SMS-env, Job SendBookingCodeSms
 
 ## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 2, API)
+
+## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 3, админка + Money VO)
+- Updated: Админ-панель на Filament — кластер «Шиномонтаж», рубли в формах, Wireable

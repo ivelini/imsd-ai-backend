@@ -2,7 +2,9 @@
 
 namespace App\Models\Booking;
 
+use App\Casts\MoneyCast;
 use App\Enums\Booking\ServiceCategory;
+use App\ValueObjects\Money;
 use Carbon\Carbon;
 use Database\Factories\Booking\BookingServiceFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property ServiceCategory $category
  * @property bool $is_active
- * @property int $base_price
+ * @property Money $base_price
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -41,6 +43,7 @@ class BookingService extends Model
         return [
             'category' => ServiceCategory::class,
             'is_active' => 'boolean',
+            'base_price' => MoneyCast::class,
         ];
     }
 

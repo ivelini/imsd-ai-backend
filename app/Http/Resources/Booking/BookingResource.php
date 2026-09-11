@@ -25,7 +25,7 @@ final class BookingResource extends JsonResource
             'radius' => $this->resource->radius,
             'car_type' => $this->resource->car_type,
             'plate' => $this->resource->plate,
-            'total_price' => $this->resource->total_price,
+            'total_price' => $this->resource->total_price->toKopecks(),
             'user' => $this->whenLoaded('user', fn () => new BookingClientResource($this->resource->user)),
             'items' => $this->whenLoaded('items', fn () => BookingItemResource::collection($this->resource->items)),
         ];

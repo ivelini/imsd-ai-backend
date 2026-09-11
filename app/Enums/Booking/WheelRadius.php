@@ -28,4 +28,10 @@ enum WheelRadius: int implements HasLabel
     {
         return 'R'.$this->value;
     }
+
+    /** @return array<int, string> value => label — для опций форм панели */
+    public static function options(): array
+    {
+        return collect(self::cases())->mapWithKeys(fn (self $radius): array => [$radius->value => $radius->label()])->all();
+    }
 }

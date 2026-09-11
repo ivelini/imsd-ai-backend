@@ -7,6 +7,7 @@ use App\DTOs\Booking\QuoteLine;
 use App\Enums\Booking\CarType;
 use App\Models\Booking\BookingService;
 use App\Models\Booking\PriceRule;
+use App\ValueObjects\Money;
 use DomainException;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
@@ -41,14 +42,14 @@ class PriceCalculator
         $rulesByService = $this->rulesByService($services);
 
         $lines = [];
-        $total = 0;
+        $total = Money::fromKopecks(0);
         foreach ($services as $service) {
             $quantity = $this->quantityFor($service->id, $quantities);
             $unitPrice = $this->priceFor($service, $rulesByService[$service->id] ?? [], $radius, $carType);
-            $linePrice = $unitPrice * $quantity;
+            $linePrice = $unitPrice->multiply($quantity);
 
             $lines[] = new QuoteLine($service, $unitPrice, $quantity, $linePrice);
-            $total += $linePrice;
+            $total = $total->add($linePrice);
         }
 
         return new Quote($lines, $total);
@@ -84,7 +85,7 @@ class PriceCalculator
     /**
      * @param  list<PriceRule>  $rules
      */
-    private function priceFor(BookingService $service, array $rules, int $radius, CarType $carType): int
+    private function priceFor(BookingService $service, array $rules, int $radius, CarType $carType): Money
     {
         if ($rules === []) {
             return $service->base_price;

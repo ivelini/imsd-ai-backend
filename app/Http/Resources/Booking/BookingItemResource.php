@@ -19,7 +19,7 @@ final class BookingItemResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'service' => $this->whenLoaded('service', fn () => new BookingServiceResource($this->resource->service)),
-            'price' => $this->resource->price,
+            'price' => $this->resource->price->toKopecks(),
             'quantity' => $this->resource->quantity,
         ];
     }

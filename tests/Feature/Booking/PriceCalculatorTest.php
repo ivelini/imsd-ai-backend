@@ -42,10 +42,10 @@ class PriceCalculatorTest extends TestCase
         $quote = $this->calculator()->calculate(collect([$mounting]), 13, CarType::Passenger, [$mounting->id => 4]);
 
         $line = $quote->lines[0];
-        $this->assertSame(15000, $line->unitPrice);
+        $this->assertSame(15000, $line->unitPrice->toKopecks());
         $this->assertSame(4, $line->quantity);
-        $this->assertSame(60000, $line->price);
-        $this->assertSame(60000, $quote->total);
+        $this->assertSame(60000, $line->price->toKopecks());
+        $this->assertSame(60000, $quote->total->toKopecks());
     }
 
     public function test_rule_by_radius_and_type(): void
@@ -56,7 +56,7 @@ class PriceCalculatorTest extends TestCase
 
         $quote = $this->calculator()->calculate(collect([$mounting]), 13, CarType::Crossover, [$mounting->id => 1]);
 
-        $this->assertSame(22000, $quote->lines[0]->price);
+        $this->assertSame(22000, $quote->lines[0]->price->toKopecks());
     }
 
     public function test_service_without_rules_uses_base_price(): void
@@ -66,10 +66,10 @@ class PriceCalculatorTest extends TestCase
         $quote = $this->calculator()->calculate(collect([$valve]), 16, CarType::Passenger, [$valve->id => 2]);
 
         $line = $quote->lines[0];
-        $this->assertSame(5000, $line->unitPrice);
+        $this->assertSame(5000, $line->unitPrice->toKopecks());
         $this->assertSame(2, $line->quantity);
-        $this->assertSame(10000, $line->price);
-        $this->assertSame(10000, $quote->total);
+        $this->assertSame(10000, $line->price->toKopecks());
+        $this->assertSame(10000, $quote->total->toKopecks());
     }
 
     public function test_throw_when_combo_rule_missing(): void
@@ -99,7 +99,10 @@ class PriceCalculatorTest extends TestCase
 
         $this->assertCount(2, $quote->lines);
         $this->assertSame([4, 2], array_column($quote->lines, 'quantity'));
-        $this->assertSame([60000, 28000], array_column($quote->lines, 'price'));
-        $this->assertSame(88000, $quote->total);
+        $this->assertSame(
+            [60000, 28000],
+            collect($quote->lines)->map(fn ($line) => $line->price->toKopecks())->all(),
+        );
+        $this->assertSame(88000, $quote->total->toKopecks());
     }
 }

@@ -15,7 +15,7 @@ final class GetUnitPricesRequest extends FormRequest
     {
         return [
             'radius' => ['required', Rule::in(array_map(fn (WheelRadius $radius): int => $radius->value, WheelRadius::cases()))],
-            'car_type' => ['required', Rule::in(array_map(fn (CarType $carType): string => $carType->value, CarType::bookable()))],
+            'car_type' => ['required', Rule::in(CarType::bookableValues())],
         ];
     }
 }

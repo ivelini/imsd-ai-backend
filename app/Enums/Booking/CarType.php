@@ -35,4 +35,16 @@ enum CarType: string implements HasLabel
     {
         return [self::Passenger, self::Crossover, self::Suv];
     }
+
+    /** @return list<string> значения bookable — для правил валидации */
+    public static function bookableValues(): array
+    {
+        return array_map(fn (self $carType): string => $carType->value, self::bookable());
+    }
+
+    /** @return array<string, string> value => label — для опций форм панели */
+    public static function bookableOptions(): array
+    {
+        return collect(self::bookable())->mapWithKeys(fn (self $carType): array => [$carType->value => $carType->label()])->all();
+    }
 }

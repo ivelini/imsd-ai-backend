@@ -23,7 +23,7 @@ final readonly class GetBookingCatalog
             ->map(fn (BookingService $service): array => [
                 'id' => $service->id,
                 'name' => $service->name,
-                'base_price' => $service->base_price,
+                'base_price' => $service->base_price->toKopecks(),
                 'has_rules' => $service->price_rules_count > 0,
             ])
             ->all();

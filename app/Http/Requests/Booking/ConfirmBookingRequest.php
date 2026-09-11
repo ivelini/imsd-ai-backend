@@ -22,7 +22,7 @@ final class ConfirmBookingRequest extends FormRequest
             'date' => 'required|date_format:Y-m-d',
             'hour' => 'required|integer|between:0,23',
             'radius' => ['required', Rule::in(array_map(fn (WheelRadius $radius): int => $radius->value, WheelRadius::cases()))],
-            'car_type' => ['required', Rule::in(array_map(fn (CarType $carType): string => $carType->value, CarType::bookable()))],
+            'car_type' => ['required', Rule::in(CarType::bookableValues())],
             'service_ids' => 'required|array|min:1',
             'service_ids.*' => 'integer|exists:booking_services,id',
             'quantities' => 'array',

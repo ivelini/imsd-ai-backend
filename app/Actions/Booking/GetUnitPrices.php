@@ -23,7 +23,7 @@ final readonly class GetUnitPrices
 
         $unitPrices = [];
         foreach ($this->priceCalculator->calculate($catalog, $radius, $carType, $quantities)->lines as $line) {
-            $unitPrices[$line->service->id] = $line->unitPrice;
+            $unitPrices[$line->service->id] = $line->unitPrice->toKopecks();
         }
 
         return $unitPrices;
