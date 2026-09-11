@@ -160,7 +160,9 @@ class DemoBookingSeeder extends Seeder
         ]);
 
         // Виджет записывает сезонный комплект (4 колеса); админка — частичный заказ
-        $quantity = $source === BookingSource::Site ? 4 : rand(1, 4);
+        $quantity = $source === BookingSource::Site
+            ? PriceCalculator::DEFAULT_QUANTITY
+            : rand(PriceCalculator::MIN_QUANTITY, PriceCalculator::MAX_QUANTITY);
         $quantities = collect($services)->mapWithKeys(fn (BookingService $service): array => [$service->id => $quantity])->all();
 
         // Расчёт — единый PriceCalculator, как на сайте и при подтверждении

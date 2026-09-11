@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->render(function (DomainException $e, Request $request) {
-            return response()->json(['message' => $e->getMessage()], 409);
+            // Код задаётся броском (409 конфликт, 422 данные, 429 кулдаун); без кода — 409
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 409);
         });
     })->create();

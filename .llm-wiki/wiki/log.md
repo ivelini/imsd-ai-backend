@@ -137,3 +137,5 @@
 
 ## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 1)
 - Updated: Эксплуатация — планировщик slots:generate, SMS-env, Job SendBookingCodeSms
+
+## [2026-09-11] ingest | Запись на шиномонтаж: домен Booking (волна 2, API)

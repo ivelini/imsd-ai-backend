@@ -1,11 +1,11 @@
 # Запись на шиномонтаж: домен Booking
 
 > Sources: Проект, 2026-09-11
-> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md)
+> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md)
 
 ## Overview
 
-Домен Booking перенесён из сервиса tireslot в монолит (ADR 0012): запись на шиномонтаж — слот-сетка, визард выбора времени/услуг, подтверждение SMS-кодом. Публичный UI — SPA через `/api/booking` (волна 2), админка — кластер Filament (волна 3). Волна 0 — фундамент: 10 таблиц с префиксом `booking_`, модели `Models/Booking/*`, enum `Enums/Booking/*`, системные настройки (`settings` KV, `Models/System/Setting` + `SettingKeyEnum`). Волна 1 — доменный слой: Services/Actions/Preconditions/DTO, SMS-job, планировщик. Клиент — единая `users` (телефон-first, без пароля/почты для записи).
+Домен Booking перенесён из сервиса tireslot в монолит (ADR 0012): запись на шиномонтаж — слот-сетка, визард выбора времени/услуг, подтверждение SMS-кодом. Публичный UI — SPA через `/api/booking` (волна 2, готово), админка — кластер Filament (волна 3). Волна 0 — фундамент: 10 таблиц с префиксом `booking_`, модели `Models/Booking/*`, enum `Enums/Booking/*`, системные настройки (`settings` KV, `Models/System/Setting` + `SettingKeyEnum`). Волна 1 — доменный слой: Services/Actions/Preconditions/DTO, SMS-job, планировщик. Клиент — единая `users` (телефон-first, без пароля/почты для записи).
 
 ## Таблицы
 
@@ -43,6 +43,19 @@
 - **Preconditions** — `EnsureCodeVerifiable` (invalid → 422, expired → 409; used пропускается — контроллер вернёт существующую запись), `EnsureSlotSelectable` (409), `EnsurePricingCombinationExists` (валидация прайсом).
 - **Сетка** — `Actions/Booking/GenerateSlotGrid::execute()`: идемпотентно по шаблону недели на горизонт; прошлое не трогает; открытые пустые строки вне шаблона удаляет, закрытые и с записями сохраняет. Команда `slots:generate` + планировщик каждые 15 минут (withoutOverlapping).
 - **Поддержка** — `Support/` (чистые функции): `Phone` (канон «7XXXXXXXXXX»), `Money`, `RussianDate`.
+
+## Публичный API (волна 2, `/api/booking`, Scramble Group «Запись на шиномонтаж»)
+
+| Метод | Путь | Ответ |
+|---|---|---|
+| GET | `/slots?date_from&date_to` | `{days: {"Y-m-d": bool}}` — карта доступности календаря |
+| GET | `/slots/{date}` | `{slots: [{hour, is_closed}]}` — сетка дня (прошлое/за горизонтом — пусто; несуществующая дата — 422) |
+| GET | `/catalog` | `{services: [{id, name, base_price, has_rules}], complexes: [{id, name, service_ids}]}` |
+| GET | `/price?radius&car_type` | `{unit_prices: {id: price}}` по каталогу; потерянная комбинация — 422 |
+| POST | `/code` {phone} | 200 `{retry_after}`; кулдаун (60 с) — 429 серверно; невалидный телефон — 422 |
+| POST | `/confirm` {phone, code, name, plate?, date, hour, radius, car_type, service_ids[], quantities{}} | 201 BookingResource; used-код (повторный submit) — 200 существующая; 422/409 |
+
+`BookingResource`: снимок (date, start_time, status, source, radius, car_type, plate, total_price) + `user {id,name,phone}` + `items [{id, service{id,name}, price, quantity}]` (вложенные компактные Resource через whenLoaded). `closeSlot` вне API — с сайта всегда true (слот закрывается с привязкой к записи). Количество 1–4 — константы `PriceCalculator::MIN/MAX/DEFAULT_QUANTITY` (единственный источник, FormRequest и сидеры ссылаются). Ошибки: DomainException → `$e->getCode() ?: 409`.
 
 ## Сидеры
 

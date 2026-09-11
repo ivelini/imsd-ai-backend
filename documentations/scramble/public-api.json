@@ -19,6 +19,9 @@
         },
         {
             "name": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433"
+        },
+        {
+            "name": "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
         }
     ],
     "paths": {
@@ -458,16 +461,23 @@
                                                             "null"
                                                         ]
                                                     },
-                                                    "delivery_min": {
-                                                        "type": [
-                                                            "integer",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "delivery_max": {
-                                                        "type": [
-                                                            "integer",
-                                                            "null"
+                                                    "delivery": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "delivery_min": {
+                                                                "type": "integer"
+                                                            },
+                                                            "delivery_max": {
+                                                                "type": "integer"
+                                                            },
+                                                            "order_day_of_week": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "delivery_min",
+                                                            "delivery_max",
+                                                            "order_day_of_week"
                                                         ]
                                                     },
                                                     "images": {
@@ -504,8 +514,6 @@
                                                     "is_studded",
                                                     "euro_label",
                                                     "price",
-                                                    "delivery_min",
-                                                    "delivery_max",
                                                     "images"
                                                 ]
                                             }
@@ -1011,16 +1019,23 @@
                                                             "null"
                                                         ]
                                                     },
-                                                    "delivery_min": {
-                                                        "type": [
-                                                            "integer",
-                                                            "null"
-                                                        ]
-                                                    },
-                                                    "delivery_max": {
-                                                        "type": [
-                                                            "integer",
-                                                            "null"
+                                                    "delivery": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "delivery_min": {
+                                                                "type": "integer"
+                                                            },
+                                                            "delivery_max": {
+                                                                "type": "integer"
+                                                            },
+                                                            "order_day_of_week": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "delivery_min",
+                                                            "delivery_max",
+                                                            "order_day_of_week"
                                                         ]
                                                     },
                                                     "images": {
@@ -1057,8 +1072,6 @@
                                                     "type",
                                                     "color",
                                                     "price",
-                                                    "delivery_min",
-                                                    "delivery_max",
                                                     "images"
                                                 ]
                                             }
@@ -2005,6 +2018,396 @@
                 }
             }
         },
+        "/booking/slots": {
+            "get": {
+                "operationId": "booking.getSlotDays",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "parameters": [
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "days": {
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "boolean"
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "days"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/booking/slots/{date}": {
+            "get": {
+                "operationId": "booking.getDaySlots",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "slots": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "hour": {
+                                                                "type": "integer"
+                                                            },
+                                                            "is_closed": {
+                                                                "type": "boolean"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "hour",
+                                                            "is_closed"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "slots"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/booking/catalog": {
+            "get": {
+                "operationId": "booking.getBookingCatalog",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "services": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "base_price": {
+                                                                "type": "integer"
+                                                            },
+                                                            "has_rules": {
+                                                                "type": "boolean"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "base_price",
+                                                            "has_rules"
+                                                        ]
+                                                    }
+                                                },
+                                                "complexes": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "service_ids": {
+                                                                "type": "object",
+                                                                "additionalProperties": {}
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "service_ids"
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "services",
+                                                "complexes"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/booking/price": {
+            "get": {
+                "operationId": "booking.getUnitPrices",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "parameters": [
+                    {
+                        "name": "radius",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "13",
+                                "14",
+                                "15",
+                                "16",
+                                "17",
+                                "18",
+                                "19",
+                                "20",
+                                "21"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "car_type",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "passenger",
+                                "crossover",
+                                "suv"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "unit_prices": {
+                                                    "type": "array",
+                                                    "items": {}
+                                                }
+                                            },
+                                            "required": [
+                                                "unit_prices"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/booking/code": {
+            "post": {
+                "operationId": "booking.issueBookingCode",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IssueCodeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "retry_after": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "retry_after"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
+        "/booking/confirm": {
+            "post": {
+                "operationId": "booking.confirmBooking",
+                "tags": [
+                    "\u0417\u0430\u043f\u0438\u0441\u044c \u043d\u0430 \u0448\u0438\u043d\u043e\u043c\u043e\u043d\u0442\u0430\u0436"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ConfirmBookingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/login": {
             "get": {
                 "operationId": "login",
@@ -2059,6 +2462,103 @@
                     "slug"
                 ],
                 "title": "CityReferenceResource"
+            },
+            "ConfirmBookingRequest": {
+                "type": "object",
+                "description": "\u0412\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044f \u0444\u043e\u0440\u043c\u0430\u0442\u0430 \u0434\u0430\u043d\u043d\u044b\u0445 \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u044f \u0437\u0430\u043f\u0438\u0441\u0438: \u0442\u0435\u043b\u0435\u0444\u043e\u043d, \u043a\u043e\u0434, \u043a\u043e\u043d\u0442\u0430\u043a\u0442\u044b, \u0441\u043b\u043e\u0442, \u0441\u043e\u0441\u0442\u0430\u0432.",
+                "properties": {
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 30
+                    },
+                    "code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "plate": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "maxLength": 20
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "hour": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 23
+                    },
+                    "radius": {
+                        "type": "string",
+                        "enum": [
+                            "13",
+                            "14",
+                            "15",
+                            "16",
+                            "17",
+                            "18",
+                            "19",
+                            "20",
+                            "21"
+                        ]
+                    },
+                    "car_type": {
+                        "type": "string",
+                        "enum": [
+                            "passenger",
+                            "crossover",
+                            "suv"
+                        ]
+                    },
+                    "service_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "minItems": 1
+                    },
+                    "quantities": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 4
+                        }
+                    }
+                },
+                "required": [
+                    "phone",
+                    "code",
+                    "name",
+                    "date",
+                    "hour",
+                    "radius",
+                    "car_type",
+                    "service_ids"
+                ],
+                "title": "ConfirmBookingRequest"
+            },
+            "IssueCodeRequest": {
+                "type": "object",
+                "description": "\u0412\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u044f \u0442\u0435\u043b\u0435\u0444\u043e\u043d\u0430 \u043f\u0440\u0438 \u0437\u0430\u043f\u0440\u043e\u0441\u0435 SMS-\u043a\u043e\u0434\u0430.",
+                "properties": {
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 30
+                    }
+                },
+                "required": [
+                    "phone"
+                ],
+                "title": "IssueCodeRequest"
             },
             "RegionReferenceResource": {
                 "type": "object",

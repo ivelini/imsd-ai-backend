@@ -24,9 +24,17 @@ use InvalidArgumentException;
  */
 class PriceCalculator
 {
+    /** Границы количества услуги (колёс/шт) — единственный источник правила 1–4. */
+    public const MIN_QUANTITY = 1;
+
+    public const MAX_QUANTITY = 4;
+
+    /** Сезонный комплект: дефолт количества при выборе с сайта (ФТ-4 tireslot). */
+    public const DEFAULT_QUANTITY = 4;
+
     /**
      * @param  Collection<int, BookingService>  $services
-     * @param  array<int, int>  $quantities  service_id => количество 1–4
+     * @param  array<int, int>  $quantities  service_id => количество MIN–MAX_QUANTITY
      */
     public function calculate(Collection $services, int $radius, CarType $carType, array $quantities): Quote
     {
@@ -51,9 +59,9 @@ class PriceCalculator
      */
     private function quantityFor(int $serviceId, array $quantities): int
     {
-        $quantity = $quantities[$serviceId] ?? 1;
-        if ($quantity < 1 || $quantity > 4) {
-            throw new InvalidArgumentException("Количество услуги {$serviceId} вне границ 1–4");
+        $quantity = $quantities[$serviceId] ?? self::MIN_QUANTITY;
+        if ($quantity < self::MIN_QUANTITY || $quantity > self::MAX_QUANTITY) {
+            throw new InvalidArgumentException("Количество услуги {$serviceId} вне границ ".self::MIN_QUANTITY.'–'.self::MAX_QUANTITY);
         }
 
         return $quantity;

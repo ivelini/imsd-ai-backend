@@ -84,11 +84,13 @@ class BookingCodeService
     public function lastIssuedAt(string $phone): ?CarbonImmutable
     {
         $canonical = Phone::normalize($phone);
+        if ($canonical === null) {
+            return null;
+        }
 
-        return $canonical === null ? null : BookingCode::query()
-            ->where('phone', $canonical)
-            ->latest('id')
-            ->value('created_at');
+        $createdAt = BookingCode::query()->where('phone', $canonical)->latest('id')->value('created_at');
+
+        return $createdAt === null ? null : CarbonImmutable::instance($createdAt);
     }
 
     private function hash(string $code): string
