@@ -1,7 +1,7 @@
 # Запись на шиномонтаж: домен Booking
 
-> Sources: Проект, 2026-09-11
-> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md); [2026-09-11-booking-domain-wave3.md](../../raw/project/2026-09-11-booking-domain-wave3.md)
+> Sources: Проект, 2026-09-11; документация волны 4, 2026-09-12
+> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md); [2026-09-11-booking-domain-wave3.md](../../raw/project/2026-09-11-booking-domain-wave3.md); [2026-09-12-booking-docs-wave4.md](../../raw/project/2026-09-12-booking-docs-wave4.md)
 
 ## Overview
 
@@ -68,6 +68,10 @@
 ## Сидеры
 
 `BookingCatalogSeeder` (реальный прайс-лист: 5 работ × 9 радиусов × 3 типа = 135 правил, 5 допработ без правил по base_price, комплекс «Сезонный шиномонтаж»; услуги вне прайса деактивируются), `BookingScheduleSeeder` (Пн–Сб 9:00–19:00), `BookingSettingsSeeder` — вызываются из DatabaseSeeder безусловно. `BookingSlotSeeder` (сетка через GenerateSlotGrid) и `DemoBookingSeeder` (неделя вокруг today: клиенты, история done/cancelled/no_show, будущие confirmed) — local-only.
+
+## Осталось (не реализовано, из ФТ-карты)
+
+Крон чистки просроченных кодов (ФТ-9); «Моя запись» — отмена клиентом (ФТ-14, верификатор `booking_code_id` готов); календарь дня (ФТ-17); корректировка цены записи оператором (ФТ-19); перенос записи (ФТ-20); снятие привязки закрытия слота при отмене и массовое закрытие дня (ФТ-15/16); любое время начала и подстановка параметров из последней записи (ФТ-18); карточка клиента (ФТ-22). UI-слой SPA — отдельный план в репо frontend. Полная карта — `documentations/tz/booking-functional-requirements.md`.
 
 ## See Also
 

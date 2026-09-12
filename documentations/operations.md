@@ -34,6 +34,10 @@ Filament-панель `/panel`: ассеты (css/js/шрифты) публик�
 | `TIRE_IMPORT_CHUNK_SIZE` | Строк XLSX на ChunkJob | 500 |
 | `TIRE_IMPORT_DISK` | Диск JSON-чанков импорта шин | local |
 | `POINT_IMPORT_DISK` | Диск чанков импорта пунктов выдачи | local |
+| `SMS_STUB` | Заглушка SMS-кода записи на шиномонтаж (фиксированный код вместо провайдера) | true |
+| `SMS_STUB_CODE` | Код заглушки (4 цифры) | 1234 |
+| `SMS_PROVIDER` | Провайдер SMS (не выбран — `LogSmsSender` пишет код в лог) | — |
+| `SMS_RESEND_COOLDOWN_SECONDS` | Кулдаун повторной отправки кода | 60 |
 | `POSTMARK_API_KEY` и др. | Почтовые драйверы (не используются активно) | — |
 
 Секреты в репозиторий не коммитятся — только имена.
@@ -42,9 +46,9 @@ Filament-панель `/panel`: ассеты (css/js/шрифты) публик�
 
 Локаль интерфейса — `APP_LOCALE=ru` (переводы кнопок/лейблов Filament идут из `vendor/filament/*/resources/lang/ru`; своих `lang/` в проекте нет).
 
-## Очереди и импорты
+## Очереди и планировщик
 
-Плановая задача одна (`routes/console.php`): `promotions:sync` — каждые 5 минут пересчитывает цены товаров, участвующих в акциях (закрывает границы действия акций по датам). Контейнер `backend-scheduler` запускает `php artisan schedule:work`; без него акционные цены не обновятся при наступлении дат (правки акций в панели пересчитывают цены сразу).
+Плановые задачи (`routes/console.php`): `promotions:sync` — каждые 5 минут (акционные цены), `slots:generate` — каждые 15 минут (сетка слотов записи на шиномонтаж на горизонт `booking_horizon_days`; идемпотентна). Контейнер `backend-scheduler` запускает `php artisan schedule:work`; без него не обновятся ни акционные цены, ни сетка слотов.
 
 Импорты запускаются со страницы панели `/panel/catalog/import` и диспатчатся в очередь (database):
 
@@ -54,6 +58,7 @@ Filament-панель `/panel`: ассеты (css/js/шрифты) публик�
 | `CatalogImport\ChunkJob` / `WheelChunkJob` | Импорт чанка: товары, остатки, цены |
 | `CatalogImport\ModelImportJob` | Импорт моделей товаров |
 | `GeoImport\PointImportJob` | Импорт пунктов выдачи → пересчёт `catalog_prices` |
+| `Booking\SendBookingCodeSms` | SMS с кодом подтверждения записи (tries 3, backoff 10/60) |
 
 Воркер: `docker compose exec backend-app php artisan queue:work` (запуск — на усмотрение инфраструктуры).
 
@@ -64,7 +69,9 @@ Filament-панель `/panel`: ассеты (css/js/шрифты) публик�
 - **«Цены в каталоге не пересчитались»** — `PopulateCatalogPrices` вызывается после импорта (MasterJob/PointImportJob), при правке остатков и акций в панели, а также задачей `promotions:sync`; вручную — `php artisan promotions:sync` (пересчёт акционных товаров) или повторный импорт.
 - **«Акция началась, но цены старые»** — проверить, работает ли `backend-scheduler` (`schedule:work`); пересчёт запускается каждые 5 минут. Ручной прогон: `php artisan promotions:sync`.
 - **«Уведомления не приходят в админку»** — проверить Reverb (`REVERB_*`) и `BROADCAST_CONNECTION`; уведомления пишутся в БД (`notifications`), вебсокет — доставка в реальном времени.
+- **«Сетка слотов не пополняется»** — проверить `backend-scheduler`; вручную — `php artisan slots:generate` или кнопка «Сгенерировать сетку» в ресурсе «Слоты» панели (кластер «Шиномонтаж»).
+- **«Код записи не приходит»** — в v1 SMS-заглушка: `LogSmsSender` пишет код в лог (`SMS на 7…`); `SMS_STUB_CODE` фиксирует код. Подключение провайдера — `SMS_PROVIDER` + новая реализация контракта `Services\Booking\SmsSender`.
 
 ## Миграции и данные
 
-`make fresh` — полный сброс БД с сидами (эталонные данные: склады, расписания отгрузки, регионы/города). Продакшен-миграции — `php artisan migrate`.
+`make fresh` — полный сброс БД с сидами (эталонные данные: склады, расписания отгрузки, регионы/города; справочники записи — каталог услуг/прайс, шаблон недели, настройки). Локально (`local`) дополнительно: сетка слотов (`BookingSlotSeeder`) и демо-записи вокруг сегодняшнего дня (`DemoBookingSeeder`). Продакшен-миграции — `php artisan migrate`.

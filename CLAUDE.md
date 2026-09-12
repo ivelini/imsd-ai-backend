@@ -84,15 +84,15 @@ Controller::__invoke()
 
 ### Домены
 
-Директории Models: `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`.
+Директории Models: `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012).
 
 Такая же структура — в `Actions/`, `Preconditions/`, `DTOs/`, `Http/Controllers/`, `Http/Requests/`, `Http/Resources/`, `Enums/`, `Services/`.
 
 **Морф-мапа (`AppServiceProvider`):** `tire → Tire`, `wheel → Wheel`, `article → Article`.
 
-**Enums:** `ProductType`, `WheelType`, `SpecType`, `PromotionType`, `DiscountType`, `OrderState`, `WeekDay` — в `app/Enums/`.
+**Enums:** `ProductType`, `WheelType`, `SpecType`, `PromotionType`, `DiscountType`, `OrderState`, `WeekDay` — в `app/Enums/`; домен Booking: `BookingStatus`, `BookingSource`, `CarType`, `ServiceCategory`, `WheelRadius`, `CodeStatus` (`Enums/Booking/`), `SettingKeyEnum` (`Enums/System/`). Деньги — VO `Money` + каст `MoneyCast` (ADR 0013), копейки в БД, рубли только в формах.
 
-**API:** `/api/admin` — `auth:sanctum`, `/api` — публичные + клиентские.
+**API:** `/api/admin` — `auth:sanctum`, `/api` — публичные + клиентские; запись на шиномонтаж — `/api/booking/*` (слоты, каталог, цена, код, подтверждение; Scramble-группа «Запись на шиномонтаж»).
 
 ---
 
@@ -230,11 +230,11 @@ Controller
 
 | Слой | Где | Что отвечает |
 |---|---|---|
-| Эксплуатация | `documentations/operations.md` | env, очереди/импорты, ручные сценарии |
-| Схема БД | `documentations/db-schema.md` | таблицы и связи |
+| Эксплуатация | `documentations/operations.md` | env, очереди/планировщик, ручные сценарии |
+| Схема БД | `documentations/db-schema.md` | таблицы и связи (включая домен Booking) |
 | Архитектура | `documentations/architecture.md` | устройство системы |
 | API | Scramble → `/docs/api` (фронт, UI) + `/docs/admin` (админка, UI) + `documentations/scramble/public-api.json` + `admin-api.json` | контракты потребителей |
-| ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования |
+| ТЗ | `documentations/tz/`, `documentations/fr/` | функциональные требования (запись на шиномонтаж — `tz/booking-functional-requirements.md`) |
 
 <!-- setup-llm-wiki:start -->
 ## LLM Wiki

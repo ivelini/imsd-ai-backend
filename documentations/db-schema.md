@@ -172,3 +172,26 @@
 | `Эл.почта` | delivery_points | `email` |
 | `Доп.информация` | delivery_points | `info` |
 | `Выдача с борта` | delivery_points | `pickup_from_truck` |
+
+## Домен: Booking (запись на шиномонтаж, ADR 0012)
+
+Префикс `booking_` отделяет таблицы домена; клиент — единая `users` (phone nullable unique). Деньги — копейки (unsignedInteger) через каст `MoneyCast` (VO `Money`, ADR 0013).
+
+| Таблица | Назначение | Ключевые поля |
+|---------|------------|---------------|
+| `booking_services` | Каталог услуг | `id`, `name`, `category` (tire/storage/other), `is_active`, `base_price` (копейки, «от N ₽») |
+| `booking_price_rules` | Прайс-правила: цена за единицу для комбинации | `id`, `service_id` (FK, restrict), `radius` (13–21), `car_type`, `price` (копейки), UNIQUE (service_id, radius, car_type) |
+| `booking_complex_services` | Комплексы услуг (без своей цены) | `id`, `name`, `is_active` |
+| `booking_complex_service_items` | Состав комплекса (pivot) | `complex_service_id` (cascade), `service_id` (restrict), UNIQUE пара |
+| `booking_schedule_templates` | Шаблон недели | `weekday` (0 пн – 6 вс, UNIQUE), `open_time`, `close_time` (оба null → выходной) |
+| `booking_slots` | Часовые окна (сетка планировщика) | `date`, `hour` (UNIQUE пара), `is_closed`, `close_reason`, `booking_id` (FK на bookings, отложенный — цикл ссылок) |
+| `booking_codes` | SMS-коды подтверждения | `phone`, `code_hash` (sha256 + app.key, plaintext не хранится), `used_at` (одноразовость), index phone; TTL = created_at + `reservation_timeout_min` |
+| `bookings` | Записи | `user_id` (FK users, restrict), `slot_id` (restrict), `booking_code_id` (nullable, nullOnDelete), `start_time`, `status` (confirmed/arrived/done/cancelled/no_show), `source` (site/admin), `cancel_reason`, `idempotency_key` (uuid), снимок: `radius`, `car_type`, `plate`, `total_price` (копейки); `operator_id` (FK admins, nullable); index slot_id/user_id/status |
+| `booking_items` | Состав записи (снапшот цены) | `booking_id` (cascade), `service_id` (restrict — услугу деактивируют, не удаляют), `price` (копейки за единицу), `quantity` (1–4), UNIQUE (booking_id, service_id) |
+| `settings` | Системный KV параметров (домен System) | `key` (PK), `value`, timestamps; дефолты — `SettingKeyEnum` |
+
+**Примечания:**
+- Запись — снимок параметров и цены на момент создания (ADR 0004 tireslot); правка прайса задним числом записи не меняет.
+- Слот: бронь с сайта закрывает слот с привязкой (`booking_id`); запись оператора в закрытый слот — не барьер (привязка не перезаписывается, ФТ-16).
+- Единый клиент: `bookings.user_id` и `orders.user_id` ссылаются на одну `users` (решение №6 плана переноса).
+- Количество услуги 1–4 — константы `PriceCalculator::MIN/MAX/DEFAULT_QUANTITY`.
