@@ -1,7 +1,7 @@
 # Запись на шиномонтаж: домен Booking
 
-> Sources: Проект, 2026-09-11; документация волны 4, 2026-09-12
-> Raw: [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md); [2026-09-11-booking-domain-wave3.md](../../raw/project/2026-09-11-booking-domain-wave3.md); [2026-09-12-booking-docs-wave4.md](../../raw/project/2026-09-12-booking-docs-wave4.md)
+> Sources: Проект, 2026-09-11; документация волны 4, 2026-09-12; фильтры листинга слотов 2026-09-12
+> Raw: [2026-09-12-slots-panel-filters.md](../../raw/project/2026-09-12-slots-panel-filters.md); [2026-09-11-booking-domain-wave0.md](../../raw/project/2026-09-11-booking-domain-wave0.md); [2026-09-11-booking-domain-wave1.md](../../raw/project/2026-09-11-booking-domain-wave1.md); [2026-09-11-booking-domain-wave2.md](../../raw/project/2026-09-11-booking-domain-wave2.md); [2026-09-11-booking-domain-wave3.md](../../raw/project/2026-09-11-booking-domain-wave3.md); [2026-09-12-booking-docs-wave4.md](../../raw/project/2026-09-12-booking-docs-wave4.md)
 
 ## Overview
 
@@ -63,7 +63,7 @@
 
 ## Админка (волна 3, кластер «Шиномонтаж»)
 
-Кластер Booking с группами «Услуги» / «Записи» / «Настройки»: ресурсы услуг, прайс-правил (уникальность комбинации), комплексов (состав CheckboxList), расписания недели (WeekDay, TimePicker без секунд), слотов (закр/откр, header-action генерации сетки через GenerateSlotGrid), настроек (key/value). Записи — полный CRUD: создание оператором через `CreateAdminBooking` (транзакция, слот lockForUpdate, клиент firstOrCreate по телефону, серверный пересчёт цены, чекбокс закрывает только свободный слот — закрытие не барьер), правка статуса/причины/снимка, табличные действия arrive/complete/noShow/cancel (причина в модале). Форма — одна схема с `visibleOn('create'|'edit')` (в этой версии Filament `operation()` — только сеттер).
+Кластер Booking с группами «Услуги» / «Записи» / «Настройки»: ресурсы услуг, прайс-правил (уникальность комбинации), комплексов (состав CheckboxList), расписания недели (WeekDay, TimePicker без секунд), слотов (закр/откр, header-action генерации сетки через GenerateSlotGrid; листинг слотов — фильтр периода «Сегодня/Завтра/Текущая неделя/Следующая неделя» из `SlotPeriod` и состояние, стартовый вид — сегодня, сброс фильтров — вся сетка хронологией (прошедшие дни срезаны), колонка «Клиенты» — записавшиеся на слот с временем начала; см. [Админ-панель на Filament](admin-panel-filament.md)), настроек (key/value). Записи — полный CRUD: создание оператором через `CreateAdminBooking` (транзакция, слот lockForUpdate, клиент firstOrCreate по телефону, серверный пересчёт цены, чекбокс закрывает только свободный слот — закрытие не барьер), правка статуса/причины/снимка, табличные действия arrive/complete/noShow/cancel (причина в модале). Форма — одна схема с `visibleOn('create'|'edit')` (в этой версии Filament `operation()` — только сеттер).
 
 ## Сидеры
 

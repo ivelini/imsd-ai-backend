@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Enums;
 
+use App\Enums\Booking\SlotPeriod;
 use App\Enums\Catalog\BrandType;
 use App\Enums\Catalog\Season;
 use App\Enums\Catalog\WheelType;
@@ -31,5 +32,8 @@ class UiEnumLabelsTest extends TestCase
 
         self::assertInstanceOf(HasLabel::class, PromotionType::Percent);
         self::assertSame('Процент', PromotionType::Percent->getLabel());
+
+        self::assertInstanceOf(HasLabel::class, SlotPeriod::CurrentWeek);
+        self::assertSame('Текущая неделя', SlotPeriod::CurrentWeek->getLabel());
     }
 }
