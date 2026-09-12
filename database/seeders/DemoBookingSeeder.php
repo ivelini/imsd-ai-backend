@@ -77,7 +77,7 @@ class DemoBookingSeeder extends Seeder
     }
 
     /**
-     * Параметры авто из «последней записи» клиента (cars упразднены, ФТ-18 tireslot):
+     * Параметры авто из «последней записи» клиента (сущности «автомобиль» нет — ADR 0017; ФТ-18):
      * первый раз генерируются, дальше клиент пишется с теми же параметрами.
      *
      * @return array{radius: int, car_type: CarType, plate: string|null}

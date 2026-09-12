@@ -16,7 +16,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Str;
 
 /**
- * Создание записи при подтверждении кода (ФТ-8 tireslot) — единый Action для сайта
+ * Создание записи при подтверждении кода (ФТ-8) — единый Action для сайта
  * (и, в будущем, каналов админки). Атомарность: блокировка строки слота
  * `SELECT … FOR UPDATE` внутри транзакции исключает гонку «закрытие vs запись».
  * Код к этому моменту верифицирован (Valid); одноразовость кода — атомарная пометка
@@ -68,7 +68,7 @@ final readonly class ConfirmBooking
                 ->where('is_active', true)
                 ->get();
 
-            // Серверный пересчёт из актуального выбора (ФТ-8 tireslot): сумма клиентом не передаётся
+            // Серверный пересчёт из актуального выбора (ФТ-8): сумма клиентом не передаётся
             $quote = $this->priceCalculator->calculate($services, $input->radius, $input->carType, $input->quantities);
 
             foreach ($quote->lines as $line) {
@@ -82,7 +82,7 @@ final readonly class ConfirmBooking
 
             $booking->update(['total_price' => $quote->total]);
 
-            // Бронь с сайта занимает час (ФТ-8/ФТ-16 tireslot): слот закрывается и привязывается
+            // Бронь с сайта занимает час (ФТ-8/ФТ-16): слот закрывается и привязывается
             // к записи — дополнительные записи в слот — только оператором из админки
             if ($input->closeSlot) {
                 $slot->update(['is_closed' => true, 'booking_id' => $booking->id]);

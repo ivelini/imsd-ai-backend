@@ -39,7 +39,7 @@ final readonly class ConfirmBookingController
 
         $verification = $this->ensureCodeVerifiable->ensure($data['phone'], $data['code']);
 
-        // Повторный submit использованного кода (НФ-1 tireslot): запись уже создана
+        // Повторный submit использованного кода (НФ-1): запись уже создана
         if ($verification->status === CodeStatus::Used) {
             $booking = Booking::forCode($verification->code);
 
@@ -70,7 +70,7 @@ final readonly class ConfirmBookingController
             radius: (int) $data['radius'],
             carType: CarType::from($data['car_type']),
             quantities: $data['quantities'],
-            // Бронь с сайта занимает час (ФТ-8/ФТ-16 tireslot): слот закрывается всегда
+            // Бронь с сайта занимает час (ФТ-8/ФТ-16): слот закрывается всегда
             closeSlot: true,
         ));
 

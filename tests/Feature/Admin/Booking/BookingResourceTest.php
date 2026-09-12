@@ -89,7 +89,7 @@ class BookingResourceTest extends TestCase
 
     public function test_admin_booking_does_not_reclose_occupied_slot(): void
     {
-        // Закрытие — не барьер для записи оператора (ФТ-16 tireslot): слот остаётся закрытым
+        // Закрытие — не барьер для записи оператора (ФТ-16): слот остаётся закрытым
         // с прежней привязкой, новая запись на него не перезакрывает
         $this->slot->update(['is_closed' => true, 'booking_id' => null]);
 

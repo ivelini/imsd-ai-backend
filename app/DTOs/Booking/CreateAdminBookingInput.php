@@ -5,7 +5,7 @@ namespace App\DTOs\Booking;
 use App\Enums\Booking\CarType;
 use App\Models\Auth\Admin;
 
-/** Данные создания записи оператором из панели (ФТ-18 tireslot). */
+/** Данные создания записи оператором из панели (ФТ-18). */
 final readonly class CreateAdminBookingInput
 {
     /**

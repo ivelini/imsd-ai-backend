@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('source')->default('site');
             $table->string('cancel_reason')->nullable();
             $table->uuid('idempotency_key')->nullable()->unique();
-            // снимок параметров и цены на момент создания (ADR 0004 tireslot)
+            // снимок параметров и цены на момент создания (ADR 0017)
             $table->unsignedSmallInteger('radius');
             $table->string('car_type');
             $table->string('plate')->nullable(); // госномер из заявки (снимок)

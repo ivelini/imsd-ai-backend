@@ -83,7 +83,7 @@ class BookingCatalogSeeder extends Seeder
         $complex->services()->sync($serviceIds);
     }
 
-    /** Работы прайса: полный куб правил (услуга × радиус × тип) — подбор точным совпадением (ADR 0007 tireslot). */
+    /** Работы прайса: полный куб правил (услуга × радиус × тип) — подбор точным совпадением (ADR 0020). */
     private function seedPriceListWorks(): void
     {
         foreach (self::PRICE_LIST as $name => $columns) {

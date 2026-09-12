@@ -9,7 +9,7 @@ class SlotsGenerate extends Command
 {
     protected $signature = 'slots:generate';
 
-    protected $description = 'Генерация сетки слотов по шаблону недели на горизонт записи (ADR 0001 tireslot)';
+    protected $description = 'Генерация сетки слотов по шаблону недели на горизонт записи (ADR 0014)';
 
     public function handle(GenerateSlotGrid $generateSlots): int
     {

@@ -8,13 +8,13 @@ namespace App\Enums\System;
  */
 enum SettingKeyEnum: string
 {
-    /** ФТ-9 tireslot: срок действия кода подтверждения (неподтверждённый), минуты */
+    /** ФТ-9: срок действия кода подтверждения (неподтверждённый), минуты */
     case ReservationTimeoutMin = 'reservation_timeout_min';
 
-    /** ФТ-10 tireslot: минимальное время записи до начала, часы */
+    /** ФТ-10: минимальное время записи до начала, часы */
     case MinLeadTimeH = 'min_lead_time_h';
 
-    /** ФТ-10 tireslot: горизонт записи (сколько дней вперёд открыта сетка), дни */
+    /** ФТ-10: горизонт записи (сколько дней вперёд открыта сетка), дни */
     case HorizonDays = 'booking_horizon_days';
 
     public function default(): int

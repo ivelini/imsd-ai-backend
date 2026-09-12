@@ -101,7 +101,7 @@ class ConfirmBookingTest extends TestCase
         $this->assertSame(15000, $item->price->toKopecks()); // цена за единицу
         $this->assertSame(4, $item->quantity);
 
-        // Бронь с сайта занимает час (ФТ-8/ФТ-16 tireslot): слот закрыт и привязан к записи
+        // Бронь с сайта занимает час (ФТ-8/ФТ-16): слот закрыт и привязан к записи
         $slot = $booking->slot()->firstOrFail();
         $this->assertTrue($slot->is_closed);
         $this->assertSame($booking->id, $slot->booking_id);
@@ -115,7 +115,7 @@ class ConfirmBookingTest extends TestCase
         $slot = $this->openSlot();
         $code = $this->verifiedCode();
 
-        // Запись без закрытия (админка, чекбокс не стоял — ФТ-18 tireslot): слот остаётся открытым
+        // Запись без закрытия (админка, чекбокс не стоял — ФТ-18): слот остаётся открытым
         app(ConfirmBooking::class)->execute($this->input($code, $service, closeSlot: false));
 
         $this->assertFalse($slot->fresh()->is_closed);

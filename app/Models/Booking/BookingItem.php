@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Строка состава записи с ценой на момент записи (снимок, корректируется оператором — ФТ-19 tireslot).
+ * Строка состава записи с ценой на момент записи (снимок, корректируется оператором — ФТ-19).
  *
  * @property int $id
  * @property int $booking_id

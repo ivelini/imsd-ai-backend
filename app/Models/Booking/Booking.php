@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Запись на конкретное время начала; параметры авто и цена — снимок на момент создания (ADR 0004 tireslot).
+ * Запись на конкретное время начала; параметры авто и цена — снимок на момент создания (ADR 0017).
  *
  * @property int $id
  * @property int $user_id

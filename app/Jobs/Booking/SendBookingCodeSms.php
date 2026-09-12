@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 
 /**
- * Доставка SMS с кодом подтверждения (ФТ-23/ФТ-24 tireslot): через очередь с ретраями —
+ * Доставка SMS с кодом подтверждения (ФТ-23/ФТ-24): через очередь с ретраями —
  * сбой провайдера не блокирует запрос кода и подтверждение брони.
  */
 final class SendBookingCodeSms implements ShouldQueue

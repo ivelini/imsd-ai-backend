@@ -6,7 +6,7 @@ use App\Enums\Booking\CarType;
 use App\Models\Booking\BookingCode;
 use Carbon\CarbonImmutable;
 
-/** Данные создания записи при подтверждении кода (ФТ-8 tireslot): слот, параметры, состав. */
+/** Данные создания записи при подтверждении кода (ФТ-8): слот, параметры, состав. */
 final readonly class ConfirmBookingInput
 {
     /**
