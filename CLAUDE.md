@@ -208,7 +208,7 @@ Controller
 
 ## Решения (ADR)
 
-Правила ведения — `documentations/adr/README.md` (создаётся при первом ADR).
+Правила ведения — `documentations/adr/README.md`; решения лежат по доменам (`common/`, `catalog/`, `booking/`), нумерация сквозная.
 
 | № | Решение | Статус | Дата |
 |---|---|---|---|
