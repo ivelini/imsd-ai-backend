@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\Catalog\Resources\Promotions;
 
 use App\Filament\Clusters\Catalog\CatalogCluster;
+use App\Filament\Clusters\Catalog\CatalogGroupEnum;
 use App\Filament\Clusters\Catalog\Resources\Promotions\Pages\CreatePromotion;
 use App\Filament\Clusters\Catalog\Resources\Promotions\Pages\EditPromotion;
 use App\Filament\Clusters\Catalog\Resources\Promotions\Pages\ListPromotions;
@@ -18,6 +19,10 @@ use Filament\Tables\Table;
 class PromotionResource extends Resource
 {
     protected static ?string $cluster = CatalogCluster::class;
+
+    protected static string|\UnitEnum|null $navigationGroup = CatalogGroupEnum::Management->value;
+
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $model = Promotion::class;
 

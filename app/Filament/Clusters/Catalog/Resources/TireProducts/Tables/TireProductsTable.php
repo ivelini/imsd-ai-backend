@@ -7,7 +7,6 @@ use App\Models\Catalog\Tire\TireProduct;
 use App\Models\Catalog\Warehouse\Stock;
 use App\Models\Delivery\City;
 use App\Services\Delivery\DeliveryInfoService;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -62,6 +61,7 @@ class TireProductsTable
                 TextColumn::make('stocks')
                     ->label('Склады')
                     ->state(fn (TireProduct $record): array => self::stockLines($record))
+                    ->html()
                     ->listWithLineBreaks()
                     ->placeholder('Нет остатков')
                     ->toggleable(),
@@ -101,7 +101,6 @@ class TireProductsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
             ]);
     }
 

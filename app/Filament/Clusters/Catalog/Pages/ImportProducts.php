@@ -7,6 +7,7 @@ use App\DTOs\Import\StartImportInput;
 use App\Enums\Import\ImportState;
 use App\Enums\Import\ImportType;
 use App\Filament\Clusters\Catalog\CatalogCluster;
+use App\Filament\Clusters\Catalog\CatalogGroupEnum;
 use App\Filament\Support\PanelAction;
 use App\Models\System\ProductImport;
 use App\Preconditions\Import\EnsureNoActiveImport;
@@ -35,6 +36,10 @@ class ImportProducts extends Page implements HasTable
     use InteractsWithTable;
 
     protected static ?string $cluster = CatalogCluster::class;
+
+    protected static string|\UnitEnum|null $navigationGroup = CatalogGroupEnum::Management->value;
+
+    protected static ?int $navigationSort = 40;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowUpTray;
 

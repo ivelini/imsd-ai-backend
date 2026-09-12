@@ -22,6 +22,8 @@ class DeliveryScheduleResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = CatalogGroupEnum::Warehouse->value;
 
+    protected static ?int $navigationSort = 20;
+
     protected static ?string $model = DeliverySchedule::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

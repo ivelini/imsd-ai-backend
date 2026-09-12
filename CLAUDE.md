@@ -1,4 +1,4 @@
-Команды — в `Makefile`. Для artisan: `docker compose exec app php /var/www/artisan ...`
+Команды — в `Makefile` (он делегирует в родительский `imsd-ai/Makefile`, где лежит `docker-compose.yml`). Artisan напрямую: `docker compose exec backend-app php /var/www/artisan ...` — из каталога `imsd-ai/`, сервис называется `backend-app`.
 
 ## Архитектура
 

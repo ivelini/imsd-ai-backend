@@ -8,4 +8,5 @@ enum CatalogGroupEnum: string
     case DeliveryPoint = 'Точки выдачи';
 
     case Product = 'Продукция';
+    case Management = 'Управление';
 }

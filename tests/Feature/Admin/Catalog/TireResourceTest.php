@@ -186,16 +186,6 @@ class TireResourceTest extends TestCase
         $this->assertDatabaseHas('tire_products', ['slug' => 'nokian-hakka-215-60-r16-2']);
     }
 
-    public function test_delete_tire_removes_record(): void
-    {
-        $tire = TireProduct::factory()->create(['brand_id' => $this->brand->id]);
-
-        Livewire::test(ListTireProducts::class)
-            ->callTableAction('delete', $tire);
-
-        $this->assertDatabaseMissing('tire_products', ['id' => $tire->id]);
-    }
-
     public function test_tire_table_searches_by_ean(): void
     {
         TireProduct::factory()->create(['brand_id' => $this->brand->id, 'name' => 'Hakka 9', 'ean' => '4600000000001']);

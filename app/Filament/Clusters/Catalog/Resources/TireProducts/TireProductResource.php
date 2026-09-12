@@ -24,7 +24,11 @@ class TireProductResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = CatalogGroupEnum::Product->value;
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationLabel = 'Шины';
+
+    protected static ?string $pluralModelLabel = 'Каталог шин';
 
     protected static ?string $model = TireProduct::class;
 

@@ -47,7 +47,8 @@ class TireProductForm
                         TextInput::make('ean')
                             ->label('EAN')
                             ->maxLength(50)
-                            ->unique(ignoreRecord: true),
+                            ->unique(ignoreRecord: true)
+                            ->readonly(),
                         Select::make('country_id')
                             ->label('Страна')
                             ->relationship('country', 'name')

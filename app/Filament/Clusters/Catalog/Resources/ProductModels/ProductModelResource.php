@@ -24,6 +24,8 @@ class ProductModelResource extends Resource
 
     protected static ?string $model = ProductModel::class;
 
+    protected static ?int $navigationSort = 3;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $navigationLabel = 'Модели';

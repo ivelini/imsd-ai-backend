@@ -38,6 +38,9 @@ fresh:
 seed:
 	$(MAKE) -C .. seed
 
+route-list:
+	$(MAKE) -C .. route-list
+
 cache-clear:
 	$(MAKE) -C .. cache-clear
 

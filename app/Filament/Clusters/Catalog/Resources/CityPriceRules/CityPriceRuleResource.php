@@ -22,6 +22,8 @@ class CityPriceRuleResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = CatalogGroupEnum::DeliveryPoint->value;
 
+    protected static ?int $navigationSort = 30;
+
     protected static ?string $model = CityPriceRule::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

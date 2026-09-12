@@ -26,6 +26,8 @@ class WheelProductResource extends Resource
 
     protected static ?string $navigationLabel = 'Диски';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $model = WheelProduct::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCircleStack;
