@@ -15,6 +15,9 @@ final readonly class UpdateAdminBookingInput
      */
     public function __construct(
         public Booking $booking,
+        public string $surname,
+        public string $name,
+        public ?string $patronymic,
         public ?string $plate,
         public int $radius,
         public CarType $carType,

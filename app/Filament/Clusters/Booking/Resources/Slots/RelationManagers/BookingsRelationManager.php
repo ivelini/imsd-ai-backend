@@ -42,9 +42,13 @@ class BookingsRelationManager extends RelationManager
                     ->label('Время')
                     ->state(fn (Booking $record): string => Carbon::parse($record->start_time)->format('H:i'))
                     ->searchable(),
-                TextColumn::make('user.name')
+                TextColumn::make('user.full_name')
                     ->label('Клиент')
-                    ->searchable(),
+                    // Склейка ФИО — не колонка: поиск идёт по частям имени в карточке клиента
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHas(
+                        'user',
+                        fn (Builder $user): Builder => $user->where('name', 'like', "%{$search}%")->orWhere('surname', 'like', "%{$search}%"),
+                    )),
                 TextColumn::make('user.phone')
                     ->label('Телефон'),
                 TextColumn::make('status')

@@ -3,11 +3,13 @@
 namespace App\Filament\Clusters\Booking\Resources\Bookings\Pages;
 
 use App\Actions\Booking\CreateAdminBooking;
+use App\DTOs\Booking\BookingItemInput;
 use App\DTOs\Booking\CreateAdminBookingInput;
 use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
 use App\Models\Auth\Admin;
 use App\Models\Booking\Booking;
+use App\ValueObjects\Money;
 use DomainException;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -35,25 +37,23 @@ class CreateBooking extends CreateRecord
     }
 
     /**
-     * Создание — через Action CreateAdminBooking: снимок цены пересчитывается сервером,
-     * клиент ищется/создаётся по телефону, слот закрывается по чекбоксу.
+     * Создание — через Action CreateAdminBooking: состав и цены строк берутся из формы
+     * (как на правке), клиент ищется/создаётся по телефону, запись на начало часа занимает час.
      */
     public function handleRecordCreation(array $data): Booking
     {
-        $quantities = collect($data['composition'])
-            ->mapWithKeys(fn (array $row): array => [$row['service_id'] => (int) $row['quantity']])
-            ->all();
-
         try {
             return app(CreateAdminBooking::class)->execute(new CreateAdminBookingInput(
                 operator: $this->operator(),
-                phone: $data['phone'],
-                name: $data['name'],
+                phone: (string) $data['phone'],
+                name: (string) $data['name'],
+                surname: (string) $data['surname'],
+                patronymic: filled($data['patronymic'] ?? null) ? (string) $data['patronymic'] : null,
                 plate: $data['plate'],
                 slotId: (int) $data['slot_id'],
                 radius: (int) $data['radius'],
                 carType: CarType::from($data['car_type']),
-                quantities: $quantities,
+                items: self::items($data['items'] ?? []),
                 startTime: (string) $data['start_time'],
             ));
         } catch (DomainException $exception) {
@@ -63,6 +63,27 @@ class CreateBooking extends CreateRecord
 
         // Недостижимо (halt() бросает Halt) — throw только для анализатора
         throw new DomainException('Запись не создана', 422);
+    }
+
+    /**
+     * @param  array<int|string, array<string, mixed>>  $rows
+     * @return list<BookingItemInput>
+     */
+    private static function items(array $rows): array
+    {
+        return collect($rows)
+            ->map(function (array $row): BookingItemInput {
+                /** @var Money $price цена за единицу в рублях — Money отдаёт dehydration поля формы */
+                $price = $row['price'];
+
+                return new BookingItemInput(
+                    serviceId: (int) $row['service_id'],
+                    quantity: (int) $row['quantity'],
+                    price: $price,
+                );
+            })
+            ->values()
+            ->all();
     }
 
     private function operator(): Admin

@@ -9,18 +9,20 @@ use App\Models\Auth\Admin;
 final readonly class CreateAdminBookingInput
 {
     /**
-     * @param  array<int, int>  $quantities  service_id => количество 1–4
+     * @param  list<BookingItemInput>  $items  состав: услуга, количество и цена за единицу (правит оператор)
      * @param  string  $startTime  время начала «HH:MM:00» внутри часа слота: ровно на начало часа — час занимается
      */
     public function __construct(
         public Admin $operator,
         public string $phone,
         public string $name,
+        public string $surname,
+        public ?string $patronymic,
         public ?string $plate,
         public int $slotId,
         public int $radius,
         public CarType $carType,
-        public array $quantities,
+        public array $items,
         public string $startTime,
     ) {}
 }

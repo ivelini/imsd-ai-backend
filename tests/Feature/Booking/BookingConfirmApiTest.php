@@ -8,6 +8,7 @@ use App\Models\Booking\BookingService;
 use App\Models\Booking\PriceRule;
 use App\Models\Booking\Slot;
 use App\Models\System\Setting;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -100,6 +101,25 @@ class BookingConfirmApiTest extends TestCase
         $this->assertTrue($booking->slot->is_closed);
         $this->assertSame($booking->id, $booking->slot->booking_id);
         $this->assertNotNull($booking->bookingCode->used_at);
+    }
+
+    /** Контракт для сайта не меняется: user.name — по-прежнему одна строка, теперь склейка ФИО. */
+    public function test_confirm_returns_client_name_as_composed_full_name(): void
+    {
+        $service = $this->serviceWithRule();
+        Slot::create(['date' => '2026-09-10', 'hour' => 11]);
+        User::create(['phone' => '79001234567', 'name' => 'Иван', 'surname' => 'Петров']);
+        $this->issueCode();
+
+        $this->postJson('/api/booking/confirm', $this->confirmParams($service))
+            ->assertCreated()
+            ->assertJsonPath('data.user.name', 'Петров Иван');
+
+        // Сайт спрашивает только имя: фамилия клиента остаётся прежней, отчество не появляется
+        $client = Booking::firstOrFail()->user;
+        $this->assertSame('Петров', $client->surname);
+        $this->assertSame('Иван', $client->name);
+        $this->assertNull($client->patronymic);
     }
 
     public function test_confirm_rejects_invalid_code(): void

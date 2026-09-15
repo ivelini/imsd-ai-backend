@@ -90,6 +90,18 @@ class Booking extends Model
         return $this->hasMany(BookingItem::class);
     }
 
+    /** Итог записи: сумма сохранённых строк «цена за единицу × количество». */
+    public function itemsTotal(): Money
+    {
+        $total = Money::fromKopecks(0);
+
+        foreach ($this->items()->get() as $item) {
+            $total = $total->add($item->price->multiply($item->quantity));
+        }
+
+        return $total;
+    }
+
     /** @return HasOne<Slot, $this> слот, закрытый привязкой к этой записи */
     public function closedSlot(): HasOne
     {

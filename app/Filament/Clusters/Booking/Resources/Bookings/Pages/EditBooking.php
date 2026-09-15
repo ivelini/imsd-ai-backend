@@ -30,18 +30,25 @@ class EditBooking extends EditRecord
 
         return 'Запись '.collect([
             $startTime,
-            $booking->user->name,
+            $booking->user->full_name,
             $booking->user->phone,
         ])
             ->filter()
             ->implode(', ');
     }
 
-    /** Состав правится в форме: строки отдаются снимком цены записи, а не пересчётом по текущему прайсу. */
+    /**
+     * Состав правится в форме: строки отдаются снимком цены записи, а не пересчётом по текущему прайсу.
+     * ФИО живёт в карточке клиента — подставляем его в поля, чтобы оператор видел текущее и правил его.
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         /** @var Booking $booking */
         $booking = $this->getRecord();
+
+        $data['surname'] = $booking->user->surname;
+        $data['name'] = $booking->user->name;
+        $data['patronymic'] = $booking->user->patronymic;
 
         $data['items'] = $booking->items
             ->sortBy('id')
@@ -66,6 +73,9 @@ class EditBooking extends EditRecord
         try {
             app(UpdateAdminBooking::class)->execute(new UpdateAdminBookingInput(
                 booking: $record,
+                surname: (string) $data['surname'],
+                name: (string) $data['name'],
+                patronymic: filled($data['patronymic'] ?? null) ? (string) $data['patronymic'] : null,
                 plate: $data['plate'] ?? null,
                 radius: (int) $data['radius'],
                 carType: CarType::from($data['car_type']),

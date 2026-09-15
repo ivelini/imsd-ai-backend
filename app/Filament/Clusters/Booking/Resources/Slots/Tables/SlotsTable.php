@@ -118,7 +118,7 @@ class SlotsTable
         $startTime = Carbon::parse($booking->start_time)->format('H:i');
 
         return $user->phone === null
-            ? $user->name
-            : "{$startTime} : {$user->name} — {$user->phone}";
+            ? $user->full_name
+            : "{$startTime} : {$user->full_name} — {$user->phone}";
     }
 }

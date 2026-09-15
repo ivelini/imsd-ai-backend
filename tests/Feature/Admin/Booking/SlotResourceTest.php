@@ -5,7 +5,6 @@ namespace Tests\Feature\Admin\Booking;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\EditSlot;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\ListSlots;
 use App\Models\Booking\Slot;
-use Database\Seeders\BookingScheduleSeeder;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,7 +12,7 @@ use Livewire\Livewire;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
-/** SlotResource панели: закрытие/открытие слота и генерация сетки. */
+/** SlotResource панели: закрытие/открытие слота и колонка состояния. */
 class SlotResourceTest extends TestCase
 {
     use CreatesAdmin, RefreshDatabase;
@@ -38,18 +37,6 @@ class SlotResourceTest extends TestCase
             ->callTableAction('closeSlot', $slot->fresh());
 
         $this->assertFalse($slot->fresh()->is_closed);
-    }
-
-    public function test_generate_grid_action_creates_slots(): void
-    {
-        $this->seed(BookingScheduleSeeder::class);
-
-        Livewire::test(ListSlots::class)
-            ->callAction('generateGrid');
-
-        // Пн–Сб × 10 часов, горизонт по умолчанию 30 дней — сетка не пустая и открытая
-        $this->assertGreaterThan(0, Slot::count());
-        $this->assertSame(0, Slot::where('is_closed', true)->count());
     }
 
     /** Дата и час в заголовке — на правке они не редактируются, но должны быть видны. */

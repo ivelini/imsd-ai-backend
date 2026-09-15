@@ -21,6 +21,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Operation;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -39,11 +40,19 @@ class BookingForm
                     ->required()
                     ->maxLength(30)
                     ->visibleOn('create'),
-                TextInput::make('name')
-                    ->label('Имя клиента')
+                // ФИО клиента: фамилия и имя обязательны, отчество — как получится.
+                // На правке подставляется из карточки клиента (mutateFormDataBeforeFill)
+                TextInput::make('surname')
+                    ->label('Фамилия')
                     ->required()
-                    ->maxLength(255)
-                    ->visibleOn('create'),
+                    ->maxLength(255),
+                TextInput::make('name')
+                    ->label('Имя')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('patronymic')
+                    ->label('Отчество')
+                    ->maxLength(255),
                 TextInput::make('plate')
                     ->label('Госномер')
                     ->maxLength(20),
@@ -63,7 +72,7 @@ class BookingForm
                     ->searchable()
                     ->live()
                     ->afterStateUpdated(fn (Get $get, Set $set) => self::fillStartTime($get, $set))
-                    ->visibleOn('create'),
+                    ->visibleOn(Operation::Create),
                 // Время внутри часа слота: 14:00–14:59. Ровно на начало часа — час занимается целиком
                 Select::make('start_time')
                     ->label('Время')
@@ -91,23 +100,22 @@ class BookingForm
                             ->mapWithKeys(fn (BookingStatus $status): array => [$status->value => $status->label()])
                     )
                     ->required()
+                    ->live()
+                    ->afterStateUpdated(function (Set $set, mixed $state): void {
+                        // Причина живёт только у отменённой записи: статус ушёл из «Отменена» — причина снимается
+                        if ($state !== BookingStatus::Cancelled->value) {
+                            $set('cancel_reason', null);
+                        }
+                    })
                     ->visibleOn('edit'),
-                // Состав — только при создании: цена строки пересчитывается сервером (снимок)
-                Repeater::make('composition')
-                    ->label('Состав')
-                    ->schema([
-                        self::serviceSelect('service_id'),
-                        Select::make('quantity')
-                            ->label('Количество')
-                            ->options(self::quantityOptions())
-                            ->default(PriceCalculator::DEFAULT_QUANTITY)
-                            ->required(),
-                    ])
-                    ->columns(2)
-                    ->minItems(1)
-                    ->required()
-                    ->visibleOn('create'),
-                // Состав при правке: услуга подтягивается с готовой ценой по прайсу, цена правится оператором
+                // Причина отмены — по статусу: у остальных статусов поля нет
+                TextInput::make('cancel_reason')
+                    ->label('Причина отмены')
+                    ->maxLength(255)
+                    ->required(fn (Get $get): bool => self::isCancelled($get))
+                    ->visible(fn (Get $get): bool => self::isCancelled($get)),
+                // Состав — одна механика на создании и правке: услуга подтягивается с ценой по прайсу,
+                // цена правится оператором, итог считается по строкам
                 Repeater::make('items')
                     ->label('Услуги')
                     ->table([
@@ -115,6 +123,7 @@ class BookingForm
                         TableColumn::make('Цена, ₽'),
                         TableColumn::make('Количество'),
                     ])
+                    ->visible(fn (Get $get): bool => self::isFillCarParams($get))
                     ->schema([
                         self::serviceSelect('service_id')
                             ->live()
@@ -129,23 +138,29 @@ class BookingForm
                         Select::make('quantity')
                             ->label('Количество')
                             ->options(self::quantityOptions())
+                            ->default(PriceCalculator::DEFAULT_QUANTITY)
                             ->required()
                             ->live(),
                     ])
                     ->minItems(1)
-                    ->required()
-                    ->visibleOn('edit'),
+                    ->required(),
                 // TextEntry вместо устаревшего Placeholder, но состояние — через state():
                 // content() запись не рендерит (Placeholder::content как раз оборачивал state)
                 TextEntry::make('items_total')
                     ->label('Итоговая стоимость')
-                    ->state(fn (Get $get): string => self::itemsTotal($get('items')))
-                    ->visibleOn('edit'),
-                TextInput::make('cancel_reason')
-                    ->label('Причина отмены')
-                    ->maxLength(255)
-                    ->visibleOn('edit'),
+                    ->state(fn (Get $get): string => self::itemsTotal($get('items'))),
             ]);
+    }
+
+    /** Запись отменяется — тогда и только тогда нужна причина отмены. */
+    private static function isCancelled(Get $get): bool
+    {
+        return $get('status') === BookingStatus::Cancelled->value;
+    }
+
+    private static function isFillCarParams(Get $get): bool
+    {
+        return ! empty($get('car_type')) && ! empty($get('radius'));
     }
 
     /** @return array<string, string> время внутри часа слота: 14:00…14:59 */

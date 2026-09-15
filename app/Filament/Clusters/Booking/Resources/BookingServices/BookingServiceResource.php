@@ -22,6 +22,8 @@ class BookingServiceResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = BookingGroupEnum::Services->value;
 
+    protected static ?int $navigationSort = 20;
+
     protected static ?string $model = BookingService::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedWrenchScrewdriver;

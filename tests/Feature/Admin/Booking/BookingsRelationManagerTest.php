@@ -86,12 +86,13 @@ class BookingsRelationManagerTest extends TestCase
             ->fillForm([
                 'phone' => '79001234567',
                 'name' => 'Иван',
+                'surname' => 'Петров',
                 'plate' => 'А 000 АА 174',
                 'start_time' => '10:00',
                 'radius' => 16,
                 'car_type' => 'passenger',
-                'composition' => [
-                    ['service_id' => $this->tireService->id, 'quantity' => 2],
+                'items' => [
+                    ['service_id' => $this->tireService->id, 'quantity' => 2, 'price' => '150'],
                 ],
             ])
             ->call('create')

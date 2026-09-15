@@ -220,6 +220,9 @@ class UpdateAdminBookingTest extends TestCase
     {
         app(UpdateAdminBooking::class)->execute(new UpdateAdminBookingInput(
             booking: $this->booking,
+            surname: 'Петров',
+            name: 'Иван',
+            patronymic: null,
             plate: $overrides['plate'] ?? null,
             radius: $overrides['radius'] ?? 16,
             carType: $overrides['carType'] ?? CarType::Passenger,

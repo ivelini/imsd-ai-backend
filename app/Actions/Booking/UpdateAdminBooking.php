@@ -7,7 +7,6 @@ use App\DTOs\Booking\UpdateAdminBookingInput;
 use App\Models\Booking\Booking;
 use App\Models\Booking\Slot;
 use App\Preconditions\Booking\EnsureSlotTimeIsFree;
-use App\ValueObjects\Money;
 use DomainException;
 use Illuminate\Database\Connection;
 
@@ -45,6 +44,13 @@ final readonly class UpdateAdminBooking
                 'start_time' => $input->startTime,
             ]);
 
+            // ФИО — карточка клиента (один телефон — один клиент): правка записи меняет его и в остальных
+            $booking->user->update([
+                'surname' => $input->surname,
+                'name' => $input->name,
+                'patronymic' => $input->patronymic,
+            ]);
+
             $booking->items()
                 ->whereNotIn('service_id', array_map(fn (BookingItemInput $item): int => $item->serviceId, $input->items))
                 ->delete();
@@ -57,7 +63,7 @@ final readonly class UpdateAdminBooking
                 );
             }
 
-            $booking->update(['total_price' => $this->totalOf($booking)]);
+            $booking->update(['total_price' => $booking->itemsTotal()]);
 
             $this->syncSlotClosure($slot, $booking, $input->startTime);
         });
@@ -78,17 +84,5 @@ final readonly class UpdateAdminBooking
         if ($slot->booking_id === $booking->id && $slot->close_reason === null) {
             $slot->update(['is_closed' => false, 'booking_id' => null]);
         }
-    }
-
-    /** Итог записи: сумма строк «цена за единицу × количество». */
-    private function totalOf(Booking $booking): Money
-    {
-        $total = Money::fromKopecks(0);
-
-        foreach ($booking->items()->get() as $item) {
-            $total = $total->add($item->price->multiply($item->quantity));
-        }
-
-        return $total;
     }
 }

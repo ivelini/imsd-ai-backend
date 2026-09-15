@@ -4,7 +4,6 @@ namespace App\Filament\Clusters\Booking\Resources\Slots\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
@@ -27,9 +26,6 @@ class SlotForm
                 Toggle::make('is_closed')
                     ->label('Слот закрыт')
                     ->default(false),
-                TextInput::make('close_reason')
-                    ->label('Причина закрытия')
-                    ->maxLength(255),
             ]);
     }
 }

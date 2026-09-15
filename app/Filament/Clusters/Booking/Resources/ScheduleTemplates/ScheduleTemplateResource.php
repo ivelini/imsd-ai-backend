@@ -22,6 +22,8 @@ class ScheduleTemplateResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = BookingGroupEnum::Settings->value;
 
+    protected static ?int $navigationSort = 30;
+
     protected static ?string $model = ScheduleTemplate::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;

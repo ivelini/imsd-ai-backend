@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Booking;
 
-use App\Filament\Clusters\Booking\Resources\Settings\Pages\EditSetting;
+use App\Filament\Clusters\Settings\Resources\Bookings\Pages\EditSetting;
 use App\Models\System\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

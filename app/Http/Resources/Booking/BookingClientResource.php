@@ -18,7 +18,7 @@ final class BookingClientResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'name' => $this->resource->name,
+            'name' => $this->resource->full_name, // склейка ФИО: контракт для сайта не меняется
             'phone' => $this->resource->phone,
         ];
     }

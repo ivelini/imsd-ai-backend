@@ -84,15 +84,39 @@ class BookingResourceTest extends TestCase
         return [
             'phone' => '79001234567',
             'name' => 'Иван',
+            'surname' => 'Петров',
             'plate' => 'А 000 АА 174',
             'slot_id' => $this->slot->id,
             'start_time' => '11:00',
             'radius' => 13,
             'car_type' => 'passenger',
-            'composition' => [
-                ['service_id' => $this->service->id, 'quantity' => 4],
+            'items' => [
+                ['service_id' => $this->service->id, 'quantity' => 4, 'price' => '150'],
             ],
         ];
+    }
+
+    /** Состав на создании — те же строки с ценой и итогом, что и на правке. */
+    public function test_create_form_shows_items_with_price_and_total(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->assertFormFieldExists('items')
+            ->assertSee('Итоговая стоимость');
+    }
+
+    /** Цену строки оператор правит и на создании: в запись уходит введённая, а не прайсовая. */
+    public function test_create_saves_price_from_form_as_is(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm([...$this->formData(), 'items' => [
+                ['service_id' => $this->service->id, 'quantity' => 1, 'price' => '999'],
+            ]])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $booking = Booking::firstOrFail();
+        $this->assertSame(99900, $booking->items()->sole()->price->toKopecks());
+        $this->assertSame(99900, $booking->total_price->toKopecks());
     }
 
     public function test_create_booking_from_admin_with_snapshot(): void
@@ -222,7 +246,7 @@ class BookingResourceTest extends TestCase
 
         Livewire::test(EditBooking::class, ['record' => $booking->id])
             ->assertOk()
-            ->assertSee('Запись 11:00, Иван, 79001234567');
+            ->assertSee('Запись 11:00, Петров Иван, 79001234567');
     }
 
     /** Снимок строки не пересчитывается при открытии: правка прайса задним числом старые записи не меняет. */
@@ -352,6 +376,94 @@ class BookingResourceTest extends TestCase
         $this->assertSame('11:00:00', $booking->fresh()->start_time);
     }
 
+    /** ФИО клиента сохраняется по частям — и в карточке клиента видно склейку. */
+    public function test_create_booking_saves_client_full_name(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm([...$this->formData(), 'surname' => 'Петров', 'patronymic' => 'Иванович'])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $client = Booking::firstOrFail()->user;
+        $this->assertSame('Петров', $client->surname);
+        $this->assertSame('Иван', $client->name);
+        $this->assertSame('Иванович', $client->patronymic);
+        $this->assertSame('Петров Иван Иванович', $client->full_name);
+    }
+
+    /** Фамилия обязательна, имя обязательно (отчество — как получится): без них записи нет. */
+    public function test_create_requires_surname_and_first_name(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm([...$this->formData(), 'surname' => null, 'name' => null])
+            ->call('create')
+            ->assertHasFormErrors(['surname', 'name']);
+
+        $this->assertSame(0, Booking::count());
+    }
+
+    /** На правке ФИО подставляется из карточки клиента — оператор видит текущее и правит его. */
+    public function test_edit_fills_client_full_name_from_card(): void
+    {
+        $booking = $this->bookingWithItem();
+        $booking->user->update(['surname' => 'Петров', 'patronymic' => 'Иванович']);
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertFormSet([
+                'surname' => 'Петров',
+                'name' => 'Иван',
+                'patronymic' => 'Иванович',
+            ]);
+    }
+
+    /** Правка ФИО меняет карточку клиента, и заголовок записи показывает новое ФИО. */
+    public function test_edit_updates_client_full_name(): void
+    {
+        $booking = $this->bookingWithItem();
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->fillForm(['surname' => 'Петров', 'name' => 'Иван', 'patronymic' => 'Иванович'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('Петров Иван Иванович', $booking->fresh()->user->full_name);
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertSee('Запись 11:00, Петров Иван Иванович, 79001234567');
+    }
+
+    /** Причина отмены показывается только у отменённой записи. */
+    public function test_edit_shows_cancel_reason_only_for_cancelled_status(): void
+    {
+        $booking = $this->bookingWithItem();
+
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+        $component->assertFormFieldHidden('cancel_reason');
+
+        $component->set('data.status', BookingStatus::Cancelled->value);
+        $component->assertFormFieldVisible('cancel_reason');
+
+        $component->set('data.status', BookingStatus::Done->value);
+        $component->assertFormFieldHidden('cancel_reason');
+    }
+
+    /** Причина живёт у отменённой записи: статус ушёл из «Отменена» — причина не сохраняется. */
+    public function test_edit_clears_cancel_reason_when_status_leaves_cancelled(): void
+    {
+        $booking = $this->bookingWithItem();
+        $booking->update(['status' => BookingStatus::Cancelled, 'cancel_reason' => 'Клиент отменил']);
+
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+        $component->assertFormFieldVisible('cancel_reason');
+
+        $component->set('data.status', BookingStatus::Done->value);
+        $component->call('save')->assertHasNoFormErrors();
+
+        $booking = $booking->fresh();
+        $this->assertSame(BookingStatus::Done, $booking->status);
+        $this->assertNull($booking->cancel_reason);
+    }
+
     /** Услугу деактивируют, а не удаляют: старая запись с такой услугой сохраняется без правок состава. */
     public function test_edit_saves_booking_with_deactivated_service(): void
     {
@@ -371,7 +483,11 @@ class BookingResourceTest extends TestCase
         $service ??= $this->service;
 
         $booking = Booking::factory()->forSlot($this->slot)->create([
-            'user_id' => User::factory()->bookingClient()->create(['name' => 'Иван', 'phone' => '79001234567'])->id,
+            'user_id' => User::factory()->bookingClient()->create([
+                'name' => 'Иван',
+                'surname' => 'Петров',
+                'phone' => '79001234567',
+            ])->id,
             'radius' => $radius,
             'car_type' => CarType::Passenger,
         ]);

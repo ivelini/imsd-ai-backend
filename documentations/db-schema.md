@@ -68,7 +68,7 @@
 
 | Таблица | Назначение |
 |---------|------------|
-| `users` | Клиенты (phone, email, password, name) |
+| `users` | Клиенты (phone, email, password, ФИО по частям: name — имя, surname — фамилия, patronymic — отчество; фамилию и отчество сайт не спрашивает) |
 | `admins` | Администраторы (email, password) |
 | `admin_roles` | Роли администраторов |
 
@@ -186,7 +186,7 @@
 | `booking_schedule_templates` | Шаблон недели | `weekday` (0 пн – 6 вс, UNIQUE), `open_time`, `close_time` (оба null → выходной) |
 | `booking_slots` | Часовые окна (сетка планировщика) | `date`, `hour` (UNIQUE пара), `is_closed`, `close_reason`, `booking_id` (FK на bookings, отложенный — цикл ссылок) |
 | `booking_codes` | SMS-коды подтверждения | `phone`, `code_hash` (sha256 + app.key, plaintext не хранится), `used_at` (одноразовость), index phone; TTL = created_at + `reservation_timeout_min` |
-| `bookings` | Записи | `user_id` (FK users, restrict), `slot_id` (restrict), `booking_code_id` (nullable, nullOnDelete), `start_time`, `status` (confirmed/arrived/done/cancelled/no_show), `source` (site/admin), `cancel_reason`, `idempotency_key` (uuid), снимок: `radius`, `car_type`, `plate`, `total_price` (копейки); `operator_id` (FK admins, nullable); index slot_id/user_id/status |
+| `bookings` | Записи | `user_id` (FK users, restrict), `slot_id` (restrict), `booking_code_id` (nullable, nullOnDelete), `start_time` (точное время внутри часа слота: сайт — начало часа, панель — любая минута), `status` (confirmed/done/cancelled/no_show), `source` (site/admin), `cancel_reason`, `idempotency_key` (uuid), снимок: `radius`, `car_type`, `plate`, `total_price` (копейки); `operator_id` (FK admins, nullable); index slot_id/user_id/status |
 | `booking_items` | Состав записи (снапшот цены) | `booking_id` (cascade), `service_id` (restrict — услугу деактивируют, не удаляют), `price` (копейки за единицу), `quantity` (1–4), UNIQUE (booking_id, service_id) |
 | `settings` | Системный KV параметров (домен System) | `key` (PK), `value`, timestamps; дефолты — `SettingKeyEnum` |
 

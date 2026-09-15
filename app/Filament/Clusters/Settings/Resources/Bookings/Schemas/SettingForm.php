@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Clusters\Booking\Resources\Settings\Schemas;
+namespace App\Filament\Clusters\Settings\Resources\Bookings\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;

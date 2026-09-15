@@ -64,13 +64,16 @@ class DemoBookingSeeder extends Seeder
         $usedPhones = [];
         $users = collect();
 
-        foreach (self::CUSTOMER_NAMES as $name) {
+        foreach (self::CUSTOMER_NAMES as $fullName) {
             do {
                 $phone = '79'.rand(100000000, 999999999); // канон «7XXXXXXXXXX» (11 цифр)
             } while (isset($usedPhones[$phone]));
             $usedPhones[$phone] = true;
 
-            $users->push(User::create(['name' => $name, 'phone' => $phone]));
+            // «Иван Петров» → имя и фамилия: ФИО в карточке клиента хранится частями
+            [$name, $surname] = explode(' ', $fullName, 2);
+
+            $users->push(User::create(['name' => $name, 'surname' => $surname, 'phone' => $phone]));
         }
 
         return User::all();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Clusters\Booking\Resources\Settings\Tables;
+namespace App\Filament\Clusters\Settings\Resources\Bookings\Tables;
 
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin\Auth;
 
 use App\Enums\Auth\AdminRoleCode;
+use App\Filament\Clusters\Settings\Resources\Admins\AdminResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class AdminRolePolicyTest extends TestCase
         $admin = $this->createAdmin(AdminRoleCode::ContentManager);
 
         $this->actingAs($admin, 'admin')
-            ->get('/panel/admins')
+            ->get(AdminResource::getUrl())
             ->assertForbidden();
     }
 
@@ -26,7 +27,7 @@ class AdminRolePolicyTest extends TestCase
         $admin = $this->createAdmin();
 
         $this->actingAs($admin, 'admin')
-            ->get('/panel/admins')
+            ->get(AdminResource::getUrl())
             ->assertOk();
     }
 }
