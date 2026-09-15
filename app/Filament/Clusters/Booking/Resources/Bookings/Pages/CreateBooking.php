@@ -44,9 +44,23 @@ class CreateBooking extends CreateRecord
             return;
         }
 
-        // Родитель уже применил дефолты полей — слот вписываем в сырое состояние: fill() дефолты теряет,
-        // а getState() в этой версии Filament валидирует форму и на пустой форме бросает исключение
-        $this->form->rawState([...$this->form->getRawState(), 'slot_id' => $this->slot_id]);
+        // Родитель уже применил дефолты полей — состояние дописываем сырым: fill() дефолты теряет,
+        // а getState() в этой версии Filament валидирует форму и на пустой форме бросает исключение.
+        // Слот в форме не показан, но его номер лежит в состоянии — на нём варианты времени (11:00–11:59);
+        // начало часа подставляем сразу: оператор правит его, только если клиент приедет позже
+        $this->form->rawState([
+            ...$this->form->getRawState(),
+            'slot_id' => $this->slot_id,
+            'start_time' => self::hourStart($this->slot_id),
+        ]);
+    }
+
+    /** Начало часа слота в формате поля «Время» (HH:MM); нет такого слота — время выбирает оператор. */
+    private static function hourStart(int $slotId): ?string
+    {
+        $hour = Slot::query()->whereKey($slotId)->value('hour');
+
+        return is_numeric($hour) ? sprintf('%02d:00', (int) $hour) : null;
     }
 
     /**
@@ -63,7 +77,7 @@ class CreateBooking extends CreateRecord
                 surname: (string) $data['surname'],
                 patronymic: filled($data['patronymic'] ?? null) ? (string) $data['patronymic'] : null,
                 plate: $data['plate'],
-                slotId: (int) $data['slot_id'],
+                slotId: (int) $this->slot_id, // слот — из адреса страницы, в форме его нет
                 radius: (int) $data['radius'],
                 carType: CarType::from($data['car_type']),
                 items: self::items($data['items'] ?? []),

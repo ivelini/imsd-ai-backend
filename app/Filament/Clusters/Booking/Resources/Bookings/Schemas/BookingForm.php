@@ -21,13 +21,13 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Operation;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Одна схема на create/edit с видимостью по операции (operation()-колбэков в этой
- * версии Filament нет): создание — клиент, слот и состав; правка — статус, снимок,
- * состав строками с ценой по прайсу и итоговая стоимость (ФТ-19).
+ * версии Filament нет): создание — клиент, время внутри часа и состав; правка — статус,
+ * снимок, состав строками с ценой по прайсу и итоговая стоимость (ФТ-19).
+ * Слот в форме не выбирается: на создании он приходит адресом (?slot_id=), на правке — из записи.
  */
 class BookingForm
 {
@@ -56,22 +56,9 @@ class BookingForm
                 TextInput::make('plate')
                     ->label('Госномер')
                     ->maxLength(20),
-                Select::make('slot_id')
-                    ->label('Слот')
-                    ->options(
-                        Slot::query()
-                            ->whereDate('date', '>=', now()->toDateString())
-                            ->orderBy('date')
-                            ->orderBy('hour')
-                            ->get()
-                            ->mapWithKeys(fn (Slot $slot): array => [
-                                $slot->id => sprintf('%s %02d:00%s', $slot->date->format('d.m.Y'), $slot->hour, $slot->is_closed ? ' (закрыт)' : ''),
-                            ])
-                    )
-                    ->required()
-                    ->searchable()
-                    ->live()
-                    ->afterStateUpdated(fn (Get $get, Set $set) => self::fillStartTime($get, $set)),
+                // Поля «Слот» в форме нет: слот приходит адресом страницы создания (?slot_id=,
+                // CreateBooking), а на правке виден датой в заголовке (EditBooking::getTitle());
+                // переноса записи на другой слот (ФТ-20) нет
                 // Время внутри часа слота: 14:00–14:59. Ровно на начало часа — час занимается целиком
                 Select::make('start_time')
                     ->label('Время')
@@ -185,16 +172,6 @@ class BookingForm
         $hour = is_numeric($slotId) ? Slot::query()->whereKey((int) $slotId)->value('hour') : null;
 
         return is_numeric($hour) ? (int) $hour : null;
-    }
-
-    /** Выбор слота подставляет его начало — оператор правит время, только если клиент приедет позже. */
-    private static function fillStartTime(Get $get, Set $set): void
-    {
-        $hour = self::slotHour(null, $get);
-
-        if ($hour !== null) {
-            $set('start_time', sprintf('%02d:00', $hour));
-        }
     }
 
     /** Выбор услуги: активные услуги каталога плюс уже прикреплённые к записи, повтор в составе запрещён. */

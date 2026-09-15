@@ -78,6 +78,12 @@ class BookingResourceTest extends TestCase
         $this->slot = Slot::create(['date' => now()->addDay()->toDateString(), 'hour' => 11]);
     }
 
+    /** Страница создания: слот приходит адресом (?slot_id=) со страницы слота — поля в форме нет. */
+    private function createPage(): Testable
+    {
+        return Livewire::withQueryParams(['slot_id' => $this->slot->id])->test(CreateBooking::class);
+    }
+
     /** @return array<string, mixed> */
     private function formData(): array
     {
@@ -86,7 +92,6 @@ class BookingResourceTest extends TestCase
             'name' => 'Иван',
             'surname' => 'Петров',
             'plate' => 'А 000 АА 174',
-            'slot_id' => $this->slot->id,
             'start_time' => '11:00',
             'radius' => 13,
             'car_type' => 'passenger',
@@ -94,6 +99,13 @@ class BookingResourceTest extends TestCase
                 ['service_id' => $this->service->id, 'quantity' => 4, 'price' => '150'],
             ],
         ];
+    }
+
+    /** Слот на создании не выбирается в форме — он приходит адресом со страницы слота. */
+    public function test_create_form_has_no_slot_field(): void
+    {
+        $this->createPage()
+            ->assertFormFieldDoesNotExist('slot_id');
     }
 
     /** Состав на создании — те же строки с ценой и итогом, что и на правке. */
@@ -107,7 +119,7 @@ class BookingResourceTest extends TestCase
     /** Цену строки оператор правит и на создании: в запись уходит введённая, а не прайсовая. */
     public function test_create_saves_price_from_form_as_is(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm([...$this->formData(), 'items' => [
                 ['service_id' => $this->service->id, 'quantity' => 1, 'price' => '999'],
             ]])
@@ -119,14 +131,15 @@ class BookingResourceTest extends TestCase
         $this->assertSame(99900, $booking->total_price->toKopecks());
     }
 
-    public function test_create_booking_from_admin_with_snapshot(): void
+    public function test_create_page_takes_slot_from_url(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm($this->formData())
             ->call('create')
             ->assertHasNoFormErrors();
 
         $booking = Booking::firstOrFail();
+        $this->assertSame($this->slot->id, $booking->slot_id); // слот — из адреса страницы
         $this->assertSame(BookingSource::Admin, $booking->source);
         $this->assertSame($this->admin->id, $booking->operator_id);
         $this->assertSame(60000, $booking->total_price->toKopecks()); // серверный пересчёт, сумма не передаётся
@@ -134,28 +147,36 @@ class BookingResourceTest extends TestCase
         $this->assertSame(15000, $booking->items()->firstOrFail()->price->toKopecks());
     }
 
-    /** Варианты времени — только из часа выбранного слота (11:00–11:59). */
-    public function test_time_options_come_from_selected_slot(): void
+    /** Варианты времени — только из часа слота, пришедшего адресом (11:00–11:59). */
+    public function test_time_options_come_from_slot_in_url(): void
     {
-        $component = Livewire::test(CreateBooking::class);
-        $component->set('data.slot_id', $this->slot->id);
-
-        $component->assertSee('11:59')->assertDontSee('12:00');
+        $this->createPage()
+            ->assertSee('11:59')
+            ->assertDontSee('12:00');
     }
 
-    /** Выбор слота подставляет его начало — оператор правит время, только если клиент приедет позже. */
-    public function test_selecting_slot_fills_hour_start(): void
+    /** Открытие создания со слотом подставляет начало его часа — оператор правит время, только если клиент приедет позже. */
+    public function test_opening_create_with_slot_fills_hour_start(): void
     {
-        $component = Livewire::test(CreateBooking::class);
-        $component->set('data.slot_id', $this->slot->id);
+        $component = $this->createPage();
 
         $this->assertSame('11:00', $component->get('data.start_time'));
+    }
+
+    /** Без слота в адресе запись не создаётся: «некуда записать» приходит ошибкой, а не записью с нулевым слотом. */
+    public function test_create_without_slot_in_url_creates_nothing(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm($this->formData())
+            ->call('create');
+
+        $this->assertSame(0, Booking::count());
     }
 
     /** Запись ровно на начало часа занимает час: слот закрыт и привязан к записи. */
     public function test_create_at_hour_start_closes_slot(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm($this->formData())
             ->call('create')
             ->assertHasNoFormErrors();
@@ -168,7 +189,7 @@ class BookingResourceTest extends TestCase
     /** Запись внутри часа (11:30) час не занимает — время 11:00 остаётся свободным. */
     public function test_create_inside_hour_keeps_slot_open(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm([...$this->formData(), 'start_time' => '11:30'])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -185,7 +206,7 @@ class BookingResourceTest extends TestCase
         // с прежней привязкой, новая запись на него не перезакрывает
         $this->slot->update(['is_closed' => true, 'booking_id' => null]);
 
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm($this->formData())
             ->call('create')
             ->assertHasNoFormErrors();
@@ -240,13 +261,24 @@ class BookingResourceTest extends TestCase
             ->assertFormFieldExists('status');
     }
 
-    public function test_edit_title_shows_time_name_and_phone(): void
+    public function test_edit_title_shows_date_time_name_and_phone(): void
+    {
+        // Дата слота живёт в заголовке: самого поля слота на правке нет
+        $booking = $this->bookingWithItem();
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertOk()
+            ->assertSee(sprintf('Запись %s, 11:00, Петров Иван, 79001234567', $this->slot->date->format('d.m.Y')));
+    }
+
+    /** Слот записи не переносится из карточки: перенос (ФТ-20) не реализован, поле убрано с правки. */
+    public function test_edit_hides_slot_field(): void
     {
         $booking = $this->bookingWithItem();
 
         Livewire::test(EditBooking::class, ['record' => $booking->id])
             ->assertOk()
-            ->assertSee('Запись 11:00, Петров Иван, 79001234567');
+            ->assertFormFieldDoesNotExist('slot_id');
     }
 
     /** Снимок строки не пересчитывается при открытии: правка прайса задним числом старые записи не меняет. */
@@ -379,7 +411,7 @@ class BookingResourceTest extends TestCase
     /** ФИО клиента сохраняется по частям — и в карточке клиента видно склейку. */
     public function test_create_booking_saves_client_full_name(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm([...$this->formData(), 'surname' => 'Петров', 'patronymic' => 'Иванович'])
             ->call('create')
             ->assertHasNoFormErrors();
@@ -394,7 +426,7 @@ class BookingResourceTest extends TestCase
     /** Фамилия обязательна, имя обязательно (отчество — как получится): без них записи нет. */
     public function test_create_requires_surname_and_first_name(): void
     {
-        Livewire::test(CreateBooking::class)
+        $this->createPage()
             ->fillForm([...$this->formData(), 'surname' => null, 'name' => null])
             ->call('create')
             ->assertHasFormErrors(['surname', 'name']);
@@ -429,7 +461,7 @@ class BookingResourceTest extends TestCase
         $this->assertSame('Петров Иван Иванович', $booking->fresh()->user->full_name);
 
         Livewire::test(EditBooking::class, ['record' => $booking->id])
-            ->assertSee('Запись 11:00, Петров Иван Иванович, 79001234567');
+            ->assertSee(sprintf('Запись %s, 11:00, Петров Иван Иванович, 79001234567', $this->slot->date->format('d.m.Y')));
     }
 
     /** Причина отмены показывается только у отменённой записи. */

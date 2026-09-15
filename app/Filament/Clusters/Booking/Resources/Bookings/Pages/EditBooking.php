@@ -24,7 +24,10 @@ class EditBooking extends EditRecord
 
     protected static string $resource = BookingResource::class;
 
-    /** Заголовок несёт клиента записи: оператор видит, с кем работает. */
+    /**
+     * Заголовок несёт дату слота, время и клиента записи: оператор видит, с кем и на какой день работает
+     * (поля слота в форме нет — запись не переносится, ADR-карта: перенос это ФТ-20).
+     */
     public function getTitle(): string
     {
         /** @var Booking $booking */
@@ -32,6 +35,7 @@ class EditBooking extends EditRecord
         $startTime = Carbon::parse($booking->start_time)->format('H:i');
 
         return 'Запись '.collect([
+            $booking->slot?->date->format('d.m.Y'),
             $startTime,
             $booking->user->full_name,
             $booking->user->phone,
