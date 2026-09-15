@@ -3,8 +3,8 @@
 namespace App\Filament\Clusters\Booking\Resources\BookingServices\Tables;
 
 use App\Enums\Booking\ServiceCategory;
+use App\Filament\Clusters\Booking\Resources\BookingServices\BookingServiceResource;
 use App\ValueObjects\Money;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -36,7 +36,7 @@ class BookingServicesTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                BookingServiceResource::deleteAction(),
             ]);
     }
 }

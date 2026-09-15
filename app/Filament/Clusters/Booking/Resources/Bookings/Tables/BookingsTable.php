@@ -73,7 +73,7 @@ class BookingsTable
                     ->label('Отменить')
                     ->icon(Heroicon::OutlinedXCircle)
                     ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed], true))
-                    ->form([
+                    ->schema([
                         TextInput::make('cancel_reason')
                             ->label('Причина')
                             ->required()

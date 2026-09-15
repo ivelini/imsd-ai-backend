@@ -7,10 +7,14 @@ use App\Filament\Clusters\Booking\BookingGroupEnum;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Pages\CreateBookingService;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Pages\EditBookingService;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Pages\ListBookingServices;
+use App\Filament\Clusters\Booking\Resources\BookingServices\RelationManagers\PriceRulesRelationManager;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Schemas\BookingServiceForm;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Tables\BookingServicesTable;
+use App\Filament\Support\PanelAction;
 use App\Models\Booking\BookingService;
+use App\Preconditions\Booking\EnsureBookingServiceIsUnused;
 use BackedEnum;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -46,6 +50,13 @@ class BookingServiceResource extends Resource
         return BookingServicesTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            PriceRulesRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
@@ -53,5 +64,17 @@ class BookingServiceResource extends Resource
             'create' => CreateBookingService::route('/create'),
             'edit' => EditBookingService::route('/{record}/edit'),
         ];
+    }
+
+    /** Удаление услуги под проверкой привязок — один путь для листинга и карточки. */
+    public static function deleteAction(): DeleteAction
+    {
+        return DeleteAction::make()
+            ->action(function (BookingService $record, EnsureBookingServiceIsUnused $ensure): void {
+                PanelAction::run('Услуга удалена', function () use ($record, $ensure): void {
+                    $ensure->ensure($record);
+                    $record->delete();
+                });
+            });
     }
 }

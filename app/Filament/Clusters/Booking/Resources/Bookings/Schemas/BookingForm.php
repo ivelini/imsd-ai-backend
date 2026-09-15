@@ -71,8 +71,7 @@ class BookingForm
                     ->required()
                     ->searchable()
                     ->live()
-                    ->afterStateUpdated(fn (Get $get, Set $set) => self::fillStartTime($get, $set))
-                    ->visibleOn(Operation::Create),
+                    ->afterStateUpdated(fn (Get $get, Set $set) => self::fillStartTime($get, $set)),
                 // Время внутри часа слота: 14:00–14:59. Ровно на начало часа — час занимается целиком
                 Select::make('start_time')
                     ->label('Время')

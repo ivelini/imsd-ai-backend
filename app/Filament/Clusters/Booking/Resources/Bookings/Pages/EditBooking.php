@@ -8,6 +8,7 @@ use App\DTOs\Booking\UpdateAdminBookingInput;
 use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
+use App\Filament\Concerns\SavesAndCloses;
 use App\Models\Booking\Booking;
 use App\Models\Booking\BookingItem;
 use App\ValueObjects\Money;
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditBooking extends EditRecord
 {
+    use SavesAndCloses;
+
     protected static string $resource = BookingResource::class;
 
     /** Заголовок несёт клиента записи: оператор видит, с кем работает. */

@@ -8,6 +8,4 @@ use Filament\Resources\Pages\ListRecords;
 class ListBookings extends ListRecords
 {
     protected static string $resource = BookingResource::class;
-
-    protected static ?string $title = 'Список записей';
 }

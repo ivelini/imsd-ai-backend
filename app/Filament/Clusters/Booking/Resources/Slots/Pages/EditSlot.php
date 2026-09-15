@@ -3,12 +3,15 @@
 namespace App\Filament\Clusters\Booking\Resources\Slots\Pages;
 
 use App\Filament\Clusters\Booking\Resources\Slots\SlotResource;
+use App\Filament\Concerns\SavesAndCloses;
 use App\Models\Booking\Slot;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSlot extends EditRecord
 {
+    use SavesAndCloses;
+
     protected static string $resource = SlotResource::class;
 
     /** Заголовок несёт дату и час: сами поля на правке скрыты. */

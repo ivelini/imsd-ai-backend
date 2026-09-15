@@ -11,4 +11,6 @@ class BookingCluster extends Cluster
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     protected static ?string $navigationLabel = 'Шиномонтаж';
+
+    protected static ?string $title = 'Шиномонтаж';
 }
