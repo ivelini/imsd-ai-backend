@@ -6,6 +6,8 @@ use App\Filament\Clusters\Booking\Resources\Slots\Pages\EditSlot;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\ListSlots;
 use App\Models\Booking\Slot;
 use Database\Seeders\BookingScheduleSeeder;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Concerns\CreatesAdmin;
@@ -66,5 +68,17 @@ class SlotResourceTest extends TestCase
         Livewire::test(EditSlot::class, ['record' => $slot->id])
             ->assertFormFieldDoesNotExist('date')
             ->assertFormFieldDoesNotExist('hour');
+    }
+
+    /** Статус слота читается цветом: открыт — зелёный круг, закрыт — красный (было наоборот). */
+    public function test_slot_status_column_is_green_when_open_red_when_closed(): void
+    {
+        $column = Livewire::test(ListSlots::class)->instance()->getTable()->getColumn('is_closed');
+
+        $this->assertInstanceOf(IconColumn::class, $column);
+        $this->assertSame('success', $column->getFalseColor());
+        $this->assertSame(Heroicon::OutlinedCheckCircle, $column->getFalseIcon());
+        $this->assertSame('danger', $column->getTrueColor());
+        $this->assertSame(Heroicon::OutlinedXCircle, $column->getTrueIcon());
     }
 }

@@ -38,9 +38,14 @@ class SlotsTable
                 TextColumn::make('hour')
                     ->label('Час')
                     ->formatStateUsing(fn (int $state): string => sprintf('%02d:00', $state)),
+                // Открыт — зелёный круг, закрыт — красный: цвет читается раньше подписи
                 IconColumn::make('is_closed')
-                    ->label('Закрыт')
-                    ->boolean(),
+                    ->label('Состояние')
+                    ->boolean()
+                    ->trueIcon(Heroicon::OutlinedXCircle)
+                    ->trueColor('danger')
+                    ->falseIcon(Heroicon::OutlinedCheckCircle)
+                    ->falseColor('success'),
                 TextColumn::make('clients')
                     ->label('Клиенты')
                     ->state(fn (Slot $record): array => self::clientLines($record))

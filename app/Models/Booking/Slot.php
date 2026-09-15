@@ -50,4 +50,10 @@ class Slot extends Model
     {
         return $this->belongsTo(Booking::class);
     }
+
+    /** Запись ровно на начало часа слота (14:00) — такая запись занимает час целиком. */
+    public function startsHour(string $startTime): bool
+    {
+        return $startTime === sprintf('%02d:00:00', $this->hour);
+    }
 }

@@ -12,12 +12,15 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookingsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('slot', fn (Builder $q) => $q->where('date', '>=', now()->startOfDay())))
+            ->defaultSort(fn (Builder $query): Builder => $query->orderBy('start_time'))
             ->columns([
                 TextColumn::make('slot.date')
                     ->label('Дата')
@@ -51,15 +54,10 @@ class BookingsTable
                     ),
             ])
             ->recordActions([
-                Action::make('arrive')
-                    ->label('Приехал')
-                    ->icon(Heroicon::OutlinedCheckCircle)
-                    ->visible(fn (Booking $record): bool => $record->status === BookingStatus::Confirmed)
-                    ->action(fn (Booking $record): bool => $record->update(['status' => BookingStatus::Arrived])),
                 Action::make('complete')
                     ->label('Завершить')
                     ->icon(Heroicon::OutlinedFlag)
-                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed, BookingStatus::Arrived], true))
+                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed], true))
                     ->action(fn (Booking $record): bool => $record->update(['status' => BookingStatus::Done])),
                 Action::make('noShow')
                     ->label('Неявка')
@@ -70,7 +68,7 @@ class BookingsTable
                 Action::make('cancel')
                     ->label('Отменить')
                     ->icon(Heroicon::OutlinedXCircle)
-                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed, BookingStatus::Arrived], true))
+                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed], true))
                     ->form([
                         TextInput::make('cancel_reason')
                             ->label('Причина')

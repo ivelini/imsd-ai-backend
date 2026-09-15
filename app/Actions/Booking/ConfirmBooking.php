@@ -10,6 +10,7 @@ use App\Models\Booking\BookingItem;
 use App\Models\Booking\BookingService;
 use App\Models\Booking\Slot;
 use App\Models\User;
+use App\Preconditions\Booking\EnsureSlotTimeIsFree;
 use App\Services\Booking\PriceCalculator;
 use DomainException;
 use Illuminate\Database\Connection;
@@ -27,6 +28,7 @@ final readonly class ConfirmBooking
     public function __construct(
         private Connection $connection,
         private PriceCalculator $priceCalculator,
+        private EnsureSlotTimeIsFree $ensureSlotTimeIsFree,
     ) {}
 
     public function execute(ConfirmBookingInput $input): Booking
@@ -44,6 +46,12 @@ final readonly class ConfirmBooking
                 throw new DomainException('Слот недоступен для записи', 409);
             }
 
+            // Сайт бронирует час целиком: время начала — начало часа слота
+            $startTime = sprintf('%02d:00:00', $input->hour);
+
+            // Час мог быть переоткрыт вручную, а время уже занято записью оператора
+            $this->ensureSlotTimeIsFree->ensure($slot->id, $startTime);
+
             $user = User::query()->firstOrCreate(
                 ['phone' => $input->phone],
                 ['name' => $input->name],
@@ -53,7 +61,7 @@ final readonly class ConfirmBooking
                 'user_id' => $user->id,
                 'slot_id' => $slot->id,
                 'booking_code_id' => $input->code->id,
-                'start_time' => sprintf('%02d:00:00', $input->hour),
+                'start_time' => $startTime,
                 'status' => BookingStatus::Confirmed,
                 'source' => BookingSource::Site,
                 'idempotency_key' => Str::uuid(),

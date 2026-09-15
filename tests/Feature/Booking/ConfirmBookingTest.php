@@ -140,6 +140,32 @@ class ConfirmBookingTest extends TestCase
         $this->assertNull($code->fresh()->used_at);
     }
 
+    /**
+     * Время занято записью оператора: час мог быть переоткрыт вручную, поэтому закрытие слота
+     * само по себе не защищает — нужна проверка времени.
+     */
+    public function test_fails_when_time_already_booked(): void
+    {
+        $service = $this->serviceWithRule();
+        $slot = $this->openSlot(); // час открыт: закрытие слота тут не защищает — ловит проверка времени
+        Booking::factory()->forSlot($slot)->create([
+            'start_time' => '11:00:00',
+            'status' => BookingStatus::Confirmed,
+        ]);
+
+        $code = $this->verifiedCode();
+
+        try {
+            app(ConfirmBooking::class)->execute($this->input($code, $service));
+            $this->fail('Ожидался DomainException');
+        } catch (DomainException $exception) {
+            $this->assertSame(409, $exception->getCode());
+        }
+
+        $this->assertSame(1, Booking::count()); // осталась только запись оператора
+        $this->assertNull($code->fresh()->used_at);
+    }
+
     public function test_used_code_returns_existing_booking(): void
     {
         $service = $this->serviceWithRule();

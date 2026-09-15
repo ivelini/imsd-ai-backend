@@ -86,12 +86,12 @@ class BookingResourceTest extends TestCase
             'name' => 'Иван',
             'plate' => 'А 000 АА 174',
             'slot_id' => $this->slot->id,
+            'start_time' => '11:00',
             'radius' => 13,
             'car_type' => 'passenger',
             'composition' => [
                 ['service_id' => $this->service->id, 'quantity' => 4],
             ],
-            'close_slot' => true,
         ];
     }
 
@@ -108,10 +108,51 @@ class BookingResourceTest extends TestCase
         $this->assertSame(60000, $booking->total_price->toKopecks()); // серверный пересчёт, сумма не передаётся
         $this->assertSame('79001234567', $booking->user->phone); // клиент — единая users
         $this->assertSame(15000, $booking->items()->firstOrFail()->price->toKopecks());
+    }
 
-        // чекбокс «закрыть слот»: слот закрыт и привязан к записи
+    /** Варианты времени — только из часа выбранного слота (11:00–11:59). */
+    public function test_time_options_come_from_selected_slot(): void
+    {
+        $component = Livewire::test(CreateBooking::class);
+        $component->set('data.slot_id', $this->slot->id);
+
+        $component->assertSee('11:59')->assertDontSee('12:00');
+    }
+
+    /** Выбор слота подставляет его начало — оператор правит время, только если клиент приедет позже. */
+    public function test_selecting_slot_fills_hour_start(): void
+    {
+        $component = Livewire::test(CreateBooking::class);
+        $component->set('data.slot_id', $this->slot->id);
+
+        $this->assertSame('11:00', $component->get('data.start_time'));
+    }
+
+    /** Запись ровно на начало часа занимает час: слот закрыт и привязан к записи. */
+    public function test_create_at_hour_start_closes_slot(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm($this->formData())
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $booking = Booking::firstOrFail();
         $this->assertTrue($this->slot->fresh()->is_closed);
         $this->assertSame($booking->id, $this->slot->fresh()->booking_id);
+    }
+
+    /** Запись внутри часа (11:30) час не занимает — время 11:00 остаётся свободным. */
+    public function test_create_inside_hour_keeps_slot_open(): void
+    {
+        Livewire::test(CreateBooking::class)
+            ->fillForm([...$this->formData(), 'start_time' => '11:30'])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $booking = Booking::firstOrFail();
+        $this->assertSame('11:30:00', $booking->start_time);
+        $this->assertFalse($this->slot->fresh()->is_closed);
+        $this->assertNull($this->slot->fresh()->booking_id);
     }
 
     public function test_admin_booking_does_not_reclose_occupied_slot(): void
@@ -175,13 +216,13 @@ class BookingResourceTest extends TestCase
             ->assertFormFieldExists('status');
     }
 
-    public function test_edit_title_shows_client_name_and_phone(): void
+    public function test_edit_title_shows_time_name_and_phone(): void
     {
         $booking = $this->bookingWithItem();
 
         Livewire::test(EditBooking::class, ['record' => $booking->id])
             ->assertOk()
-            ->assertSee('Запись Иван, 79001234567');
+            ->assertSee('Запись 11:00, Иван, 79001234567');
     }
 
     /** Снимок строки не пересчитывается при открытии: правка прайса задним числом старые записи не меняет. */
@@ -295,6 +336,20 @@ class BookingResourceTest extends TestCase
         $this->assertSame(18000, $booking->items()->sole()->price->toKopecks());
         $this->assertSame(2, $booking->items()->sole()->quantity);
         $this->assertSame(36000, $booking->total_price->toKopecks());
+    }
+
+    /** Занятое время со страницы не сохраняется: оператор видит уведомление, запись не меняется. */
+    public function test_edit_rejects_taken_time_with_notification(): void
+    {
+        $booking = $this->bookingWithItem();
+        Booking::factory()->forSlot($this->slot)->create(['start_time' => '11:30:00']);
+
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+        $component->set('data.start_time', '11:30');
+        $component->call('save');
+
+        $component->assertNotified('На это время в слоте уже есть запись');
+        $this->assertSame('11:00:00', $booking->fresh()->start_time);
     }
 
     /** Услугу деактивируют, а не удаляют: старая запись с такой услугой сохраняется без правок состава. */

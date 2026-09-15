@@ -11,7 +11,6 @@ enum BookingStatus: string implements HasLabel
     use HasFilamentLabel;
 
     case Confirmed = 'confirmed';
-    case Arrived = 'arrived';
     case Done = 'done';
     case Cancelled = 'cancelled';
     case NoShow = 'no_show';
@@ -20,7 +19,6 @@ enum BookingStatus: string implements HasLabel
     {
         return match ($this) {
             self::Confirmed => 'Подтверждена',
-            self::Arrived => 'Клиент приехал',
             self::Done => 'Завершена',
             self::Cancelled => 'Отменена',
             self::NoShow => 'Неявка',

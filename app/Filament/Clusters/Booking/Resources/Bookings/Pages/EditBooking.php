@@ -11,6 +11,9 @@ use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
 use App\Models\Booking\Booking;
 use App\Models\Booking\BookingItem;
 use App\ValueObjects\Money;
+use Carbon\Carbon;
+use DomainException;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,8 +26,15 @@ class EditBooking extends EditRecord
     {
         /** @var Booking $booking */
         $booking = $this->getRecord();
+        $startTime = Carbon::parse($booking->start_time)->format('H:i');
 
-        return 'Запись '.collect([$booking->user->name, $booking->user->phone])->filter()->implode(', ');
+        return 'Запись '.collect([
+            $startTime,
+            $booking->user->name,
+            $booking->user->phone,
+        ])
+            ->filter()
+            ->implode(', ');
     }
 
     /** Состав правится в форме: строки отдаются снимком цены записи, а не пересчётом по текущему прайсу. */
@@ -53,17 +63,26 @@ class EditBooking extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /** @var Booking $record */
-        app(UpdateAdminBooking::class)->execute(new UpdateAdminBookingInput(
-            booking: $record,
-            plate: $data['plate'] ?? null,
-            radius: (int) $data['radius'],
-            carType: CarType::from($data['car_type']),
-            status: BookingStatus::from($data['status']),
-            cancelReason: $data['cancel_reason'] ?? null,
-            items: self::items($data['items'] ?? []),
-        ));
+        try {
+            app(UpdateAdminBooking::class)->execute(new UpdateAdminBookingInput(
+                booking: $record,
+                plate: $data['plate'] ?? null,
+                radius: (int) $data['radius'],
+                carType: CarType::from($data['car_type']),
+                status: BookingStatus::from($data['status']),
+                cancelReason: $data['cancel_reason'] ?? null,
+                startTime: (string) $data['start_time'],
+                items: self::items($data['items'] ?? []),
+            ));
 
-        return $record;
+            return $record;
+        } catch (DomainException $exception) {
+            Notification::make()->danger()->title($exception->getMessage())->send();
+            $this->halt();
+        }
+
+        // Недостижимо (halt() бросает Halt) — throw только для анализатора
+        throw new DomainException('Запись не сохранена', 422);
     }
 
     /**

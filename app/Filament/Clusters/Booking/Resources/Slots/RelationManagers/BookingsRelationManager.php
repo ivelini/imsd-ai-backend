@@ -70,7 +70,7 @@ class BookingsRelationManager extends RelationManager
                 Action::make('complete')
                     ->label('Завершить')
                     ->icon(Heroicon::OutlinedFlag)
-                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed, BookingStatus::Arrived], true))
+                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed], true))
                     ->action(fn (Booking $record): bool => $record->update(['status' => BookingStatus::Done])),
                 Action::make('noShow')
                     ->label('Неявка')
@@ -81,7 +81,7 @@ class BookingsRelationManager extends RelationManager
                 Action::make('cancel')
                     ->label('Отменить')
                     ->icon(Heroicon::OutlinedXCircle)
-                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed, BookingStatus::Arrived], true))
+                    ->visible(fn (Booking $record): bool => in_array($record->status, [BookingStatus::Confirmed], true))
                     ->form([
                         TextInput::make('cancel_reason')
                             ->label('Причина')

@@ -54,7 +54,7 @@ class CreateBooking extends CreateRecord
                 radius: (int) $data['radius'],
                 carType: CarType::from($data['car_type']),
                 quantities: $quantities,
-                closeSlot: (bool) $data['close_slot'],
+                startTime: (string) $data['start_time'],
             ));
         } catch (DomainException $exception) {
             Notification::make()->danger()->title($exception->getMessage())->send();

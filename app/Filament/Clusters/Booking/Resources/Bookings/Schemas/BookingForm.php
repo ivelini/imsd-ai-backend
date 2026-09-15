@@ -16,7 +16,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
@@ -62,7 +61,16 @@ class BookingForm
                     )
                     ->required()
                     ->searchable()
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Set $set) => self::fillStartTime($get, $set))
                     ->visibleOn('create'),
+                // Время внутри часа слота: 14:00–14:59. Ровно на начало часа — час занимается целиком
+                Select::make('start_time')
+                    ->label('Время')
+                    ->options(fn (?Booking $record, Get $get): array => self::timeOptions(self::slotHour($record, $get)))
+                    ->required()
+                    ->formatStateUsing(fn (?string $state): ?string => $state === null ? null : substr($state, 0, 5))
+                    ->dehydrateStateUsing(fn (string $state): string => $state.':00'),
                 // Радиус и тип авто — параметры прайса: на правке за ними следует цена строк состава
                 Select::make('radius')
                     ->label('Радиус')
@@ -76,6 +84,14 @@ class BookingForm
                     ->required()
                     ->live()
                     ->afterStateUpdated(fn (Get $get, Set $set) => self::repriceItems($get, $set)),
+                Select::make('status')
+                    ->label('Статус')
+                    ->options(
+                        collect(BookingStatus::cases())
+                            ->mapWithKeys(fn (BookingStatus $status): array => [$status->value => $status->label()])
+                    )
+                    ->required()
+                    ->visibleOn('edit'),
                 // Состав — только при создании: цена строки пересчитывается сервером (снимок)
                 Repeater::make('composition')
                     ->label('Состав')
@@ -125,23 +141,46 @@ class BookingForm
                     ->label('Итоговая стоимость')
                     ->state(fn (Get $get): string => self::itemsTotal($get('items')))
                     ->visibleOn('edit'),
-                Toggle::make('close_slot')
-                    ->label('Закрыть слот с привязкой к записи')
-                    ->default(true)
-                    ->visibleOn('create'),
-                Select::make('status')
-                    ->label('Статус')
-                    ->options(
-                        collect(BookingStatus::cases())
-                            ->mapWithKeys(fn (BookingStatus $status): array => [$status->value => $status->label()])
-                    )
-                    ->required()
-                    ->visibleOn('edit'),
                 TextInput::make('cancel_reason')
                     ->label('Причина отмены')
                     ->maxLength(255)
                     ->visibleOn('edit'),
             ]);
+    }
+
+    /** @return array<string, string> время внутри часа слота: 14:00…14:59 */
+    private static function timeOptions(?int $hour): array
+    {
+        if ($hour === null) {
+            return [];
+        }
+
+        $options = [];
+        foreach (range(0, 59) as $minute) {
+            $time = sprintf('%02d:%02d', $hour, $minute);
+            $options[$time] = $time;
+        }
+
+        return $options;
+    }
+
+    /** Час слота: на создании — выбранный слот, на правке — слот записи. */
+    private static function slotHour(?Booking $record, Get $get): ?int
+    {
+        $slotId = $get('slot_id') ?? $record?->slot_id;
+        $hour = is_numeric($slotId) ? Slot::query()->whereKey((int) $slotId)->value('hour') : null;
+
+        return is_numeric($hour) ? (int) $hour : null;
+    }
+
+    /** Выбор слота подставляет его начало — оператор правит время, только если клиент приедет позже. */
+    private static function fillStartTime(Get $get, Set $set): void
+    {
+        $hour = self::slotHour(null, $get);
+
+        if ($hour !== null) {
+            $set('start_time', sprintf('%02d:00', $hour));
+        }
     }
 
     /** Выбор услуги: активные услуги каталога плюс уже прикреплённые к записи, повтор в составе запрещён. */

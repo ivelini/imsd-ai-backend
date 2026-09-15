@@ -10,7 +10,7 @@ final readonly class CreateAdminBookingInput
 {
     /**
      * @param  array<int, int>  $quantities  service_id => количество 1–4
-     * @param  bool  $closeSlot  закрыть слот с привязкой к записи; закрытый слот — не барьер (привязку не перезаписываем)
+     * @param  string  $startTime  время начала «HH:MM:00» внутри часа слота: ровно на начало часа — час занимается
      */
     public function __construct(
         public Admin $operator,
@@ -21,6 +21,6 @@ final readonly class CreateAdminBookingInput
         public int $radius,
         public CarType $carType,
         public array $quantities,
-        public bool $closeSlot,
+        public string $startTime,
     ) {}
 }

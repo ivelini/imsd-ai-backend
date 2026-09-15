@@ -11,17 +11,22 @@ use App\Models\Booking\Booking;
 use App\Models\Booking\BookingItem;
 use App\Models\Booking\BookingService;
 use App\Models\Booking\PriceRule;
+use App\Models\Booking\Slot;
 use App\ValueObjects\Money;
+use DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
  * Правка записи оператором (ФТ-19): состав синхронизируется по услугам, итог
- * пересчитывается из сохранённых строк, цена из формы не пересчитывается прайсом.
+ * пересчитывается из сохранённых строк, цена из формы не пересчитывается прайсом,
+ * время внутри часа держит час закрытым и не даёт занять занятое время.
  */
 class UpdateAdminBookingTest extends TestCase
 {
     use RefreshDatabase;
+
+    private Slot $slot;
 
     private Booking $booking;
 
@@ -54,9 +59,12 @@ class UpdateAdminBookingTest extends TestCase
             'base_price' => 5000,
         ]);
 
-        $this->booking = Booking::factory()->create([
+        $this->slot = Slot::create(['date' => now()->addDay()->toDateString(), 'hour' => 14]);
+
+        $this->booking = Booking::factory()->forSlot($this->slot)->create([
             'radius' => 16,
             'car_type' => CarType::Passenger,
+            'start_time' => '14:30:00',
         ]);
     }
 
@@ -111,7 +119,7 @@ class UpdateAdminBookingTest extends TestCase
                 'plate' => 'В 001 ВВ 174',
                 'radius' => 18,
                 'carType' => CarType::Suv,
-                'status' => BookingStatus::Arrived,
+                'status' => BookingStatus::Done,
                 'cancelReason' => null,
             ],
         );
@@ -120,8 +128,88 @@ class UpdateAdminBookingTest extends TestCase
         $this->assertSame('В 001 ВВ 174', $booking->plate);
         $this->assertSame(18, $booking->radius);
         $this->assertSame(CarType::Suv, $booking->car_type);
-        $this->assertSame(BookingStatus::Arrived, $booking->status);
+        $this->assertSame(BookingStatus::Done, $booking->status);
         $this->assertNull($booking->cancel_reason);
+    }
+
+    /** Запись ровно на начало часа занимает час: слот закрыт и привязан к записи. */
+    public function test_closes_slot_when_time_is_hour_start(): void
+    {
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:00:00']);
+
+        $slot = $this->slot->fresh();
+        $this->assertTrue($slot->is_closed);
+        $this->assertSame($this->booking->id, $slot->booking_id);
+    }
+
+    /** Запись внутри часа (14:30) час не занимает: время 14:00 остаётся свободным. */
+    public function test_keeps_slot_open_when_time_inside_hour(): void
+    {
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+
+        $slot = $this->slot->fresh();
+        $this->assertFalse($slot->is_closed);
+        $this->assertNull($slot->booking_id);
+    }
+
+    /** Перенос записи внутрь часа освобождает час, который она занимала. */
+    public function test_releases_slot_when_time_moves_inside_hour(): void
+    {
+        $this->booking->update(['start_time' => '14:00:00']);
+        $this->slot->update(['is_closed' => true, 'booking_id' => $this->booking->id]);
+
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+
+        $slot = $this->slot->fresh();
+        $this->assertFalse($slot->is_closed);
+        $this->assertNull($slot->booking_id);
+    }
+
+    /** Час, закрытый вручную оператором, правка времени не открывает. */
+    public function test_keeps_manual_closing_when_time_moves(): void
+    {
+        $this->booking->update(['start_time' => '14:00:00']);
+        $this->slot->update(['is_closed' => true, 'close_reason' => 'Инвентаризация', 'booking_id' => null]);
+
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+
+        $slot = $this->slot->fresh();
+        $this->assertTrue($slot->is_closed);
+        $this->assertSame('Инвентаризация', $slot->close_reason);
+    }
+
+    /** Две записи на одно время в слоте невозможны: сохранение второй отклоняется, первая не меняется. */
+    public function test_rejects_time_taken_by_another_booking(): void
+    {
+        $this->booking->update(['start_time' => '14:00:00']);
+        Booking::factory()->forSlot($this->slot)->create(['start_time' => '14:30:00']);
+
+        try {
+            $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+            $this->fail('Сохранение на занятое время должно падать');
+        } catch (DomainException $exception) {
+            $this->assertSame(409, $exception->getCode());
+        }
+
+        $this->assertSame('14:00:00', $this->booking->fresh()->start_time);
+    }
+
+    /** Отменённая запись время не держит — на её время можно поставить новую. */
+    public function test_allows_time_of_cancelled_booking(): void
+    {
+        Booking::factory()->forSlot($this->slot)->cancelled()->create(['start_time' => '14:30:00']);
+
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+
+        $this->assertSame('14:30:00', $this->booking->fresh()->start_time);
+    }
+
+    /** Сохранение без смены времени не упирается в саму запись. */
+    public function test_allows_own_time_on_resave(): void
+    {
+        $this->save([$this->item($this->tireService->id, quantity: 1, priceKopecks: 15000)], ['startTime' => '14:30:00']);
+
+        $this->assertSame('14:30:00', $this->booking->fresh()->start_time);
     }
 
     /**
@@ -137,6 +225,7 @@ class UpdateAdminBookingTest extends TestCase
             carType: $overrides['carType'] ?? CarType::Passenger,
             status: $overrides['status'] ?? BookingStatus::Confirmed,
             cancelReason: $overrides['cancelReason'] ?? null,
+            startTime: $overrides['startTime'] ?? $this->booking->start_time,
             items: $items,
         ));
     }

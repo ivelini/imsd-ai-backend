@@ -10,6 +10,7 @@ use App\Models\Booking\Booking;
 final readonly class UpdateAdminBookingInput
 {
     /**
+     * @param  string  $startTime  время начала «HH:MM:00» внутри часа слота
      * @param  list<BookingItemInput>  $items  полный состав записи: услуги, которых в нём нет, удаляются
      */
     public function __construct(
@@ -19,6 +20,7 @@ final readonly class UpdateAdminBookingInput
         public CarType $carType,
         public BookingStatus $status,
         public ?string $cancelReason,
+        public string $startTime,
         public array $items,
     ) {}
 }

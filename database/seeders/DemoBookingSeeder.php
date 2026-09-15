@@ -145,11 +145,17 @@ class DemoBookingSeeder extends Seeder
 
         $status = $this->statusFor($date);
         $source = $minute === 0 ? BookingSource::Site : BookingSource::Admin;
+        $startTime = sprintf('%02d:%02d:00', $hour, $minute);
+
+        // Правило записи: две записи на одно время в одном слоте невозможны — демо-данные его тоже держат
+        if ($this->timeIsTaken($slot, $startTime)) {
+            return;
+        }
 
         $booking = Booking::create([
             'user_id' => $user->id,
             'slot_id' => $slot->id,
-            'start_time' => sprintf('%02d:%02d:00', $hour, $minute),
+            'start_time' => $startTime,
             'status' => $status,
             'source' => $source,
             'cancel_reason' => $status === BookingStatus::Cancelled ? 'Клиент отменил' : null,
@@ -182,6 +188,21 @@ class DemoBookingSeeder extends Seeder
             ]);
         }
         $booking->update(['total_price' => $quote->total]);
+
+        // Час занимает только запись ровно на его начало — как в CreateAdminBooking
+        if ($slot->startsHour($startTime) && ! $slot->is_closed) {
+            $slot->update(['is_closed' => true, 'booking_id' => $booking->id]);
+        }
+    }
+
+    /** Время занято: правило «одна запись на время в слоте» (отменённые время не держат). */
+    private function timeIsTaken(Slot $slot, string $startTime): bool
+    {
+        return Booking::query()
+            ->where('slot_id', $slot->id)
+            ->where('start_time', $startTime)
+            ->where('status', '!=', BookingStatus::Cancelled->value)
+            ->exists();
     }
 
     private function statusFor(CarbonInterface $date): BookingStatus
