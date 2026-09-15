@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin\Booking;
 
 use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
+use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
 use App\Filament\Clusters\Booking\Resources\Bookings\Pages\EditBooking;
 use App\Filament\Clusters\Booking\Resources\BookingServices\BookingServiceResource;
 use App\Filament\Clusters\Booking\Resources\BookingServices\Pages\EditBookingService;
@@ -68,6 +69,36 @@ class SaveAndCloseTest extends TestCase
             ->assertRedirect($from);
 
         $this->assertTrue($slot->fresh()->is_closed);
+    }
+
+    public function test_slot_save_and_close_returns_to_slots_list_when_opened_from_booking(): void
+    {
+        // В карточку слота попали из записи: возврат в запись замкнул бы круг «запись → слот → запись»
+        $slot = Slot::create(['date' => now()->addDay()->toDateString(), 'hour' => 10]);
+        $booking = $this->createBooking($slot);
+
+        Livewire::withHeaders(['referer' => BookingResource::getUrl('edit', ['record' => $booking])])
+            ->test(EditSlot::class, ['record' => $slot->id])
+            ->fillForm(['is_closed' => true])
+            ->call('saveAndClose')
+            ->assertHasNoFormErrors()
+            ->assertRedirect(SlotResource::getUrl('index'));
+
+        $this->assertTrue($slot->fresh()->is_closed);
+    }
+
+    public function test_slot_save_and_close_keeps_list_filters(): void
+    {
+        // Экран входа — сам список слотов: возврат сохраняет фильтры и страницу листинга
+        $slot = Slot::create(['date' => now()->addDay()->toDateString(), 'hour' => 10]);
+        $from = SlotResource::getUrl('index').'?page=2';
+
+        Livewire::withHeaders(['referer' => $from])
+            ->test(EditSlot::class, ['record' => $slot->id])
+            ->fillForm(['is_closed' => true])
+            ->call('saveAndClose')
+            ->assertHasNoFormErrors()
+            ->assertRedirect($from);
     }
 
     public function test_booking_save_and_close_saves_and_returns_to_previous_screen(): void

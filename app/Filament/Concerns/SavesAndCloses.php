@@ -11,6 +11,9 @@ use Filament\Actions\Action;
  * Возврат делает штатный `save()` через `getRedirectUrl()`, а не наш код после него: при ошибке
  * валидации и при `halt()` (DomainException из Action — например «на это время уже есть запись»)
  * `save()` выходит раньше редиректа, и оператор остаётся на форме с сообщением об ошибке.
+ *
+ * Адрес возврата страница может сузить через `getReturnUrl()` — если экран входа уводит по кругу
+ * (см. `EditSlot`).
  */
 trait SavesAndCloses
 {
@@ -40,6 +43,12 @@ trait SavesAndCloses
             return parent::getRedirectUrl();
         }
 
+        return $this->getReturnUrl();
+    }
+
+    /** Адрес возврата «Сохранить и закрыть»: экран входа, запасной — список раздела. */
+    protected function getReturnUrl(): string
+    {
         return $this->previousUrl ?? static::getResource()::getUrl('index');
     }
 

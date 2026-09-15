@@ -29,4 +29,18 @@ class EditSlot extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    /**
+     * Возврат — в список слотов, даже если в карточку попали из записи: возврат в запись замкнул бы
+     * круг «запись → слот → запись». Адрес экрана входа берётся, только когда он сам список, —
+     * так переживают фильтры и страница листинга.
+     */
+    protected function getReturnUrl(): string
+    {
+        $list = static::getResource()::getUrl('index');
+
+        return $this->previousUrl !== null && str_starts_with($this->previousUrl, $list)
+            ? $this->previousUrl
+            : $list;
+    }
 }
