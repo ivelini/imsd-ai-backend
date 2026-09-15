@@ -6,13 +6,17 @@ use App\Enums\Booking\BookingSource;
 use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\Pages\CreateBooking;
+use App\Filament\Clusters\Booking\Resources\Bookings\Pages\EditBooking;
 use App\Filament\Clusters\Booking\Resources\Bookings\Pages\ListBookings;
 use App\Models\Auth\Admin;
 use App\Models\Booking\Booking;
+use App\Models\Booking\BookingItem;
 use App\Models\Booking\BookingService;
 use App\Models\Booking\PriceRule;
 use App\Models\Booking\Slot;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
@@ -25,6 +29,8 @@ class BookingResourceTest extends TestCase
     private Admin $admin;
 
     private BookingService $service;
+
+    private BookingService $extraService;
 
     private Slot $slot;
 
@@ -41,11 +47,32 @@ class BookingResourceTest extends TestCase
             'is_active' => true,
             'base_price' => 15000,
         ]);
+        // Куб прайса: R13/passenger — 150 ₽, R16/passenger — 180 ₽, R16/suv — 200 ₽ (цена строки в форме — рубли)
         PriceRule::create([
             'service_id' => $this->service->id,
             'radius' => 13,
             'car_type' => CarType::Passenger,
             'price' => 15000,
+        ]);
+        PriceRule::create([
+            'service_id' => $this->service->id,
+            'radius' => 16,
+            'car_type' => CarType::Passenger,
+            'price' => 18000,
+        ]);
+        PriceRule::create([
+            'service_id' => $this->service->id,
+            'radius' => 16,
+            'car_type' => CarType::Suv,
+            'price' => 20000,
+        ]);
+
+        // Услуга без прайс-правил: её цена от радиуса не зависит
+        $this->extraService = BookingService::create([
+            'name' => 'Доплата за низкий профиль',
+            'category' => 'tire',
+            'is_active' => true,
+            'base_price' => 5000,
         ]);
 
         $this->slot = Slot::create(['date' => now()->addDay()->toDateString(), 'hour' => 11]);
@@ -133,5 +160,182 @@ class BookingResourceTest extends TestCase
 
         $this->assertSame(BookingStatus::Cancelled, $booking->fresh()->status);
         $this->assertSame('Клиент передумал', $booking->fresh()->cancel_reason);
+    }
+
+    /**
+     * Регрессия: сумма (Money) попадает в состояние формы и уезжает в снапшот Livewire,
+     * а Wireable требует от полезной нагрузки массив — страница падала на первом рендере.
+     */
+    public function test_edit_page_renders(): void
+    {
+        $booking = Booking::factory()->create();
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertOk()
+            ->assertFormFieldExists('status');
+    }
+
+    public function test_edit_title_shows_client_name_and_phone(): void
+    {
+        $booking = $this->bookingWithItem();
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertOk()
+            ->assertSee('Запись Иван, 79001234567');
+    }
+
+    /** Снимок строки не пересчитывается при открытии: правка прайса задним числом старые записи не меняет. */
+    public function test_edit_prefills_saved_item_prices(): void
+    {
+        $booking = $this->bookingWithItem(priceKopecks: 99900);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $this->assertSame(999.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    /** Новая услуга в записи подтягивает готовую цену по комбинации (услуга × радиус × тип) записи. */
+    public function test_selecting_service_fills_price_from_rule(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13, priceKopecks: 5000, service: $this->extraService);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set($this->itemPath($component, 'service_id'), $this->service->id);
+
+        $this->assertSame(150.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    public function test_selecting_service_without_rules_fills_base_price(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set($this->itemPath($component, 'service_id'), $this->extraService->id);
+
+        $this->assertSame(50.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    /** Правила у услуги есть, комбинации нет: цена не подставляется молча, оператор видит предупреждение. */
+    public function test_selecting_service_without_matching_rule_keeps_price_and_notifies(): void
+    {
+        $booking = $this->bookingWithItem(radius: 20, priceKopecks: 99900, service: $this->extraService);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set($this->itemPath($component, 'service_id'), $this->service->id);
+
+        $this->assertSame(999.0, (float) $component->get($this->itemPath($component, 'price')));
+        $component->assertNotified('Нет прайс-правила: услуга Снятие и установка колёс, R20, Легковая');
+    }
+
+    public function test_radius_change_reprices_services_with_rules(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set('data.radius', 16);
+
+        $this->assertSame(180.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    public function test_radius_change_keeps_prices_without_rules(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13, priceKopecks: 5000, service: $this->extraService);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set('data.radius', 16);
+
+        $this->assertSame(50.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    public function test_car_type_change_reprices_services_with_rules(): void
+    {
+        $booking = $this->bookingWithItem(radius: 16);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set('data.car_type', CarType::Suv->value);
+
+        $this->assertSame(200.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    /** Зафиксированное поведение: цена услуги с правилами следует за радиусом, ручная правка не сохраняется. */
+    public function test_radius_change_overwrites_manual_price(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set($this->itemPath($component, 'price'), '999');
+        $component->set('data.radius', 16);
+
+        $this->assertSame(180.0, (float) $component->get($this->itemPath($component, 'price')));
+    }
+
+    public function test_edit_shows_items_total(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13); // 150 ₽ × 1
+        BookingItem::create([
+            'booking_id' => $booking->id,
+            'service_id' => $this->extraService->id,
+            'price' => 5000,
+            'quantity' => 2,
+        ]);
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->assertSee('250 ₽');
+    }
+
+    public function test_edit_saves_items_and_total(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13);
+        $component = Livewire::test(EditBooking::class, ['record' => $booking->id]);
+
+        $component->set('data.radius', 16); // цена правила R16/passenger — 180 ₽
+        $component->set($this->itemPath($component, 'quantity'), 2);
+        $component->call('save')->assertHasNoFormErrors();
+
+        $booking = $booking->fresh();
+        $this->assertSame(18000, $booking->items()->sole()->price->toKopecks());
+        $this->assertSame(2, $booking->items()->sole()->quantity);
+        $this->assertSame(36000, $booking->total_price->toKopecks());
+    }
+
+    /** Услугу деактивируют, а не удаляют: старая запись с такой услугой сохраняется без правок состава. */
+    public function test_edit_saves_booking_with_deactivated_service(): void
+    {
+        $booking = $this->bookingWithItem(radius: 13);
+        $this->service->update(['is_active' => false]);
+
+        Livewire::test(EditBooking::class, ['record' => $booking->id])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame(15000, $booking->fresh()->total_price->toKopecks());
+    }
+
+    /** Запись клиента «Иван» на слот из setUp с одной строкой состава (по умолчанию — услуга с правилами). */
+    private function bookingWithItem(int $radius = 13, int $priceKopecks = 15000, ?BookingService $service = null): Booking
+    {
+        $service ??= $this->service;
+
+        $booking = Booking::factory()->forSlot($this->slot)->create([
+            'user_id' => User::factory()->bookingClient()->create(['name' => 'Иван', 'phone' => '79001234567'])->id,
+            'radius' => $radius,
+            'car_type' => CarType::Passenger,
+        ]);
+
+        BookingItem::create([
+            'booking_id' => $booking->id,
+            'service_id' => $service->id,
+            'price' => $priceKopecks,
+            'quantity' => 1,
+        ]);
+
+        return $booking;
+    }
+
+    /** Путь поля строки состава: ключ строки генерирует сам повторитель. */
+    private function itemPath(Testable $component, string $field): string
+    {
+        $key = array_key_first($component->get('data.items'));
+
+        return "data.items.{$key}.{$field}";
     }
 }
