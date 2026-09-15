@@ -7,6 +7,7 @@ use App\Filament\Clusters\Booking\BookingGroupEnum;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\CreateSlot;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\EditSlot;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\ListSlots;
+use App\Filament\Clusters\Booking\Resources\Slots\RelationManagers\BookingsRelationManager;
 use App\Filament\Clusters\Booking\Resources\Slots\Schemas\SlotForm;
 use App\Filament\Clusters\Booking\Resources\Slots\Tables\SlotsTable;
 use App\Models\Booking\Slot;
@@ -36,6 +37,13 @@ class SlotResource extends Resource
     public static function table(Table $table): Table
     {
         return SlotsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            BookingsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

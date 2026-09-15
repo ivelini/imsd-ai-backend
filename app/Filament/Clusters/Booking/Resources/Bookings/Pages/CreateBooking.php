@@ -11,10 +11,28 @@ use App\Models\Booking\Booking;
 use DomainException;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Livewire\Attributes\Url;
 
 class CreateBooking extends CreateRecord
 {
     protected static string $resource = BookingResource::class;
+
+    /** Слот из строки запроса — переход со страницы слота (?slot_id=): форма открывается с выбранным слотом. */
+    #[Url]
+    public ?int $slot_id = null;
+
+    protected function fillForm(): void
+    {
+        parent::fillForm();
+
+        if ($this->slot_id === null) {
+            return;
+        }
+
+        // Родитель уже применил дефолты полей — слот вписываем в сырое состояние: fill() дефолты теряет,
+        // а getState() в этой версии Filament валидирует форму и на пустой форме бросает исключение
+        $this->form->rawState([...$this->form->getRawState(), 'slot_id' => $this->slot_id]);
+    }
 
     /**
      * Создание — через Action CreateAdminBooking: снимок цены пересчитывается сервером,

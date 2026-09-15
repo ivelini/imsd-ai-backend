@@ -49,4 +49,19 @@ class MoneyTest extends TestCase
     {
         $this->assertSame(170000, json_decode(json_encode(Money::fromKopecks(170000)), true));
     }
+
+    /** Полезная нагрузка Livewire — массив: WireableSynth итерирует её и требует array-shaped payload. */
+    public function test_livewire_payload_is_array_shaped(): void
+    {
+        $this->assertIsArray(Money::fromKopecks(170000)->toLivewire());
+    }
+
+    public function test_livewire_roundtrip_keeps_kopecks(): void
+    {
+        $money = Money::fromKopecks(170000);
+
+        $this->assertSame(170000, Money::fromLivewire($money->toLivewire())->toKopecks());
+        // Числовая форма осталась в снапшотах уже открытых страниц — читается и она
+        $this->assertSame(170000, Money::fromLivewire(170000)->toKopecks());
+    }
 }

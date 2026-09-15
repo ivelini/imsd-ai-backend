@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin\Booking;
 
+use App\Filament\Clusters\Booking\Resources\Slots\Pages\EditSlot;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\ListSlots;
 use App\Models\Booking\Slot;
 use Database\Seeders\BookingScheduleSeeder;
@@ -47,5 +48,23 @@ class SlotResourceTest extends TestCase
         // Пн–Сб × 10 часов, горизонт по умолчанию 30 дней — сетка не пустая и открытая
         $this->assertGreaterThan(0, Slot::count());
         $this->assertSame(0, Slot::where('is_closed', true)->count());
+    }
+
+    /** Дата и час в заголовке — на правке они не редактируются, но должны быть видны. */
+    public function test_edit_page_title_shows_date_and_hour(): void
+    {
+        $slot = Slot::create(['date' => '2026-09-12', 'hour' => 10]);
+
+        Livewire::test(EditSlot::class, ['record' => $slot->id])
+            ->assertSee('Редактирование слота: 12.09.2026, 10:00');
+    }
+
+    public function test_edit_form_hides_date_and_hour(): void
+    {
+        $slot = Slot::create(['date' => '2026-09-12', 'hour' => 10]);
+
+        Livewire::test(EditSlot::class, ['record' => $slot->id])
+            ->assertFormFieldDoesNotExist('date')
+            ->assertFormFieldDoesNotExist('hour');
     }
 }

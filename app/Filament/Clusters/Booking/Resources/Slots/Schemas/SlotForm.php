@@ -14,13 +14,16 @@ class SlotForm
     {
         return $schema
             ->components([
+                // Дата и час — только при создании: на правке слот уже привязан к записям, а свои дата и час он несёт в заголовке
                 DatePicker::make('date')
                     ->label('Дата')
-                    ->required(),
+                    ->required()
+                    ->visibleOn('create'),
                 Select::make('hour')
                     ->label('Час')
                     ->options(collect(range(0, 23))->mapWithKeys(fn (int $hour): array => [$hour => sprintf('%02d:00', $hour)]))
-                    ->required(),
+                    ->required()
+                    ->visibleOn('create'),
                 Toggle::make('is_closed')
                     ->label('Слот закрыт')
                     ->default(false),

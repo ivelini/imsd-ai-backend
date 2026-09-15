@@ -73,14 +73,26 @@ final readonly class Money implements JsonSerializable, Wireable
         return $this->kopecks;
     }
 
-    /** Livewire-гидратация записей панели: по проводу — копейки. */
-    public function toLivewire(): int
+    /**
+     * Livewire-гидратация записей панели: по проводу — копейки, но **в массиве** —
+     * `WireableSynth` обходит полезную нагрузку `foreach` и требует array-shaped payload.
+     *
+     * @return array{kopecks: int}
+     */
+    public function toLivewire(): array
     {
-        return $this->kopecks;
+        return ['kopecks' => $this->kopecks];
     }
 
+    /**
+     * @param  array{kopecks: int}|int  $value  число — вид из снапшотов уже открытых страниц
+     */
     public static function fromLivewire($value): self
     {
+        if (is_array($value)) {
+            return self::fromKopecks((int) $value['kopecks']);
+        }
+
         return self::fromKopecks((int) $value);
     }
 }

@@ -15,6 +15,10 @@ class BookingFactory extends Factory
 {
     protected $model = Booking::class;
 
+    /** Буквы госномера, допустимые ГОСТом (кириллица: важно — faker'ов regexify режет многобайтные
+     *  наборы по байтам и выдаёт невалидный UTF-8, на котором падает сериализация состояния Livewire). */
+    private const PLATE_LETTERS = ['А', 'В', 'Е', 'К', 'М', 'Н', 'О', 'Р', 'С', 'Т', 'У', 'Х'];
+
     public function definition(): array
     {
         // слот из существующих строк сетки, иначе создаётся по требованию (как запись из админки)
@@ -33,9 +37,22 @@ class BookingFactory extends Factory
             'source' => BookingSource::Site,
             'radius' => fake()->numberBetween(13, 21),
             'car_type' => fake()->randomElement(CarType::bookable()),
-            'plate' => fake()->boolean(70) ? fake()->regexify('[АВЕКМНОРСТУХ][0-9]{3}[АВЕКМНОРСТУХ]{2}[0-9]{2}') : null,
+            'plate' => fake()->boolean(70) ? self::plate() : null,
             'total_price' => 60000,
         ];
+    }
+
+    /** Госномер вида «А123ВС74» — собирается по частям: многобайтные буквы берутся по одной. */
+    private static function plate(): string
+    {
+        return sprintf(
+            '%s%03d%s%s%02d',
+            fake()->randomElement(self::PLATE_LETTERS),
+            fake()->numberBetween(1, 999),
+            fake()->randomElement(self::PLATE_LETTERS),
+            fake()->randomElement(self::PLATE_LETTERS),
+            fake()->numberBetween(1, 99),
+        );
     }
 
     public function forSlot(Slot $slot): static
