@@ -9,6 +9,7 @@ use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
 use App\Models\Auth\Admin;
 use App\Models\Booking\Booking;
+use App\Models\Booking\Slot;
 use App\ValueObjects\Money;
 use DomainException;
 use Filament\Notifications\Notification;
@@ -22,6 +23,18 @@ class CreateBooking extends CreateRecord
     /** Слот из строки запроса — переход со страницы слота (?slot_id=): форма открывается с выбранным слотом. */
     #[Url]
     public ?int $slot_id = null;
+
+    /** Слот в заголовке — только при переходе со страницы слота: с кнопки списка записей id в строке запроса нет. */
+    public function getTitle(): string
+    {
+        if ($this->slot_id === null) {
+            return 'Новая запись';
+        }
+
+        $slot = Slot::findOrFail($this->slot_id);
+
+        return sprintf('Создать запись в слот: %s, %02d:00', $slot->date->format('d.m.Y'), $slot->hour);
+    }
 
     protected function fillForm(): void
     {

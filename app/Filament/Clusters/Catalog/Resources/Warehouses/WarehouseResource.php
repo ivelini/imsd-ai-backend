@@ -30,6 +30,12 @@ class WarehouseResource extends Resource
 
     protected static ?string $navigationLabel = 'Склады поставщиков';
 
+    protected static ?string $modelLabel = 'Склад';
+
+    protected static ?string $pluralModelLabel = 'Склады поставщиков';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return WarehouseForm::configure($schema);

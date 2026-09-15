@@ -30,6 +30,12 @@ class ComplexServiceResource extends Resource
 
     protected static ?string $navigationLabel = 'Комплексы услуг';
 
+    protected static ?string $modelLabel = 'Комплекс услуг';
+
+    protected static ?string $pluralModelLabel = 'Комплексы услуг';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return ComplexServiceForm::configure($schema);

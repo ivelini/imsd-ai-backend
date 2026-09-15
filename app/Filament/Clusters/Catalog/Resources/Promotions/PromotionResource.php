@@ -30,9 +30,11 @@ class PromotionResource extends Resource
 
     protected static ?string $navigationLabel = 'Акции';
 
-    protected static ?string $modelLabel = 'акция';
+    protected static ?string $modelLabel = 'Акция';
 
-    protected static ?string $pluralModelLabel = 'акции';
+    protected static ?string $pluralModelLabel = 'Акции';
+
+    protected static bool $hasTitleCaseModelLabel = false;
 
     public static function form(Schema $schema): Schema
     {

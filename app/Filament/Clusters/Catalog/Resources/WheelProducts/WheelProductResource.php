@@ -26,6 +26,12 @@ class WheelProductResource extends Resource
 
     protected static ?string $navigationLabel = 'Диски';
 
+    protected static ?string $modelLabel = 'Диск';
+
+    protected static ?string $pluralModelLabel = 'Каталог дисков';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?int $navigationSort = 2;
 
     protected static ?string $model = WheelProduct::class;

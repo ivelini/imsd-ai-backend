@@ -21,6 +21,12 @@ class AdminResource extends Resource
 
     protected static ?string $navigationLabel = 'Администраторы';
 
+    protected static ?string $modelLabel = 'Администратор';
+
+    protected static ?string $pluralModelLabel = 'Администраторы';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return AdminForm::configure($schema);

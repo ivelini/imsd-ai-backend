@@ -10,6 +10,8 @@ class ListSlots extends ListRecords
 {
     protected static string $resource = SlotResource::class;
 
+    protected static ?string $title = 'Расписание';
+
     /**
      * Стартовый вид — слоты на сегодня.
      *

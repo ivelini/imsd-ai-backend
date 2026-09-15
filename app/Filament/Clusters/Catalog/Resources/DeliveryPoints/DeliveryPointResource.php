@@ -30,6 +30,12 @@ class DeliveryPointResource extends Resource
 
     protected static ?string $navigationLabel = 'Точки выдачи';
 
+    protected static ?string $modelLabel = 'Точка выдачи';
+
+    protected static ?string $pluralModelLabel = 'Точки выдачи';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return DeliveryPointForm::configure($schema);

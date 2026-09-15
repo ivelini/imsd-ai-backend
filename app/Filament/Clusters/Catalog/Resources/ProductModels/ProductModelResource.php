@@ -30,6 +30,12 @@ class ProductModelResource extends Resource
 
     protected static ?string $navigationLabel = 'Модели';
 
+    protected static ?string $modelLabel = 'Модель';
+
+    protected static ?string $pluralModelLabel = 'Модели';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return ProductModelForm::configure($schema);

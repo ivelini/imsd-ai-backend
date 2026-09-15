@@ -31,6 +31,12 @@ class SlotResource extends Resource
 
     protected static ?string $navigationLabel = 'Слоты';
 
+    protected static ?string $modelLabel = 'Слот';
+
+    protected static ?string $pluralModelLabel = 'Слоты';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return SlotForm::configure($schema);

@@ -21,6 +21,12 @@ class BookingResource extends Resource
 
     protected static ?string $navigationLabel = 'Настройки';
 
+    protected static ?string $modelLabel = 'Настройка';
+
+    protected static ?string $pluralModelLabel = 'Настройки';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return SettingForm::configure($schema);

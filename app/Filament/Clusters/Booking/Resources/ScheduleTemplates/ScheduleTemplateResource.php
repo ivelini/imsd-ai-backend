@@ -30,6 +30,12 @@ class ScheduleTemplateResource extends Resource
 
     protected static ?string $navigationLabel = 'Расписание недели';
 
+    protected static ?string $modelLabel = 'Шаблон расписания';
+
+    protected static ?string $pluralModelLabel = 'Расписание недели';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return ScheduleTemplateForm::configure($schema);

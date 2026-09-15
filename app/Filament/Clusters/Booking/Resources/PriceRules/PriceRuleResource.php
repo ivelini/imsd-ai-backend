@@ -30,6 +30,12 @@ class PriceRuleResource extends Resource
 
     protected static ?string $navigationLabel = 'Прайс-правила';
 
+    protected static ?string $modelLabel = 'Прайс-правило';
+
+    protected static ?string $pluralModelLabel = 'Прайс-правила';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return PriceRuleForm::configure($schema);

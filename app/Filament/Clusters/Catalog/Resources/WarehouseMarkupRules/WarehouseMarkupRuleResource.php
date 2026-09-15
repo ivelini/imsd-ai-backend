@@ -30,6 +30,12 @@ class WarehouseMarkupRuleResource extends Resource
 
     protected static ?string $navigationLabel = 'Наценка от поставщика';
 
+    protected static ?string $modelLabel = 'Наценка от поставщика';
+
+    protected static ?string $pluralModelLabel = 'Наценки от поставщика';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return WarehouseMarkupRuleForm::configure($schema);

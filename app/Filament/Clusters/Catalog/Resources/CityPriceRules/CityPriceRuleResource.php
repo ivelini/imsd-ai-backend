@@ -30,6 +30,12 @@ class CityPriceRuleResource extends Resource
 
     protected static ?string $navigationLabel = 'Наценка на доставку';
 
+    protected static ?string $modelLabel = 'Наценка на доставку';
+
+    protected static ?string $pluralModelLabel = 'Наценки на доставку';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return CityPriceRuleForm::configure($schema);

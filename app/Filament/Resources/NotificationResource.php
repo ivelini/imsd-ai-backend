@@ -21,9 +21,11 @@ class NotificationResource extends Resource
 
     protected static ?string $navigationLabel = 'Уведомления';
 
-    protected static ?string $modelLabel = 'уведомление';
+    protected static ?string $modelLabel = 'Уведомление';
 
     protected static ?string $pluralModelLabel = 'Уведомления';
+
+    protected static bool $hasTitleCaseModelLabel = false;
 
     public static function table(Table $table): Table
     {

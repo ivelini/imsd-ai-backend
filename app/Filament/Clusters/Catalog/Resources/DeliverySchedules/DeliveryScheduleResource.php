@@ -30,6 +30,12 @@ class DeliveryScheduleResource extends Resource
 
     protected static ?string $navigationLabel = 'График доставки';
 
+    protected static ?string $modelLabel = 'График доставки';
+
+    protected static ?string $pluralModelLabel = 'Графики доставки';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function form(Schema $schema): Schema
     {
         return DeliveryScheduleForm::configure($schema);

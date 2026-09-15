@@ -28,7 +28,11 @@ class TireProductResource extends Resource
 
     protected static ?string $navigationLabel = 'Шины';
 
+    protected static ?string $modelLabel = 'Шина';
+
     protected static ?string $pluralModelLabel = 'Каталог шин';
+
+    protected static bool $hasTitleCaseModelLabel = false;
 
     protected static ?string $model = TireProduct::class;
 
