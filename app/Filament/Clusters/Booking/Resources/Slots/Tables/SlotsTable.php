@@ -3,8 +3,8 @@
 namespace App\Filament\Clusters\Booking\Resources\Slots\Tables;
 
 use App\Enums\Booking\BookingStatus;
-use App\Enums\Booking\SlotPeriod;
 use App\Filament\Support\PanelAction;
+use App\Filament\Support\PeriodFilter;
 use App\Models\Booking\Booking;
 use App\Models\Booking\Slot;
 use Carbon\Carbon;
@@ -52,8 +52,12 @@ class SlotsTable
                     ->listWithLineBreaks()
                     ->placeholder('—'),
             ])
-            // Селекты над таблицей: период с дефолтом «Сегодня» объясняет, почему виден один день.
+            // Фильтры над таблицей; период с дефолтом «текущая неделя» объясняет, почему видна неделя.
             ->filtersLayout(FiltersLayout::AboveContent)
+            // Применяются сразу: кнопка быстрого выбора должна сужать таблицу одним кликом, без «Применить».
+            ->deferFilters(false)
+            // 50 строк вместо 5: сетка недели — это десятки слотов, листать по пять нечего.
+            ->defaultPaginationPageOption(50)
             ->filters([
                 SelectFilter::make('is_closed')
                     ->label('Состояние')
@@ -61,21 +65,10 @@ class SlotsTable
                         true => 'Закрыт',
                         false => 'Открыт',
                     ]),
-                SelectFilter::make('period')
-                    ->label('Период')
-                    ->options(SlotPeriod::class)
-                    // Пустое значение — вся сетка (так ведёт себя сброс фильтров), иначе сужение по датам.
-                    ->query(function (Builder $query, array $data): Builder {
-                        $period = SlotPeriod::tryFrom((string) ($data['value'] ?? ''));
-
-                        if ($period === null) {
-                            return $query;
-                        }
-
-                        $range = $period->range(CarbonImmutable::now());
-
-                        return $query->whereBetween('date', [$range['from'], $range['to']]);
-                    }),
+                // Период — по дате самого слота.
+                PeriodFilter::make(
+                    fn (Builder $query, CarbonImmutable $from, CarbonImmutable $to): Builder => $query->whereBetween('date', [$from, $to]),
+                ),
             ])
             ->recordActions([
                 // Переключение закрытия: закрытие без записи, повторное открытие освобождает время

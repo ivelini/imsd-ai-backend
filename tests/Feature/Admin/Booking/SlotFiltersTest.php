@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin\Booking;
 
 use App\Enums\Booking\BookingStatus;
+use App\Enums\Booking\SlotPeriod;
 use App\Filament\Clusters\Booking\Resources\Slots\Pages\ListSlots;
 use App\Models\Booking\Booking;
 use App\Models\Booking\Slot;
@@ -14,7 +15,7 @@ use Livewire\Livewire;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
 
-/** Листинг слотов: период (сегодня/завтра/недели), состояние и колонка клиентов. */
+/** Листинг слотов: период (пресеты и даты), состояние и колонка клиентов. */
 class SlotFiltersTest extends TestCase
 {
     use CreatesAdmin, RefreshDatabase;
@@ -29,17 +30,28 @@ class SlotFiltersTest extends TestCase
         Filament::setCurrentPanel(Filament::getPanel('admin'));
     }
 
-    public function test_default_page_shows_today_slots_only(): void
+    /** Стартовый вид — текущая неделя целиком: воскресенье её же, понедельник следующей — уже нет. */
+    public function test_default_page_shows_current_week(): void
     {
         $today = $this->slotAt(now());
-        $tomorrow = $this->slotAt(now()->addDay());
+        $sunday = $this->slotAt(now()->endOfWeek(), hour: 11);
+        $nextMonday = $this->slotAt(now()->startOfWeek()->addWeek(), hour: 11);
 
         Livewire::test(ListSlots::class)
-            ->assertCanSeeTableRecords([$today])
-            ->assertCanNotSeeTableRecords([$tomorrow]);
+            ->assertCanSeeTableRecords([$today, $sunday])
+            ->assertCanNotSeeTableRecords([$nextMonday]);
     }
 
-    /** Сброс фильтров — не возврат к «Сегодня», а вся сетка: сегодняшний день и дальше. */
+    /** Дефолт виден и в самом фильтре: иначе сужение таблицы выглядит ничем не объяснённым. */
+    public function test_default_page_fills_period_filter(): void
+    {
+        Livewire::test(ListSlots::class)
+            ->assertSet('tableFilters.period.from', now()->startOfWeek()->toDateString())
+            ->assertSet('tableFilters.period.until', now()->endOfWeek()->toDateString())
+            ->assertSet('tableFilters.period.preset', SlotPeriod::CurrentWeek->value);
+    }
+
+    /** Сброс фильтров — не возврат к дефолту, а вся сетка: сегодняшний день и дальше. */
     public function test_reset_shows_all_slots(): void
     {
         $today = $this->slotAt(now());
@@ -48,6 +60,7 @@ class SlotFiltersTest extends TestCase
 
         Livewire::test(ListSlots::class)
             ->call('resetTableFiltersForm')
+            ->assertSet('tableFilters.period.from', null)
             ->assertCanSeeTableRecords([$today, $tomorrow, $far]);
     }
 
@@ -72,38 +85,90 @@ class SlotFiltersTest extends TestCase
             ->assertCanSeeTableRecords([$today, $week, $far], inOrder: true);
     }
 
-    public function test_tomorrow_filter_narrows_table(): void
+    /** Заполнено только «С» — это один день, а не «от этой даты и дальше». */
+    public function test_single_date_filter_shows_only_that_day(): void
+    {
+        $day = now()->addDays(10);
+        $slot = $this->slotAt($day);
+        $nextDaySlot = $this->slotAt($day->copy()->addDay());
+
+        Livewire::test(ListSlots::class)
+            ->filterTable('period', ['from' => $day->toDateString(), 'until' => null])
+            ->assertCanSeeTableRecords([$slot])
+            ->assertCanNotSeeTableRecords([$nextDaySlot]);
+    }
+
+    /** Обе границы включительно: последний день диапазона виден, следующий за ним — нет. */
+    public function test_date_range_filter_includes_both_ends(): void
+    {
+        $from = now()->addDays(10);
+        $last = $from->copy()->addDays(2);
+
+        $firstSlot = $this->slotAt($from);
+        $lastSlot = $this->slotAt($last);
+        $outsideSlot = $this->slotAt($last->copy()->addDay());
+
+        Livewire::test(ListSlots::class)
+            ->filterTable('period', ['from' => $from->toDateString(), 'until' => $last->toDateString()])
+            ->assertCanSeeTableRecords([$firstSlot, $lastSlot])
+            ->assertCanNotSeeTableRecords([$outsideSlot]);
+    }
+
+    /** Пустой период сетку не сужает: пустые поля читаются как «показывай всё». */
+    public function test_empty_period_shows_whole_grid(): void
+    {
+        $today = $this->slotAt(now());
+        $far = $this->slotAt(now()->addDays(20));
+
+        Livewire::test(ListSlots::class)
+            ->filterTable('period', ['from' => null, 'until' => null])
+            ->assertCanSeeTableRecords([$today, $far]);
+    }
+
+    /** Пресет заполняет обе даты и сразу сужает таблицу — это и есть «быстрый выбор». */
+    public function test_period_preset_fills_dates_and_narrows_table(): void
     {
         $today = $this->slotAt(now());
         $tomorrow = $this->slotAt(now()->addDay());
 
         Livewire::test(ListSlots::class)
-            ->filterTable('period', 'tomorrow')
+            ->set('tableFilters.period.preset', SlotPeriod::Tomorrow->value)
+            ->assertSet('tableFilters.period.from', now()->addDay()->toDateString())
+            ->assertSet('tableFilters.period.until', now()->addDay()->toDateString())
             ->assertCanSeeTableRecords([$tomorrow])
             ->assertCanNotSeeTableRecords([$today]);
     }
 
-    /** Прошедшие дни листинг срезает, поэтому «текущая неделя» = сегодня…воскресенье. */
-    public function test_current_week_filter_covers_week_until_sunday(): void
+    /** Правка даты руками снимает подсветку пресета: иначе панель показывает пресет, которого в фильтре нет. */
+    public function test_manual_date_clears_preset(): void
     {
-        $sunday = $this->slotAt(now()->endOfWeek());
-        $nextMonday = $this->slotAt(now()->startOfWeek()->addWeek());
+        $day = now()->addDays(10);
 
         Livewire::test(ListSlots::class)
-            ->filterTable('period', 'current_week')
-            ->assertCanSeeTableRecords([$sunday])
-            ->assertCanNotSeeTableRecords([$nextMonday]);
+            ->set('tableFilters.period.preset', SlotPeriod::Today->value)
+            ->set('tableFilters.period.from', $day->toDateString())
+            ->assertSet('tableFilters.period.preset', null)
+            ->assertSet('tableFilters.period.from', $day->toDateString());
     }
 
-    public function test_next_week_filter_narrows_table(): void
+    /** По умолчанию на странице 50 строк: из 55 записей 51-я уходит на вторую страницу. */
+    public function test_default_page_size_is_fifty(): void
     {
-        $today = $this->slotAt(now());
-        $nextMonday = $this->slotAt(now()->startOfWeek()->addWeek());
+        $firstDay = now()->startOfDay();
+
+        // 11 часов × 5 дней = 55 слотов; порядок — как в таблице (по дате, затем по часу).
+        $slots = collect(range(0, 4))
+            ->flatMap(fn (int $day): array => collect(range(8, 18))
+                ->map(fn (int $hour): Slot => $this->slotAt($firstDay->copy()->addDays($day), hour: $hour))
+                ->all());
 
         Livewire::test(ListSlots::class)
-            ->filterTable('period', 'next_week')
-            ->assertCanSeeTableRecords([$nextMonday])
-            ->assertCanNotSeeTableRecords([$today]);
+            ->filterTable('period', [
+                'from' => $firstDay->toDateString(),
+                'until' => $firstDay->copy()->addDays(4)->toDateString(),
+            ])
+            ->assertCanSeeTableRecords($slots->take(50)->all(), inOrder: true)
+            ->assertCanNotSeeTableRecords([$slots->last()]);
     }
 
     public function test_closed_state_filter_narrows_table(): void

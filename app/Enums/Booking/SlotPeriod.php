@@ -6,7 +6,7 @@ use App\Enums\Concerns\HasFilamentLabel;
 use Carbon\CarbonImmutable;
 use Filament\Support\Contracts\HasLabel;
 
-/** Период сетки слотов в листинге панели: день или ISO-неделя (пн–вс). */
+/** Пресет периода сетки слотов в листинге панели: день, завтра, календарные неделя и месяц. */
 enum SlotPeriod: string implements HasLabel
 {
     use HasFilamentLabel;
@@ -14,7 +14,7 @@ enum SlotPeriod: string implements HasLabel
     case Today = 'today';
     case Tomorrow = 'tomorrow';
     case CurrentWeek = 'current_week';
-    case NextWeek = 'next_week';
+    case CurrentMonth = 'current_month';
 
     public function label(): string
     {
@@ -22,7 +22,7 @@ enum SlotPeriod: string implements HasLabel
             self::Today => 'Сегодня',
             self::Tomorrow => 'Завтра',
             self::CurrentWeek => 'Текущая неделя',
-            self::NextWeek => 'Следующая неделя',
+            self::CurrentMonth => 'Текущий месяц',
         };
     }
 
@@ -35,24 +35,22 @@ enum SlotPeriod: string implements HasLabel
     public function range(CarbonImmutable $now): array
     {
         $today = $now->startOfDay();
+        // Неделя — от понедельника по воскресенье: «от сегодня до воскресенья» дало бы другую сетку.
+        $monday = $today->startOfWeek();
 
         return match ($this) {
-            self::Today => self::dayRange($today),
-            self::Tomorrow => self::dayRange($today->addDay()),
-            self::CurrentWeek => self::weekRange($today->startOfWeek()),
-            self::NextWeek => self::weekRange($today->startOfWeek()->addWeek()),
+            self::Today => self::spanRange($today, $today),
+            self::Tomorrow => self::spanRange($today->addDay(), $today->addDay()),
+            self::CurrentWeek => self::spanRange($monday, $monday->addDays(6)),
+            self::CurrentMonth => self::spanRange($today->startOfMonth(), $today->endOfMonth()),
         };
     }
 
-    /** @return array{from: CarbonImmutable, to: CarbonImmutable} один день целиком */
-    private static function dayRange(CarbonImmutable $day): array
+    /**
+     * @return array{from: CarbonImmutable, to: CarbonImmutable} отрезок от первого дня до последнего включительно
+     */
+    private static function spanRange(CarbonImmutable $first, CarbonImmutable $last): array
     {
-        return ['from' => $day->startOfDay(), 'to' => $day->endOfDay()];
-    }
-
-    /** @return array{from: CarbonImmutable, to: CarbonImmutable} неделя от понедельника по воскресенье */
-    private static function weekRange(CarbonImmutable $monday): array
-    {
-        return ['from' => $monday->startOfDay(), 'to' => $monday->addDays(6)->endOfDay()];
+        return ['from' => $first->startOfDay(), 'to' => $last->endOfDay()];
     }
 }

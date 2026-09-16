@@ -3,13 +3,17 @@
 namespace App\Filament\Clusters\Booking\Resources\Bookings\Tables;
 
 use App\Enums\Booking\BookingStatus;
+use App\Filament\Support\PeriodFilter;
 use App\Models\Booking\Booking;
+use App\Models\Booking\Slot;
 use App\ValueObjects\Money;
+use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,8 +23,11 @@ class BookingsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('slot', fn (Builder $q) => $q->where('date', '>=', now()->startOfDay())))
-            ->defaultSort(fn (Builder $query): Builder => $query->orderBy('start_time'))
+            // Порядок — дата слота, затем время начала: одно время суток перемешало бы дни недели
+            // (запись на завтра в 09:00 встала бы выше сегодняшней на 15:00).
+            ->defaultSort(fn (Builder $query): Builder => $query
+                ->orderBy(Slot::select('date')->whereColumn('booking_slots.id', 'bookings.slot_id'))
+                ->orderBy('start_time'))
             ->columns([
                 TextColumn::make('slot.date')
                     ->label('Дата')
@@ -49,6 +56,11 @@ class BookingsTable
                     ->label('Услуг')
                     ->counts('items'),
             ])
+            // Фильтры над таблицей — как в листинге слотов; период с дефолтом «текущая неделя».
+            ->filtersLayout(FiltersLayout::AboveContent)
+            // Применяются сразу: кнопка быстрого выбора должна сужать таблицу одним кликом, без «Применить».
+            ->deferFilters(false)
+            ->defaultPaginationPageOption(50)
             ->filters([
                 SelectFilter::make('status')
                     ->label('Статус')
@@ -56,6 +68,13 @@ class BookingsTable
                         collect(BookingStatus::cases())
                             ->mapWithKeys(fn (BookingStatus $status): array => [$status->value => $status->label()])
                     ),
+                // Период — по дате слота записи.
+                PeriodFilter::make(
+                    fn (Builder $query, CarbonImmutable $from, CarbonImmutable $to): Builder => $query->whereHas(
+                        'slot',
+                        fn (Builder $slot): Builder => $slot->whereBetween('date', [$from, $to]),
+                    ),
+                ),
             ])
             ->recordActions([
                 Action::make('complete')

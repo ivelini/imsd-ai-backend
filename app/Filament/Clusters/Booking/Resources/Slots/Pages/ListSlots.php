@@ -2,24 +2,19 @@
 
 namespace App\Filament\Clusters\Booking\Resources\Slots\Pages;
 
-use App\Enums\Booking\SlotPeriod;
 use App\Filament\Clusters\Booking\Resources\Slots\SlotResource;
+use App\Filament\Support\PeriodFilter;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSlots extends ListRecords
 {
     protected static string $resource = SlotResource::class;
 
-    /**
-     * Стартовый вид — слоты на сегодня.
-     *
-     * Дефолт живёт здесь, а не в `->default()` фильтра периода: при сбросе фильтров Filament
-     * перезаполняет форму дефолтами, и фильтр возвращал бы «Сегодня» вместо всей сетки.
-     */
+    /** Стартовый вид — слоты текущей недели: оператору нужна неделя целиком, а не один день. */
     public function mount(): void
     {
         parent::mount();
 
-        $this->tableFilters['period']['value'] ??= SlotPeriod::Today->value;
+        $this->tableFilters['period'] ??= PeriodFilter::weekDefaults();
     }
 }

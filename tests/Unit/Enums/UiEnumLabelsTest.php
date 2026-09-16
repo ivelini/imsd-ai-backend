@@ -35,5 +35,8 @@ class UiEnumLabelsTest extends TestCase
 
         self::assertInstanceOf(HasLabel::class, SlotPeriod::CurrentWeek);
         self::assertSame('Текущая неделя', SlotPeriod::CurrentWeek->getLabel());
+
+        self::assertInstanceOf(HasLabel::class, SlotPeriod::CurrentMonth);
+        self::assertSame('Текущий месяц', SlotPeriod::CurrentMonth->getLabel());
     }
 }
