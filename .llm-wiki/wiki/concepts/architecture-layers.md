@@ -38,7 +38,7 @@ HTTP → Middleware → FormRequest → Controller → Cache Service? → Precon
 
 ## Домены и структура
 
-Директории Models (и зеркально — Actions/, Preconditions/, DTOs/, Http/*, Enums/, Services/): `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012).
+Директории Models (и зеркально — Actions/, Preconditions/, DTOs/, Http/*, Enums/, Services/): `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012), `Storage/` (хранение колёс: договор на клиента, ADR 0026).
 
 Морф-мапа (AppServiceProvider): `tire → TireProduct`, `wheel → WheelProduct`, `article → Article`.
 
@@ -105,3 +105,4 @@ Resource — только маппинг полей: никаких вычисл
 - [Шина (TireProduct)](../entities/tire-product.md)
 - [Диск (WheelProduct)](../entities/wheel-product.md)
 - [Запись на шиномонтаж: домен Booking](booking-domain.md)
+- [Хранение колёс: домен Storage](storage-domain.md)

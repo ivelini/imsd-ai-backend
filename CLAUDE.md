@@ -84,13 +84,13 @@ Controller::__invoke()
 
 ### Домены
 
-Директории Models: `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012).
+Директории Models: `Admin/`, `Catalog/`, `Cart/`, `Order/`, `Geo/`, `Warehouse/`, `Vehicle/`, `Article/`, `Content/`, `Common/`, `System/`, `Booking/` (запись на шиномонтаж, ADR 0012), `Storage/` (хранение колёс: договор + позиции).
 
 Такая же структура — в `Actions/`, `Preconditions/`, `DTOs/`, `Http/Controllers/`, `Http/Requests/`, `Http/Resources/`, `Enums/`, `Services/`.
 
 **Морф-мапа (`AppServiceProvider`):** `tire → Tire`, `wheel → Wheel`, `article → Article`.
 
-**Enums:** `ProductType`, `WheelType`, `SpecType`, `PromotionType`, `DiscountType`, `OrderState`, `WeekDay` — в `app/Enums/`; домен Booking: `BookingStatus`, `BookingSource`, `CarType`, `ServiceCategory`, `WheelRadius`, `CodeStatus` (`Enums/Booking/`), `SettingKeyEnum` (`Enums/System/`). Деньги — VO `Money` + каст `MoneyCast` (ADR 0013), копейки в БД, рубли только в формах.
+**Enums:** `ProductType`, `WheelType`, `SpecType`, `PromotionType`, `DiscountType`, `OrderState`, `WeekDay` — в `app/Enums/`; домен Booking: `BookingStatus`, `BookingSource`, `CarType`, `ServiceCategory`, `WheelRadius`, `CodeStatus` (`Enums/Booking/`), `StorageContractStatus` (`Enums/Storage/`), `SettingKeyEnum` (`Enums/System/`). Деньги — VO `Money` + каст `MoneyCast` (ADR 0013), копейки в БД, рубли только в формах.
 
 **API:** `/api/admin` — `auth:sanctum`, `/api` — публичные + клиентские; запись на шиномонтаж — `/api/booking/*` (слоты, каталог, цена, код, подтверждение; Scramble-группа «Запись на шиномонтаж»).
 
@@ -229,6 +229,7 @@ Controller
 | 0018–0019, 0022–0023 | tireslot: упразднены 2026-09-12 — Livewire-сайт, шаги записи в URL, Actions/Services с `handle()`; содержимое 0022 влито в 0017 | Упразднены | 2026-09-12 |
 | 0024 | Правка записи оператором: цена услуг с правилами следует за прайс-кубом, итог — из строк (ФТ-19) | Accepted | 2026-09-15 |
 | 0025 | Услуга с привязками не удаляется, а деактивируется | Accepted | 2026-09-16 |
+| 0026 | Хранение колёс — отдельный домен с самостоятельным договором (цена снимком) | Accepted | 2026-09-17 |
 
 ## Документация
 

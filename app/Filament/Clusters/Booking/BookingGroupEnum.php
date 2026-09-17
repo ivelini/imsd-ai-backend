@@ -7,5 +7,6 @@ enum BookingGroupEnum: string
 {
     case Services = 'Услуги';
     case Schedule = 'Записи';
+    case Storage = 'Хранение';
     case Settings = 'Настройки';
 }

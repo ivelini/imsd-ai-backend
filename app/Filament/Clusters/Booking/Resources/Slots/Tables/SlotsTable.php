@@ -68,7 +68,7 @@ class SlotsTable
                 // Период — по дате самого слота.
                 PeriodFilter::make(
                     fn (Builder $query, CarbonImmutable $from, CarbonImmutable $to): Builder => $query->whereBetween('date', [$from, $to]),
-                ),
+                )->columnSpan(4),
             ])
             ->recordActions([
                 // Переключение закрытия: закрытие без записи, повторное открытие освобождает время

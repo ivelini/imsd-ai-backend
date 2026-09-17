@@ -37,7 +37,6 @@ final class PeriodFilter
                 Select::make('preset')
                     ->label('Быстрый выбор')
                     ->options(SlotPeriod::class)
-                    ->maxWidth(200)
                     // Filament кастует опции энума к его кейсу — состояние приходит кейсом, а не строкой.
                     ->afterStateUpdated(function (Set $set, ?SlotPeriod $state): void {
                         if ($state === null) {

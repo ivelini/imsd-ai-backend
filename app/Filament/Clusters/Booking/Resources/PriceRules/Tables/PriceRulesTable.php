@@ -3,7 +3,7 @@
 namespace App\Filament\Clusters\Booking\Resources\PriceRules\Tables;
 
 use App\Enums\Booking\CarType;
-use App\ValueObjects\Money;
+use App\Filament\Support\MoneyColumn;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -32,9 +32,7 @@ class PriceRulesTable
                     ->label('Тип авто')
                     ->badge()
                     ->formatStateUsing(fn (CarType $state): string => $state->label()),
-                TextColumn::make('price')
-                    ->label('Цена за единицу')
-                    ->formatStateUsing(fn (?Money $state): string => $state?->formatted() ?? '—'),
+                MoneyColumn::make('price', 'Цена за единицу'),
             ])
             ->recordActions([
                 EditAction::make(),

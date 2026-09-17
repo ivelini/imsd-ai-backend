@@ -4,7 +4,7 @@ namespace App\Filament\Clusters\Booking\Resources\BookingServices\Tables;
 
 use App\Enums\Booking\ServiceCategory;
 use App\Filament\Clusters\Booking\Resources\BookingServices\BookingServiceResource;
-use App\ValueObjects\Money;
+use App\Filament\Support\MoneyColumn;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -24,9 +24,7 @@ class BookingServicesTable
                     ->label('Категория')
                     ->badge()
                     ->formatStateUsing(fn (ServiceCategory $state): string => $state->label()),
-                TextColumn::make('base_price')
-                    ->label('Цена от')
-                    ->formatStateUsing(fn (?Money $state): string => $state?->formatted() ?? '—'),
+                MoneyColumn::make('base_price', 'Цена от'),
                 TextColumn::make('price_rules_count')
                     ->label('Правил')
                     ->counts('priceRules'),

@@ -215,7 +215,7 @@ Filament 5 добавляет правилу поля `in`: `Select::getInValida
 
 Экраны Cities и Countries из панели удалены (в кластер не переносились). ADR 0008 (обновлён).
 
-Кластер **«Шиномонтаж»** (`BookingCluster`, ADR 0012) — ресурсы записи на шиномонтаж; группы `BookingGroupEnum`: «Услуги» (BookingServices, PriceRules, ComplexServices), «Записи» (Slots, Bookings), «Настройки» (ScheduleTemplates). Кнопка ручной генерации сетки живёт на расписании недели (`ListScheduleTemplates`), а не на листинге слотов: сетку держит планировщик, кнопка — ручной запуск того же `GenerateSlotGrid`.
+Кластер **«Шиномонтаж»** (`BookingCluster`, ADR 0012) — ресурсы записи на шиномонтаж; группы `BookingGroupEnum`: «Услуги» (BookingServices, PriceRules, ComplexServices), «Записи» (Slots, Bookings), «Хранение» (`StorageContracts` — договоры хранения колёс, домен Storage, ADR 0026: клиент, срок, стоимость, позиции повторителем со связью, закрытие кнопкой «Выдать колёса»), «Настройки» (ScheduleTemplates). Кнопка ручной генерации сетки живёт на расписании недели (`ListScheduleTemplates`), а не на листинге слотов: сетку держит планировщик, кнопка — ручной запуск того же `GenerateSlotGrid`.
 
 Кластер **«Настройки»** (`SettingsCluster`, 2026-09-15) — настройки записи (`Settings`, переехали из «Шиномонтажа») и администраторы (`Admins`, переехали из плоского `app/Filament/Resources/`). Деньги в формах — рубли через `formatStateUsing`/`dehydrateStateUsing` (`numeric()` не совместим с Money-состоянием — NumberStateCast); record с Money-кастом гидратируется Livewire через `Wireable`. См. [Запись на шиномонтаж: домен Booking](booking-domain.md).
 

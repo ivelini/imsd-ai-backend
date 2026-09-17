@@ -3,10 +3,10 @@
 namespace App\Filament\Clusters\Booking\Resources\Bookings\Tables;
 
 use App\Enums\Booking\BookingStatus;
+use App\Filament\Support\MoneyColumn;
 use App\Filament\Support\PeriodFilter;
 use App\Models\Booking\Booking;
 use App\Models\Booking\Slot;
-use App\ValueObjects\Money;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -49,9 +49,7 @@ class BookingsTable
                     ->label('Статус')
                     ->badge()
                     ->formatStateUsing(fn (BookingStatus $state): string => $state->label()),
-                TextColumn::make('total_price')
-                    ->label('Сумма')
-                    ->formatStateUsing(fn (?Money $state): string => $state?->formatted() ?? '—'),
+                MoneyColumn::make('total_price', 'Сумма'),
                 TextColumn::make('items_count')
                     ->label('Услуг')
                     ->counts('items'),
@@ -74,7 +72,7 @@ class BookingsTable
                         'slot',
                         fn (Builder $slot): Builder => $slot->whereBetween('date', [$from, $to]),
                     ),
-                ),
+                )->columnSpan(4),
             ])
             ->recordActions([
                 Action::make('complete')

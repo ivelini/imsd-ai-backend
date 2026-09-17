@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Booking\Booking;
+use App\Models\Storage\StorageContract;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -51,6 +52,12 @@ class User extends Authenticatable
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
+    }
+
+    /** @return HasMany<StorageContract, $this> договоры хранения колёс клиента */
+    public function storageContracts(): HasMany
+    {
+        return $this->hasMany(StorageContract::class);
     }
 
     /**
