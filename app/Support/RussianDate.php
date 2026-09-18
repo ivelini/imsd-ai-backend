@@ -3,10 +3,11 @@
 namespace App\Support;
 
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 
 /**
- * Русские названия дат для страниц записи (Carbon-локализация в проекте не подключена):
- * «Сентябрь 2026», «11 сентября, пятница», «11 сентября (пт)».
+ * Русские названия дат для страниц записи и бумаг панели (Carbon-локализация в проекте не подключена):
+ * «Сентябрь 2026», «11 сентября, пятница», «11 сентября (пт)», «11 сентября 2026».
  */
 final class RussianDate
 {
@@ -45,5 +46,11 @@ final class RussianDate
     public static function dayShort(CarbonImmutable $date): string
     {
         return sprintf('%d %s (%s)', $date->day, self::MONTHS_GENITIVE[$date->month], self::WEEKDAYS_SHORT[$date->isoWeekday()]);
+    }
+
+    /** «11 сентября 2026» — длинная дата с годом (договор хранения) */
+    public static function dayWithYear(CarbonInterface $date): string
+    {
+        return sprintf('%d %s %d', $date->day, self::MONTHS_GENITIVE[$date->month], $date->year);
     }
 }

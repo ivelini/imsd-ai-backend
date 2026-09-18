@@ -236,6 +236,8 @@ Filament 5 добавляет правилу поля `in`: `Select::getInValida
 
 Кластер **«Шиномонтаж»** (`BookingCluster`, ADR 0012) — ресурсы записи на шиномонтаж; группы `BookingGroupEnum`: «Услуги» (BookingServices, PriceRules, ComplexServices), «Записи» (Slots, Bookings), «Хранение» (`StorageContracts` — договоры хранения колёс, домен Storage, ADR 0026: клиент, срок, стоимость, позиции повторителем со связью, закрытие кнопкой «Выдать колёса»), «Настройки» (ScheduleTemplates). Кнопка ручной генерации сетки живёт на расписании недели (`ListScheduleTemplates`), а не на листинге слотов: сетку держит планировщик, кнопка — ручной запуск того же `GenerateSlotGrid`.
 
+**Хранение в панели — карточка и листинг** (2026-09-18): номер договора — первая колонка листинга и заголовок карточки; в листинге по нему **ищут** (колонки под номер нет — SQL по ID, приведённому к тексту с ведущими нулями). Кнопка «Распечатать договор» на карточке правки — header action, возвращающий `StreamedResponse`: файл формирует сервис домена, Livewire превращает ответ в скачивание (см. [Хранение колёс: домен Storage](storage-domain.md)).
+
 Кластер **«Настройки»** (`SettingsCluster`, 2026-09-15) — настройки записи (`Settings`, переехали из «Шиномонтажа») и администраторы (`Admins`, переехали из плоского `app/Filament/Resources/`). Деньги в формах — рубли через `formatStateUsing`/`dehydrateStateUsing` (`numeric()` не совместим с Money-состоянием — NumberStateCast); record с Money-кастом гидратируется Livewire через `Wireable`. См. [Запись на шиномонтаж: домен Booking](booking-domain.md).
 
 ## See Also

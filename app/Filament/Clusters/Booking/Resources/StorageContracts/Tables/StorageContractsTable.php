@@ -21,7 +21,12 @@ class StorageContractsTable
             ->defaultSort('starts_on', 'desc')
             ->columns([
                 TextColumn::make('number')
-                    ->label('Номер'),
+                    ->label('Номер')
+                    // Номер — ID с ведущими нулями (колонки нет): ищем по напечатанному виду, дописав нули слева
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereRaw(
+                        "('00000' || cast(storage_contracts.id as text)) like ?",
+                        ["%{$search}%"],
+                    )),
                 TextColumn::make('user.full_name')
                     ->label('Клиент')
                     // Склейка ФИО — не колонка: поиск идёт по частям имени в карточке клиента

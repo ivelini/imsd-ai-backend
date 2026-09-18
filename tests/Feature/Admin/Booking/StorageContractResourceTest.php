@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\Concerns\CreatesAdmin;
 use Tests\TestCase;
+use ZipArchive;
 
 /** StorageContractResource панели: договор хранения — клиент, срок, стоимость, позиции, закрытие. */
 class StorageContractResourceTest extends TestCase
@@ -255,5 +256,60 @@ class StorageContractResourceTest extends TestCase
             ->assertActionHasUrl('createClient', UserResource::getUrl('create'))
             ->assertActionShouldOpenUrlInNewTab('createClient')
             ->assertSee('Создать пользователя'); // кнопка отрисована, а не только объявлена
+    }
+
+    /** Нумерация начинается со 100: последовательность без перезапуска отдала бы id = 1 */
+    public function test_store_numbers_contracts_from_hundred(): void
+    {
+        Livewire::test(CreateStorageContract::class)
+            ->fillForm($this->formData())
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $contract = StorageContract::firstOrFail();
+        $this->assertGreaterThanOrEqual(100, $contract->id);
+        $this->assertSame(sprintf('%05d', $contract->id), $contract->number);
+    }
+
+    /** Листинг ищет договор по номеру — и по полному «00101», и по цифрам без ведущих нулей */
+    public function test_list_search_finds_by_number(): void
+    {
+        StorageContract::factory()->count(2)->create(['user_id' => $this->client->id]);
+        $contract = StorageContract::orderByDesc('id')->firstOrFail();
+
+        Livewire::test(ListStorageContracts::class)
+            ->searchTable($contract->number)
+            ->assertCanSeeTableRecords([$contract])
+            ->assertCanNotSeeTableRecords([StorageContract::orderBy('id')->firstOrFail()]);
+
+        Livewire::test(ListStorageContracts::class)
+            ->searchTable(ltrim($contract->number, '0'))
+            ->assertCanSeeTableRecords([$contract]);
+    }
+
+    /** Кнопка отдаёт файл, а не уводит со страницы: имя — с номером договора, содержимое — docx */
+    public function test_print_downloads_document(): void
+    {
+        $contract = $this->contractWithItems();
+
+        $component = Livewire::test(EditStorageContract::class, ['record' => $contract->id])
+            ->assertActionVisible('printDocument')
+            ->call('printDocument');
+
+        $component->assertFileDownloaded("Договор хранения №{$contract->number}.docx");
+
+        // Содержимое — байты .docx: номер лежит в документе внутри zip, в сырых байтах его не видно
+        $content = base64_decode((string) $component->effects['download']['content']);
+        $path = tempnam(sys_get_temp_dir(), 'docx');
+        file_put_contents($path, $content);
+
+        $zip = new ZipArchive;
+        $zip->open($path);
+        $documentXml = (string) $zip->getFromName('word/document.xml');
+        $zip->close();
+        unlink($path);
+
+        $this->assertStringStartsWith('PK', $content);
+        $this->assertStringContainsString($contract->number, $documentXml);
     }
 }

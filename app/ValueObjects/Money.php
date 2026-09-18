@@ -43,14 +43,18 @@ final readonly class Money implements JsonSerializable, Wireable
     /** «1 700 ₽», «1 700,50 ₽» — отображение, не хранение. */
     public function formatted(): string
     {
+        return $this->amount().' ₽';
+    }
+
+    /** «1 700», «1 700,50» — сумма без знака рубля: шаблоны дописывают валюту сами («6 000 рублей»). */
+    public function amount(): string
+    {
         $rubles = intdiv($this->kopecks, 100);
         $remainder = $this->kopecks % 100;
 
-        $amount = $remainder === 0
+        return $remainder === 0
             ? number_format($rubles, 0, ',', ' ')
             : number_format($this->kopecks / 100, 2, ',', ' ');
-
-        return $amount.' ₽';
     }
 
     /** Цена позиции = цена за единицу × количество (количество ≥ 1). */

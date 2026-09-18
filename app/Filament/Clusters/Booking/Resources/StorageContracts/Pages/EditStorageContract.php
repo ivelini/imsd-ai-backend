@@ -5,10 +5,12 @@ namespace App\Filament\Clusters\Booking\Resources\StorageContracts\Pages;
 use App\Filament\Clusters\Booking\Resources\StorageContracts\StorageContractResource;
 use App\Filament\Concerns\SavesAndCloses;
 use App\Models\Storage\StorageContract;
+use App\Services\Storage\StorageContractDocumentService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Icons\Heroicon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EditStorageContract extends EditRecord
 {
@@ -43,9 +45,18 @@ class EditStorageContract extends EditRecord
             ->action('printDocument');
     }
 
-    public function printDocument(): void
+    /** Кнопка отдаёт .docx: Livewire превращает возвращённый ответ в скачивание файла */
+    public function printDocument(StorageContractDocumentService $documents): StreamedResponse
     {
-        $storageContract = $this->getRecord()->refresh()->load('items');
-        dd($storageContract);
+        /** @var StorageContract $contract */
+        $contract = $this->getRecord()->load(['user', 'items']);
+
+        return response()->streamDownload(
+            function () use ($documents, $contract): void {
+                echo $documents->render($contract);
+            },
+            "Договор хранения №{$contract->number}.docx",
+            ['Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        );
     }
 }
