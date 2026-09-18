@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Storage;
+namespace App\Services\StorageContract;
 
 use App\Models\Storage\StorageContract;
 use App\Models\Storage\StorageItem;
@@ -27,6 +27,7 @@ final class ContractDocumentValues
 
         return [
             'contract_num' => $contract->number,
+            'personal_document' => $contract->personal_document,
             'created_at' => RussianDate::dayWithYear($createdAt),
             'user_fio' => $contract->user->full_name,
             'user_phone' => (string) $contract->user->phone,

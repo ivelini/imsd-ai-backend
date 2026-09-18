@@ -27,6 +27,9 @@ class StorageContractForm
                     ->getOptionLabelFromRecordUsing(fn (User $record): string => trim($record->full_name.' '.$record->phone))
                     ->searchable(['name', 'surname', 'phone'])
                     ->required(),
+                TextInput::make('personal_document')
+                    ->label('Документ, удостоверяющий личность')
+                    ->required(),
                 DatePicker::make('starts_on')
                     ->label('Срок с')
                     ->required(),

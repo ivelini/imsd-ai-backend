@@ -1,7 +1,3 @@
 *
-!template
-!template/**
+!template/*
 !.gitignore
-
-# Служебные файлы Word рядом с открытым документом
-~$*

@@ -44,6 +44,7 @@ class StorageContractResourceTest extends TestCase
     {
         return [
             'user_id' => $this->client->id,
+            'personal_document' => '75 18 074294',
             'starts_on' => '2026-10-01',
             'ends_on' => '2027-04-30',
             'price' => '6000',
@@ -81,6 +82,7 @@ class StorageContractResourceTest extends TestCase
 
         $contract = StorageContract::firstOrFail();
         $this->assertSame($this->client->id, $contract->user_id);
+        $this->assertSame('75 18 074294', $contract->personal_document);
         $this->assertSame('2026-10-01', $contract->starts_on->toDateString());
         $this->assertSame('2027-04-30', $contract->ends_on->toDateString());
         $this->assertSame(600000, (int) $contract->getRawOriginal('price')); // в БД — копейки
@@ -116,6 +118,17 @@ class StorageContractResourceTest extends TestCase
             ->fillForm([...$this->formData(), 'user_id' => null])
             ->call('create')
             ->assertHasFormErrors(['user_id']);
+
+        $this->assertSame(0, StorageContract::count());
+    }
+
+    /** Документ, удостоверяющий личность, обязателен: без него договор не заводят */
+    public function test_store_requires_personal_document(): void
+    {
+        Livewire::test(CreateStorageContract::class)
+            ->fillForm([...$this->formData(), 'personal_document' => null])
+            ->call('create')
+            ->assertHasFormErrors(['personal_document']);
 
         $this->assertSame(0, StorageContract::count());
     }

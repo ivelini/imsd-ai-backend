@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property int $user_id
+ * @property string $personal_document
  * @property Carbon $starts_on срок хранения, от
  * @property Carbon $ends_on срок хранения, до
  * @property Money $price стоимость за весь срок, копейки
@@ -36,7 +37,16 @@ class StorageContract extends Model
 
     protected $table = 'storage_contracts';
 
-    protected $fillable = ['user_id', 'starts_on', 'ends_on', 'price', 'status', 'closed_at', 'operator_id'];
+    protected $fillable = [
+        'user_id',
+        'personal_document',
+        'starts_on',
+        'ends_on',
+        'price',
+        'status',
+        'closed_at',
+        'operator_id',
+    ];
 
     protected function casts(): array
     {

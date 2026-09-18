@@ -16,6 +16,7 @@ class StorageContractFactory extends Factory
     {
         return [
             'user_id' => User::factory()->bookingClient(),
+            'personal_document' => '75 18 074294',
             'starts_on' => now()->toDateString(),
             'ends_on' => now()->addMonths(6)->toDateString(),
             'price' => 600000,

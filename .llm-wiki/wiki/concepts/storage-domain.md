@@ -1,7 +1,7 @@
 # Хранение колёс: домен Storage
 
 > Sources: Реализация в backend, 2026-09-17; 2026-09-18
-> Raw: [storage-contracts](../../raw/project/2026-09-17-storage-contracts.md); [номер, клиенты, кнопка из записи](../../raw/project/2026-09-18-storage-contract-number-and-clients.md); [печать договора](../../raw/project/2026-09-18-storage-contract-print.md)
+> Raw: [storage-contracts](../../raw/project/2026-09-17-storage-contracts.md); [номер, клиенты, кнопка из записи](../../raw/project/2026-09-18-storage-contract-number-and-clients.md); [печать договора](../../raw/project/2026-09-18-storage-contract-print.md); [документ и переезд помощника](../../raw/project/2026-09-18-storage-contract-personal-document.md)
 
 ## Overview
 
@@ -19,7 +19,7 @@
 
 | Таблица | Назначение | Ключевые поля |
 |---------|------------|---------------|
-| `storage_contracts` | Договор хранения | `user_id` (FK users, restrict), `starts_on` / `ends_on` (date), `price` (копейки, `MoneyCast`), `status` (active/closed), `closed_at` (дата выдачи), `operator_id` (FK admins) |
+| `storage_contracts` | Договор хранения | `user_id` (FK users, restrict), `personal_document` (документ, удостоверяющий личность — NOT NULL), `starts_on` / `ends_on` (date), `price` (копейки, `MoneyCast`), `status` (active/closed), `closed_at` (дата выдачи), `operator_id` (FK admins) |
 | `storage_items` | Позиции — что оставлено | `storage_contract_id` (cascade), `name`, `description` (text nullable) |
 
 Модели — `App\Models\Storage\StorageContract` (belongsTo `User`, `Admin`-оператор, hasMany `items`),
@@ -32,6 +32,9 @@
   допустимо: сдал и забрал в один день — нулевой срок.
 - **Стоимость** — одна сумма за весь срок, вводит оператор (снимок; изменение прайса договор не
   затрагивает). Рубли в форме, копейки в БД.
+- **Документ, удостоверяющий личность** (`personal_document`) — обязательное поле договора: он есть
+  в бумажном договоре, поэтому и колонка NOT NULL, и `required()` в форме. Печатается рядом с ФИО
+  и телефоном клиента.
 - **Позиции** — минимум одна: «что оставлено» есть суть договора; наименование обязательно, описание
   («особенности»: комплектность, повреждения, метки) — нет.
 - **Состояние.** Новый договор — `active`; закрытие (выдача колёс) ставит `closed` и дату `closed_at`,
@@ -63,18 +66,24 @@ Word'ом; `cloneRow` размножает строку таблицы и нум
 
 | Слой | Класс / файл | Что делает |
 |---|---|---|
-| Значения | `App\Support\Storage\ContractDocumentValues` | чистая функция: поля договора (`forContract`) и строки акта с нумерацией (`items`) |
-| Печать | `App\Services\Storage\StorageContractDocumentService` | шаблон → значения → `cloneRow` по числу позиций → байты |
+| Значения | `App\Services\StorageContract\ContractDocumentValues` | чистая функция: поля договора (`forContract`) и строки акта с нумерацией (`items`) |
+| Печать | `App\Services\StorageContract\StorageContractDocumentService` | шаблон → значения → `cloneRow` по числу позиций → байты |
 | Путь к шаблону | `config/storage_document.php` | диск и путь (`template/storage_contract.docx`) |
+
+Помощник значений лежит **рядом со своим сервисом**, а не в общем `Support/`: потребитель у него ровно
+один (правило «чистый помощник живёт рядом со своим потребителем», глобальный `coding-style.md`).
+Тесты — зеркально каталогу реализации: `tests/Unit/Services/StorageContract/` и
+`tests/Feature/Services/StorageContract/`.
 
 Форматы: даты — «1 октября 2026» (`RussianDate::dayWithYear`), сумма — «6 000» без знака рубля
 (`Money::amount()`, шаблон дописывает «рублей» сам), копейки печатаются, если есть. Строк акта — по
 числу позиций, номер строки (колонка «№ п/п») — от 1 по порядку списка, а не id позиции. Договор без
 позиций печатается актом без строк (образец строки удаляется — `cloneRow` на нуле падает).
 
-Шаблон лежит в `storage/app/private/template/` и **открыт в git** (`!template/**` в `.gitignore`
-каталога) — иначе на выкладке его нет. Ключей в шаблоне — 10; тест печати проверяет, что после
-подстановки в документе не осталось ни одного `${`.
+Шаблон лежит в `storage/app/private/template/` и **открыт в git** (`!template/*` в `.gitignore`
+каталога) — иначе на выкладке его нет. Ключей в шаблоне — 11 (номер, документ, три даты, ФИО, телефон,
+стоимость и строка акта `item_id`/`item_name`/`item_desc`); тест печати проверяет, что после подстановки
+в документе не осталось ни одного `${`.
 
 ## Договор из записи
 

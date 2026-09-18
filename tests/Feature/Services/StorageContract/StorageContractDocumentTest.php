@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\Storage;
+namespace Tests\Feature\Services\StorageContract;
 
 use App\Models\Storage\StorageContract;
 use App\Models\Storage\StorageItem;
 use App\Models\User;
-use App\Services\Storage\StorageContractDocumentService;
+use App\Services\StorageContract\StorageContractDocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use ZipArchive;
@@ -27,6 +27,7 @@ class StorageContractDocumentTest extends TestCase
 
         $contract = StorageContract::factory()->create([
             'user_id' => $client->id,
+            'personal_document' => '75 18 074294',
             'starts_on' => '2026-10-01',
             'ends_on' => '2027-04-30',
             'price' => 600000,
@@ -88,6 +89,7 @@ class StorageContractDocumentTest extends TestCase
         $this->assertStringContainsString($contract->number, $text);
         $this->assertStringContainsString('Петров Иван Иванович', $text);
         $this->assertStringContainsString('79001234567', $text);
+        $this->assertStringContainsString('75 18 074294', $text);
         $this->assertStringContainsString('1 октября 2026', $text);
         $this->assertStringContainsString('30 апреля 2027', $text);
         $this->assertStringContainsString('6 000', $text);

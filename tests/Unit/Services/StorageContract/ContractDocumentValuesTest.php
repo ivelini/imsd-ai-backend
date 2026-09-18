@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Unit\Support\Storage;
+namespace Tests\Unit\Services\StorageContract;
 
 use App\Models\Storage\StorageContract;
 use App\Models\Storage\StorageItem;
 use App\Models\User;
-use App\Support\Storage\ContractDocumentValues;
+use App\Services\StorageContract\ContractDocumentValues;
 use Carbon\Carbon;
 use Tests\TestCase;
 
@@ -21,6 +21,7 @@ class ContractDocumentValuesTest extends TestCase
     {
         $contract = new StorageContract([
             'user_id' => 1,
+            'personal_document' => '75 18 074294',
             'starts_on' => '2026-10-01',
             'ends_on' => '2027-04-30',
             'price' => $priceKopecks,
@@ -70,6 +71,7 @@ class ContractDocumentValuesTest extends TestCase
 
         $this->assertSame([
             'contract_num' => '00100',
+            'personal_document' => '75 18 074294',
             'created_at' => '18 сентября 2026',
             'user_fio' => 'Петров Иван Иванович',
             'user_phone' => '79001234567',

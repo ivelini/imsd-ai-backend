@@ -203,7 +203,7 @@
 
 | Таблица | Назначение | Ключевые поля |
 |---------|------------|---------------|
-| `storage_contracts` | Договор хранения колёс клиента | `user_id` (FK users, restrict), `starts_on` / `ends_on` (date — срок от/до), `price` (копейки за весь срок, снимок), `status` (active/closed), `closed_at` (timestamp nullable — фактическая выдача колёс), `operator_id` (FK admins, nullOnDelete); index status/ends_on |
+| `storage_contracts` | Договор хранения колёс клиента | `user_id` (FK users, restrict), `personal_document` (документ, удостоверяющий личность — обязателен, печатается в договоре), `starts_on` / `ends_on` (date — срок от/до), `price` (копейки за весь срок, снимок), `status` (active/closed), `closed_at` (timestamp nullable — фактическая выдача колёс), `operator_id` (FK admins, nullOnDelete); index status/ends_on |
 | `storage_items` | Позиции договора — что оставлено | `storage_contract_id` (cascade), `name` (наименование), `description` (text nullable — особенности: комплектность, повреждения, метки) |
 
 **Примечания:**

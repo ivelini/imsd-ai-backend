@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('storage_contracts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
+            $table->string('personal_document');
             $table->date('starts_on');
             $table->date('ends_on');
             $table->unsignedInteger('price'); // стоимость за весь срок, копейки

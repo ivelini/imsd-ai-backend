@@ -5,7 +5,7 @@ namespace App\Filament\Clusters\Booking\Resources\StorageContracts\Pages;
 use App\Filament\Clusters\Booking\Resources\StorageContracts\StorageContractResource;
 use App\Filament\Concerns\SavesAndCloses;
 use App\Models\Storage\StorageContract;
-use App\Services\Storage\StorageContractDocumentService;
+use App\Services\StorageContract\StorageContractDocumentService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
