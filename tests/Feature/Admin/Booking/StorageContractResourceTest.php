@@ -300,6 +300,22 @@ class StorageContractResourceTest extends TestCase
             ->assertCanSeeTableRecords([$contract]);
     }
 
+    /** Листинг ищет и по телефону клиента: оператор ищет договор по номеру из трубки */
+    public function test_list_search_finds_by_phone(): void
+    {
+        $contract = StorageContract::factory()->create([
+            'user_id' => User::factory()->bookingClient()->create(['phone' => '79001234567'])->id,
+        ]);
+        $other = StorageContract::factory()->create([
+            'user_id' => User::factory()->bookingClient()->create(['phone' => '79131112233'])->id,
+        ]);
+
+        Livewire::test(ListStorageContracts::class)
+            ->searchTable('79001234567')
+            ->assertCanSeeTableRecords([$contract])
+            ->assertCanNotSeeTableRecords([$other]);
+    }
+
     /** Кнопка отдаёт файл, а не уводит со страницы: имя — с номером договора, содержимое — docx */
     public function test_print_downloads_document(): void
     {

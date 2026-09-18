@@ -35,7 +35,8 @@ class StorageContractsTable
                         fn (Builder $user): Builder => $user->where('name', 'like', "%{$search}%")->orWhere('surname', 'like', "%{$search}%"),
                     )),
                 TextColumn::make('user.phone')
-                    ->label('Телефон'),
+                    ->label('Телефон')
+                    ->searchable(),
                 TextColumn::make('starts_on')
                     ->label('Срок с')
                     ->date('d.m.Y')
