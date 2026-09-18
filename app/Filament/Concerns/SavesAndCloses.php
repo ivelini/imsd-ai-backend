@@ -34,7 +34,19 @@ trait SavesAndCloses
             $this->getSaveFormAction(),
             $this->getSaveAndCloseFormAction(),
             $this->getCancelFormAction(),
+            ...$this->getExtraFormActions(),
         ];
+    }
+
+    /**
+     * Кнопки сверх «Сохранить»: у страницы своя операция над записью (см. EditBooking —
+     * договор хранения). Пусто по умолчанию.
+     *
+     * @return array<int, Action>
+     */
+    protected function getExtraFormActions(): array
+    {
+        return [];
     }
 
     protected function getRedirectUrl(): ?string

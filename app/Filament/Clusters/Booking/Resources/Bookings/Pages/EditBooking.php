@@ -8,14 +8,18 @@ use App\DTOs\Booking\UpdateAdminBookingInput;
 use App\Enums\Booking\BookingStatus;
 use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
+use App\Filament\Clusters\Booking\Resources\StorageContracts\StorageContractResource;
 use App\Filament\Concerns\SavesAndCloses;
+use App\Filament\Support\StorageContractPrefill;
 use App\Models\Booking\Booking;
 use App\Models\Booking\BookingItem;
 use App\ValueObjects\Money;
 use Carbon\Carbon;
 use DomainException;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class EditBooking extends EditRecord
@@ -23,6 +27,34 @@ class EditBooking extends EditRecord
     use SavesAndCloses;
 
     protected static string $resource = BookingResource::class;
+
+    /** @return array<int, Action> */
+    protected function getExtraFormActions(): array
+    {
+        return [
+            $this->createStorageContractAction(),
+        ];
+    }
+
+    /** Кнопка появляется на услуге категории «Хранение»: с ней запись продолжается договором. */
+    protected function createStorageContractAction(): Action
+    {
+        return Action::make('createStorageContract')
+            ->label('Создать договор хранения')
+            ->icon(Heroicon::OutlinedArchiveBox)
+            ->color('gray')
+            ->visible(fn (): bool => StorageContractPrefill::hasStorageService($this->data['items'] ?? []))
+            ->action('createStorageContract');
+    }
+
+    /** Запись уже сохранена — сразу ведём на договор с её данными (правки формы в договор не попадут). */
+    public function createStorageContract(): void
+    {
+        /** @var Booking $booking */
+        $booking = $this->getRecord();
+
+        $this->redirect(StorageContractResource::getUrl('create', StorageContractPrefill::paramsFor($booking)));
+    }
 
     /**
      * Заголовок несёт дату слота, время и клиента записи: оператор видит, с кем и на какой день работает

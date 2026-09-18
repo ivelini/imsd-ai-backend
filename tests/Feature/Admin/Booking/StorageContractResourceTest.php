@@ -6,6 +6,7 @@ use App\Enums\Storage\StorageContractStatus;
 use App\Filament\Clusters\Booking\Resources\StorageContracts\Pages\CreateStorageContract;
 use App\Filament\Clusters\Booking\Resources\StorageContracts\Pages\EditStorageContract;
 use App\Filament\Clusters\Booking\Resources\StorageContracts\Pages\ListStorageContracts;
+use App\Filament\Resources\UserResource;
 use App\Models\Auth\Admin;
 use App\Models\Storage\StorageContract;
 use App\Models\Storage\StorageItem;
@@ -203,5 +204,56 @@ class StorageContractResourceTest extends TestCase
 
         $this->assertSame(0, StorageItem::count());
         $this->assertNotNull($this->client->fresh());
+    }
+
+    /** Номер виден в списке: оператор называет договор по номеру, а не по клиенту */
+    public function test_list_shows_contract_number(): void
+    {
+        $contract = StorageContract::factory()->create(['user_id' => $this->client->id]);
+
+        Livewire::test(ListStorageContracts::class)
+            ->assertTableColumnStateSet('number', sprintf('%05d', $contract->id), $contract);
+    }
+
+    public function test_edit_title_shows_number_and_client(): void
+    {
+        $contract = StorageContract::factory()->create(['user_id' => $this->client->id]);
+
+        $title = Livewire::test(EditStorageContract::class, ['record' => $contract->id])->instance()->getTitle();
+
+        $this->assertStringContainsString(sprintf('Договор № %05d', $contract->id), $title);
+        $this->assertStringContainsString('Петров', $title);
+    }
+
+    /** Переход из записи: адрес несёт клиента, срок «с» и стоимость — форма открывается заполненной */
+    public function test_create_prefills_from_query(): void
+    {
+        Livewire::withQueryParams([
+            'user_id' => $this->client->id,
+            'starts_on' => '2026-10-01',
+            'price' => '6000',
+        ])->test(CreateStorageContract::class)
+            ->assertFormSet([
+                'user_id' => $this->client->id,
+                'starts_on' => '2026-10-01',
+                'price' => '6000',
+            ]);
+    }
+
+    /** Переход из меню: подставлять клиента неоткуда — поле остаётся пустым */
+    public function test_create_without_query_leaves_client_empty(): void
+    {
+        Livewire::test(CreateStorageContract::class)
+            ->assertFormSet(['user_id' => null]);
+    }
+
+    /** Нового клиента заводят, не бросая заполненный договор: форма создания — в новой вкладке */
+    public function test_create_has_button_to_create_client(): void
+    {
+        Livewire::test(CreateStorageContract::class)
+            ->assertActionExists('createClient')
+            ->assertActionHasUrl('createClient', UserResource::getUrl('create'))
+            ->assertActionShouldOpenUrlInNewTab('createClient')
+            ->assertSee('Создать пользователя'); // кнопка отрисована, а не только объявлена
     }
 }

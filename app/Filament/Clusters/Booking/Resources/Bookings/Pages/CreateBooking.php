@@ -7,13 +7,17 @@ use App\DTOs\Booking\BookingItemInput;
 use App\DTOs\Booking\CreateAdminBookingInput;
 use App\Enums\Booking\CarType;
 use App\Filament\Clusters\Booking\Resources\Bookings\BookingResource;
+use App\Filament\Clusters\Booking\Resources\StorageContracts\StorageContractResource;
+use App\Filament\Support\StorageContractPrefill;
 use App\Models\Auth\Admin;
 use App\Models\Booking\Booking;
 use App\Models\Booking\Slot;
 use App\ValueObjects\Money;
 use DomainException;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\Url;
 
 class CreateBooking extends CreateRecord
@@ -23,6 +27,9 @@ class CreateBooking extends CreateRecord
     /** Слот из строки запроса — переход со страницы слота (?slot_id=): форма открывается с выбранным слотом. */
     #[Url]
     public ?int $slot_id = null;
+
+    /** Кнопка «Создать договор хранения» сохраняет запись — после сохранения оператор уходит на договор. */
+    protected bool $redirectToStorageContract = false;
 
     /** Слот в заголовке — только при переходе со страницы слота: с кнопки списка записей id в строке запроса нет. */
     public function getTitle(): string
@@ -61,6 +68,47 @@ class CreateBooking extends CreateRecord
         $hour = Slot::query()->whereKey($slotId)->value('hour');
 
         return is_numeric($hour) ? sprintf('%02d:00', (int) $hour) : null;
+    }
+
+    /** @return array<int, Action> */
+    protected function getFormActions(): array
+    {
+        return [
+            ...parent::getFormActions(),
+            $this->createStorageContractAction(),
+        ];
+    }
+
+    /** Кнопка появляется на услуге категории «Хранение»: с ней запись продолжается договором. */
+    protected function createStorageContractAction(): Action
+    {
+        return Action::make('createStorageContract')
+            ->label('Создать договор хранения')
+            ->icon(Heroicon::OutlinedArchiveBox)
+            ->color('gray')
+            ->visible(fn (): bool => StorageContractPrefill::hasStorageService($this->data['items'] ?? []))
+            ->action('createStorageContract');
+    }
+
+    /** Запись ещё не сохранена: кнопка сначала создаёт её (с валидацией), затем ведёт на договор. */
+    public function createStorageContract(): void
+    {
+        $this->redirectToStorageContract = true;
+
+        $this->create();
+    }
+
+    /** Обычный путь — в список записей; после кнопки — на форму договора с данными записи. */
+    protected function getRedirectUrl(): string
+    {
+        if (! $this->redirectToStorageContract) {
+            return parent::getRedirectUrl();
+        }
+
+        /** @var Booking $booking */
+        $booking = $this->getRecord();
+
+        return StorageContractResource::getUrl('create', StorageContractPrefill::paramsFor($booking));
     }
 
     /**

@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $operator_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read string $number номер договора для панели и бумаги: ID с ведущими нулями
  */
 class StorageContract extends Model
 {
@@ -64,5 +65,14 @@ class StorageContract extends Model
     public function items(): HasMany
     {
         return $this->hasMany(StorageItem::class);
+    }
+
+    /**
+     * Номер договора: ID с ведущими нулями до пяти знаков. Отдельной колонки нет — ID не меняется,
+     * а копия завела бы второй источник правды (номер-то и есть ID).
+     */
+    public function getNumberAttribute(): string
+    {
+        return str_pad((string) $this->id, 5, '0', STR_PAD_LEFT);
     }
 }

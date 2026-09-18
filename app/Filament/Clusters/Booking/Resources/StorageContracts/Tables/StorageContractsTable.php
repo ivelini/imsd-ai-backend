@@ -20,6 +20,8 @@ class StorageContractsTable
         return $table
             ->defaultSort('starts_on', 'desc')
             ->columns([
+                TextColumn::make('number')
+                    ->label('Номер'),
                 TextColumn::make('user.full_name')
                     ->label('Клиент')
                     // Склейка ФИО — не колонка: поиск идёт по частям имени в карточке клиента
